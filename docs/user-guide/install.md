@@ -1,4 +1,4 @@
-# PennCNV Installation
+# Overview
 
 Below are the instructions for installing PennCNV on various operating systems. PennCNV is written in a mixture of Perl and C; therefore, re-compilation of the source code is always recommended (unless you are using Windows, for which I pre-packaged a number of dll files for different versions of Perl). In fact, many of the problems that users reported can be simply solved by re-compilation of the source code! 
 
@@ -28,9 +28,9 @@ It will show the program usage information, indicating the successful installati
 
 For Solaris, change "gcc" to "cc" in the Makefile, since normally one can create shared libraries with c compiler provided by Solaris, but not gcc itself.
 
-> ADDITIONAL NOTES: If you have problem installing PennCNV in your operating system, it is perhaps due to incompatibility with the latest version of Perl 5.14/5.18 in some systems. To solve this issue, you can use perlbrew to install a lower version of Perl and run PennCNV on top of that without re-compilation. Perlbrew defaults the installation to non-threaded and non-multi perl versions. In order to use (for example), as precompiled code for perl-5.8.8 (x86_64-linux-thread-multi, one would have to set their perlbrew install to install a version where thread and multi is available. So, in the install I had to do "perlbrew install perl-[insert version here] --thread --multi". See more instructions at the end of this page.
+> *ADDITIONAL NOTES: If you have problem installing PennCNV in your operating system, it is perhaps due to incompatibility with the latest version of Perl 5.14/5.18 in some systems. To solve this issue, you can use perlbrew to install a lower version of Perl and run PennCNV on top of that without re-compilation. Perlbrew defaults the installation to non-threaded and non-multi perl versions. In order to use (for example), as precompiled code for perl-5.8.8 (x86_64-linux-thread-multi, one would have to set their perlbrew install to install a version where thread and multi is available. So, in the install I had to do "perlbrew install perl-[insert version here] --thread --multi". See more instructions at the end of this page.*
 
-## Installation under Windows - overview
+## Windows
 
 There are two ways to use PennCNV in a Windows system: either install Cygwin and use PennCNV under Cygwin shell, or install ActivePerl and use PennCNV in a regular Windows command shell. These two methods are described in the following two sections.
 
@@ -70,13 +70,11 @@ If you see a core dumped error message, or see a cannot locate loadable object e
 
 If using a very old machine with very old version of make program, the fancy characters like $@ and $^ in the Makefile may not be recognized correctly. If thats the case, just manually change the character to appropriate file names.
 
-Compilation in Cygwin: the procedure is slightly different: change khmm.so to khmm.dll in the Makefile file before compilation.
+> *Compilation in Cygwin: the procedure is slightly different: change khmm.so to khmm.dll in the Makefile file before compilation.*
 
-Compilation in Windows: The pre-compiled executable in PennCNV can only be used under 32-bit Windows machine. (If you use 64-bit Windows, it is likely that the pre-compiled executable can still be used, but only if you install 32-bit Perl in the machine, not the 64-bit version of Perl). If you have a 64-bit Windows but have no experience in compilation, do NOT compile. Just download 32-bit Perl and run PennCNV directly. I was not able to compile PennCNV specifically for 64-bit Perl.
+> *Compilation in Windows: The pre-compiled executable in PennCNV can only be used under 32-bit Windows machine. (If you use 64-bit Windows, it is likely that the pre-compiled executable can still be used, but only if you install 32-bit Perl in the machine, not the 64-bit version of Perl). If you have a 64-bit Windows but have no experience in compilation, do NOT compile. Just download 32-bit Perl and run PennCNV directly. I was not able to compile PennCNV specifically for 64-bit Perl.For other Windows system and/or any other Perl version, re-compilation may be required. Follow these steps exactly. First, install ActivePerl in the system (direct link to 32-bit version of 5.8.9, 5.10.1, 5.12.3, 5.14.0), and it does not matter which version you choose to install. Next, install the MinGW-Get (minimalist GNU), which contains necessary components/commands/libraries for GCC. During installation, select the MSYS shell which is more convenient for our compilation purposes, compared to windows shell. Next, open MSYS, go to PennCNV directory, to go the kext sub-directory, run the `perl -MExtUtils::Embed -e ccopts`, `perl -MExtUtils::Embed -e ldopts`, `perl -MConfig -e 'print $Config{archname}'` and `perl -MConfig -e 'print $Config{version}'` command, then copy the output and paste into the Makefile in the corresponding places in the file. Different machines may have a different outputs for the above commands! (for example, some machines will need to use `VER=5.8.8` but others will need to use `VER=5.10.1`, depending on version of Perl). The only complication is that any \ character need to be changed to / instead. For example, `C:\Perl\lib\CORE` should be changed to `C:/Perl/lib/CORE`. Finally change khmm.so to khmm.dll in the Makefile file. Now just type make in the `kext/` directory and it should work from there.*
 
-For other Windows system and/or any other Perl version, re-compilation may be required. Follow these steps exactly. First, install ActivePerl in the system (direct link to 32-bit version of 5.8.9, 5.10.1, 5.12.3, 5.14.0), and it does not matter which version you choose to install. Next, install the MinGW-Get (minimalist GNU), which contains necessary components/commands/libraries for GCC. During installation, select the MSYS shell which is more convenient for our compilation purposes, compared to windows shell. Next, open MSYS, go to PennCNV directory, to go the kext sub-directory, run the `perl -MExtUtils::Embed -e ccopts`, `perl -MExtUtils::Embed -e ldopts`, `perl -MConfig -e 'print $Config{archname}'` and `perl -MConfig -e 'print $Config{version}'` command, then copy the output and paste into the Makefile in the corresponding places in the file. Different machines may have a different outputs for the above commands! (for example, some machines will need to use `VER=5.8.8` but others will need to use `VER=5.10.1`, depending on version of Perl). The only complication is that any \ character need to be changed to / instead. For example, `C:\Perl\lib\CORE` should be changed to `C:/Perl/lib/CORE`. Finally change khmm.so to khmm.dll in the Makefile file. Now just type make in the `kext/` directory and it should work from there.
-
-> Compilation in Solaris: change `gcc` to `cc` in the `Makefile`, then compile by typing `make`. This change is needed because gcc in many Solaris system is not compiled in a way to allow dynamic linking.
+> *Compilation in Solaris: change `gcc` to `cc` in the `Makefile`, then compile by typing `make`. This change is needed because gcc in many Solaris system is not compiled in a way to allow dynamic linking.*
 
 ## The last resort
 
@@ -107,14 +105,14 @@ Finally, remember to add `~/usr/perl` into the beginning of your PATH environmen
 
   **Solution**: By default, Cygwin assigns only 1GB memory so any process, so a process that tries use >1GB will be killed by Cygwin.
 
-Try this in cygwin:
+  Try this in cygwin:
 
 ```
 regtool -i set /HKLM/Software/Cygnus\ Solutions/Cygwin/heap_chunk_in_mb 2048 
 regtool -v list /HKLM/Software/Cygnus\ Solutions/Cygwin
 ```
 
-If it does not work, change the 2048 to 4096. If this still does not work, then I do not know a good solution, except to split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
+  If it does not work, change the 2048 to 4096. If this still does not work, then I do not know a good solution, except to split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
 
  
 
