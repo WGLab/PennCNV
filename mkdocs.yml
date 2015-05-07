@@ -1,4 +1,4 @@
-site_name: PennCNV Documentation
+site_name: PennCNV
 site_url: http://penncnv.openbioinformatics.org/
 repo_url: http://github.com/WangGenomicsLab/penncnv/
 repo_name: GitHub
@@ -9,12 +9,11 @@ copyright: 2007-2015 PennCNV
 google_analytics: ['UA-7565671-1', 'www.openbioinformatics.org/penncnv']
 
 docs_dir: docs
-include_search: true
+#include_search: true
 #use_absolute_urls: true
 #use_directory_urls: false
 
 pages:
-# for strange reasons I can only put max of 7 items below for building to pass
 - ['index.md', 'PennCNV']
 
 # User Guide
