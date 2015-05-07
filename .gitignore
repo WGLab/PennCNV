@@ -1,2 +1,5 @@
 **/*.o
 **/*.so
+**/x86_64-linux
+**/x86_64-linux-thread-multi
+**/5.20.2
