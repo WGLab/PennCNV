@@ -78,6 +78,27 @@ For other Windows system and/or any other Perl version, re-compilation may be re
 
 > Compilation in Solaris: change `gcc` to `cc` in the `Makefile`, then compile by typing `make`. This change is needed because gcc in many Solaris system is not compiled in a way to allow dynamic linking.
 
+## The last resort
+
+If all the above methods do not work, then you can resort to reinstallation of Perl manually. (Note that sometimes, `perlbrew` cannot correctly compile/install perl even if appropriate arguments were supplied based on their documentation.) This is indeed incredibly simple if you just follow step-by-step instructions below. Suppose that I want to install Perl in `~/usr/perl` directory.
+
+```
+[kaiwang@biocluster ~/]$ wget http://www.cpan.org/src/perl-5.14.2.tar.gz
+[kaiwang@biocluster ~/]$ tar xvfz perl-5.14.2.tar.gz 
+[kaiwang@biocluster ~/]$ cd perl-5.14.2
+[kaiwang@biocluster ~/]$ ./Configure -des -Dprefix=/home/kaiwang/usr/perl -Accflags='-fPIC' -Duseithreads
+[kaiwang@biocluster ~/]$ make
+[kaiwang@biocluster ~/]$ make test
+[kaiwang@biocluster ~/]$ make install
+```
+
+Note that in the command above, `-fPIC` is needed for x86_64 system, and `-Duseithreads` are highly recommended to enable threading functionality in Perl (though not used in PennCNV per se).
+
+The `make test` command will run around 1,000 tests, and some of them may fail (usually should be less than 5). If a large fraction fails, then you should be careful with continuing the installation.
+
+Finally, remember to add `~/usr/perl` into the beginning of your PATH environmental variable. Then logout and login again, enter PennCNV's `kext/` directory and type `make`. Everything should work from there.
+
+
 ## Installation trouble shooting
 
 - Problem (out of memory in Cygwin):
