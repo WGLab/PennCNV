@@ -146,11 +146,11 @@ By default the output file names will be appended by split1, split2 and so on; h
 
 > Tip: The `-name` argument tells the program that the output file name should be based on the first word in the first line of the inputfile (for example, 99HI0697A and 99HI0698C). Sometimes the sample name contains non-word characters such as "-"; in this case, you can also add the "--beforestring .GType " argument to the above command in addition to the -name argument; this means that any string before the ".GType" should be used as output file name, so that the output file names are sample.99HI0697A, sample.99HI0698C and so on.
 
-To get more detailed description of each argument for the kcolumn.pl program (or any other program in the PennCNV package), try the `--help` argument. To read the complete manual for the kcolumn.pl program (or any other program in the PennCNV package), use the --man argument.
+To get more detailed description of each argument for the kcolumn.pl program (or any other program in the PennCNV package), try the `--help` argument. To read the complete manual for the kcolumn.pl program (or any other program in the PennCNV package), use the `--man` argument.
 
 Now we have three files, called sample1.txt, sample2.txt and sample3.txt, corresponding to three individuals, respectively, and we need to identify CNVs for them.
 
-Note: After file spliting, it is very important to check the output files. Normally, if you keep the terminal open, after the program finished, there should be a line saying that all splitting is done to confirm that this step is completely successfully. Sometimes due to lack of hard drive space, or due to an interruption of the program before it's finished, the file splitting is not completed successfully, resulting in fewer markers than it should contain. You can do a simple "wc -l file.split1" to check the number of lines in a random output file: it should be around 1.8 million for Affy 6, 900K for Affy 5, 1 millino for Illumina 1M and 550K for Illumina 550K array. If not, then the file splitting is not completely corrrectly and you can use "tail file.split1" to see what's the last line in the file, usually the line is not complete, meaning that something is wrong there. Re-do the splitting again, and make sure that the file splitting is completed before calling CNVs.
+> Note: After file spliting, it is very important to check the output files. Normally, if you keep the terminal open, after the program finished, there should be a line saying that all splitting is done to confirm that this step is completely successfully. Sometimes due to lack of hard drive space, or due to an interruption of the program before it's finished, the file splitting is not completed successfully, resulting in fewer markers than it should contain. You can do a simple "wc -l file.split1" to check the number of lines in a random output file: it should be around 1.8 million for Affy 6, 900K for Affy 5, 1 millino for Illumina 1M and 550K for Illumina 550K array. If not, then the file splitting is not completely corrrectly and you can use "tail file.split1" to see what's the last line in the file, usually the line is not complete, meaning that something is wrong there. Re-do the splitting again, and make sure that the file splitting is completed before calling CNVs.
 
 
 ## Preparing signal intensity files from Affymetrix CEL files
@@ -164,7 +164,7 @@ The procedures described above are suitable for standard Illumina and Affymetrix
 
 PennCNV can still process these types of arrays or data using the PennCNV-Affy framework, but the user need to prepare appropriate input file formats. Below is a description of these data formats: in fact they match the same format as output files given by APT, so that PennCNV-Affy can be directly applied on these files.
 
-## Normalized signal file
+### - Normalized signal file
 
 The user need to provide a normalized signal file, possibly by a simple re-formatting of the original file received from data provider. The file has a simple tab-delimited text format: first line gives the sample identifiers, while following lines gives signal intensity values. The first field must be probeset_id. In addition, all values must be log2 based, and negative values are possible. It is very important that this file has been normalized (any algorithm should suffice) so that the signal intensity between different samples are comparable to each other: a simple way to check this is to get all intensity values for sample1, calculate its median, 25% and 75% quantile, then compare that of sample2 and sample3 to make sure that they are largely comparable.
 
@@ -182,7 +182,7 @@ The user need to provide a normalized signal file, possibly by a simple re-forma
 
 If the marker name ends with -A and -B, it will be treated as a SNP, so two lines will be required to describe its signal intensity values. Otherwise, the marker will be treated as a non-polymorphic marker (CN marker), and only one line is required to describe its signal intensity values. For example, the rs11127467, SNP45265 and marker4438516 above are all SNP markers, while the CN10000 is a CN marker.
 
-## Genotype call file
+### - Genotype call file
 
 This file is required even if using an oligonucleotide array. It is also a tab-delimited text file, with one marker per line. The first line gives the sample identifiers, while following lines give the genotype calls. The first field again must be probeset_id. The order of the samples in this file should match that in the signal file, even if the actual sample name differ.
 
@@ -194,7 +194,7 @@ This file is required even if using an oligonucleotide array. It is also a tab-d
 
 In the genotyping call field in the file, 0 means AA, 1 means AB and 2 means BB call. CN markers are obviously not included in the file since they have no genotype calls.
 
-## Genotype confidence file
+### - Genotype confidence file
 
 This file is required even if using an oligonucleotide array. The format is similar to the above genotype call file. The confidence value are quantitative values, and the smaller, the better (this is somewhat counter-intuitive, but the file format is based on Affymetrix genotyping calls). If using a genotype callingn algorithm (such as Chiamo) that gives higher scores to more confident calls, then the user need to reformat the field to be 1-score, to reflect that lower scores means better call quality.
 
@@ -204,9 +204,7 @@ This file is required even if using an oligonucleotide array. The format is simi
 | rs4522651    |   0       | 0      |  0.2     |   0.01  |
 | rs4438516    |   0       | 0.0013 |     0    |    0    |
 
- 
-
-## Generating cluster file and LRR/BAF file
+### - Generating cluster file and LRR/BAF file
 
 After having the above three files, the user can then follow PennCNV-Affy protocol and generates the cluster file (generate_affy_geno_cluster.pl) and finally the LRR/BAF file (normalize_affy_geno_cluster.pl), and then proceed with CNV calling. Several arguments, like call confidence score, should be specified to match the genotype calling algorithm used in the above files.
  
