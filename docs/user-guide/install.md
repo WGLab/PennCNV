@@ -101,38 +101,36 @@ Finally, remember to add `~/usr/perl` into the beginning of your PATH environmen
 
 - Problem (out of memory in Cygwin):
 
-  **Symptom**: out of memory occurs in cygwin, although the machine clearly has 4GB memory and should be more than enough (even for 1.8 million markers for a father-mother-offspring trio, the memory usage should be ~3GB in a 64-bit machine).
+    **Symptom**: out of memory occurs in cygwin, although the machine clearly has 4GB memory and should be more than enough (even for 1.8 million markers for a father-mother-offspring trio, the memory usage should be ~3GB in a 64-bit machine).
 
-  **Solution**: By default, Cygwin assigns only 1GB memory so any process, so a process that tries use >1GB will be killed by Cygwin.
+    **Solution**: By default, Cygwin assigns only 1GB memory so any process, so a process that tries use >1GB will be killed by Cygwin.
 
-  Try this in cygwin:
+    Try this in cygwin:
 
 ```
 regtool -i set /HKLM/Software/Cygnus\ Solutions/Cygwin/heap_chunk_in_mb 2048 
 regtool -v list /HKLM/Software/Cygnus\ Solutions/Cygwin
 ```
 
-  If it does not work, change the 2048 to 4096. If this still does not work, then I do not know a good solution, except to split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
-
- 
+    If it does not work, change the 2048 to 4096. If this still does not work, then I do not know a good solution, except to split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
 
 - Problem (program is very slow):
 
-   **Symptom**: Program takes forever to run.
+    **Symptom**: Program takes forever to run.
 
-   **Solution**: It should take ~2 minutes for calling CNV on a signal file with 1 million markers, and slightly longer if the GCmodel adjustment and confidence score calculation are used. If the program takes forever to run, it is more likely due to lack of memory. In Windows, use the task manager to check the CPU/memory usage; in Linux/Unix, use the top command to check CPU/memory usage. If the CPU usage is far less than 20%, it indicates that virtual memory has been used by the system to execute PennCNV, resulting in the slow speed. To solve the problem, try to use a machine with larger amounts of memory instead. Alternatively, split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
+    **Solution**: It should take ~2 minutes for calling CNV on a signal file with 1 million markers, and slightly longer if the GCmodel adjustment and confidence score calculation are used. If the program takes forever to run, it is more likely due to lack of memory. In Windows, use the task manager to check the CPU/memory usage; in Linux/Unix, use the top command to check CPU/memory usage. If the CPU usage is far less than 20%, it indicates that virtual memory has been used by the system to execute PennCNV, resulting in the slow speed. To solve the problem, try to use a machine with larger amounts of memory instead. Alternatively, split the PFB file into two parts (one for chr1-10, the other for 11-23), and run PennCNV twice with two different PFB files.
 
 - Problem (wave adjustment does not work):
 
-   **Symptom**: The -gcmodel argument does not work, so the GCWF score before and after adjustment are the same.
+    **Symptom**: The -gcmodel argument does not work, so the GCWF score before and after adjustment are the same.
 
-   **Solution**: Re-compile the source code using the instruction above.
+    **Solution**: Re-compile the source code using the instruction above.
 
 - Problem (core dumped or cannot locate loadable object error):
 
-   **Symptom**: When issuing PennCNV, the cannot locate loadable object message appear, or when running PennCNV, a sudden core dumped message occurs during what appears to be a normal run.
+    **Symptom**: When issuing PennCNV, the cannot locate loadable object message appear, or when running PennCNV, a sudden core dumped message occurs during what appears to be a normal run.
 
-   **Solution**: Re-compile the source code using the instruction above.
+    **Solution**: Re-compile the source code using the instruction above.
 
 - Problem (cannot find -lperl):
 
@@ -142,7 +140,7 @@ regtool -v list /HKLM/Software/Cygnus\ Solutions/Cygwin
 If you run "perl -V", you can try to find something like"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE" in the dynamic linking section. Now make sure that the"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/libperl.so"
 file actually exist. Then in the Makefile, just add"-L/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/" to the command it should fix the problem.
 
-   To give a more clear example, suppose after using "perl -V", you know that the library "libperl.so" file is in the "/usr/lib"  folder. But if you run "perl -MExtUtils::Embed -e ldopts" you found the following: " -Wl,-E  -L/usr/local/lib  -L/usr/lib/perl/5.10/CORE -lperl -ldl -lm -lpthread -lc -lcrypt", so /usr/lib is not annotated here. 
+    To give a more clear example, suppose after using "perl -V", you know that the library "libperl.so" file is in the "/usr/lib"  folder. But if you run "perl -MExtUtils::Embed -e ldopts" you found the following: " -Wl,-E  -L/usr/local/lib  -L/usr/lib/perl/5.10/CORE -lperl -ldl -lm -lpthread -lc -lcrypt", so /usr/lib is not annotated here. 
 
     Now you can just simply manually add the "-L/usr/bin" to the command line, " gcc -shared -o khmm.so khmm_wrap.o khmm.o kc.o include/arrays.o khmmDev.o -L/usr/lib -Wl,-E  -L/usr/local/lib  -L/usr/lib/perl/5.10/CORE -lperl -ldl -lm -lpthread -lc -lcrypt", so the system won't complain about not finding "-lperl".
 
