@@ -1,0 +1,92 @@
+NOTICE: All program notification/warning messages that appear in STDERR will be also written to log file ex6.log
+NOTICE: Reading marker coordinates and population frequency of B allele (PFB) from example.pfb ... Done with 93129 records
+NOTICE: Reading LRR and BAF values for from father.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all markers by 0.0221
+NOTICE: Reading LRR and BAF values for from mother.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all markers by -0.0199
+NOTICE: Reading LRR and BAF values for from offspring.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all markers by -0.0087
+NOTICE: Calling CNVs in chromosome 11 with 27272 markers
+NOTICE: Finished recursion cycle 1000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 2000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 3000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 4000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 5000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 6000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 7000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 8000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 9000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 10000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 11000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 12000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 13000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 14000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 15000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 16000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 17000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 18000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 19000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 20000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 21000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 22000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 23000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 24000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 25000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 26000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 27000 in Viterbi algorithm
+NOTICE: Calling CNVs in chromosome 20 with 14269 markers
+NOTICE: Finished recursion cycle 1000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 2000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 3000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 4000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 5000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 6000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 7000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 8000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 9000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 10000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 11000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 12000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 13000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 14000 in Viterbi algorithm
+NOTICE: Calling CNVs in chromosome 3 with 37768 markers
+NOTICE: Finished recursion cycle 1000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 2000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 3000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 4000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 5000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 6000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 7000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 8000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 9000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 10000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 11000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 12000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 13000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 14000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 15000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 16000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 17000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 18000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 19000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 20000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 21000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 22000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 23000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 24000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 25000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 26000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 27000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 28000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 29000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 30000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 31000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 32000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 33000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 34000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 35000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 36000 in Viterbi algorithm
+NOTICE: Finished recursion cycle 37000 in Viterbi algorithm

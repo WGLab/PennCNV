@@ -1,0 +1,20 @@
+This directory contains some example files to run PennCNV, assuming that PennCNV is already installed in the system and that the executables are already in the system PATH environmental variable.
+
+The runex.pl script can be issued to run sample sessions:
+
+The user can run these programs sequentially:
+
+perl runex.pl 1
+
+perl runex.pl 2
+	
+perl runex.pl 3
+
+......
+
+perl runex.pl 16
+
+If PennCNV is not set up in the PATH environmental variable, the user need to add '-path_detect_cnv ../detect_cnv.pl' argument to the above commands.
+
+If there is any problem running the examples, or if the output files differ from those in the output_expected/ directory, it may indcate that PennCNV is not installed correctly.	
+	

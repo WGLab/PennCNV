@@ -1,0 +1,11 @@
+track name="Track: example track" description="example track" visibility=2 itemRgb="On"
+chr3	37957464	37961253	father.txt	30	.	0	0	255,0,0
+chr3	75511364	75650909	father.txt	70	.	0	0	255,0,0
+chr11	81181639	81194909	father.txt	90	.	0	0	255,0,0
+chr20	10440278	10511908	father.txt	100	.	0	0	255,0,0
+chr11	55127596	55204003	mother.txt	110	.	0	0	255,0,0
+chr11	539118	548884	mother.txt	40	.	0	0	0,255,0
+chr11	55127596	55193702	offspring.txt	80	.	0	0	128,0,0
+chr3	3974669	4071644	offspring.txt	500	.	0	0	255,0,0
+chr11	81181639	81194909	offspring.txt	90	.	0	0	255,0,0
+chr20	10440278	10511908	offspring.txt	100	.	0	0	255,0,0

@@ -1,0 +1,37 @@
+site_name: PennCNV Documentation
+site_url: http://penncnv.openbioinformatics.org/
+repo_url: http://github.com/WangGenomicsLab/penncnv/
+repo_name: GitHub
+site_description: Documentation for PennCNV software
+site_author: Kai Wang, et al
+site_favicon: favicon.ico
+copyright: 2007-2015 PennCNV
+google_analytics: ['UA-7565671-1', 'www.openbioinformatics.org/penncnv']
+
+docs_dir: .
+include_search: true
+#use_absolute_urls: true
+#use_directory_urls: false
+
+pages:
+# for strange reasons I can only put max of 7 items below for building to pass
+- ['index.md', 'PennCNV']
+
+# User Guide
+- ['user-guide/download.md', 'User Guide', 'Download PennCNV']
+- ['user-guide/install.md', 'User Guide', 'Install PennCNV']
+- ['user-guide/startup.md', 'User Guide', 'Quick Start-Up Guide']
+- ['user-guide/input.md', 'User Guide', 'Prepare Input Files']
+
+
+# Misc
+- ['misc/faq.md', 'Misc', 'FAQ']
+- ['misc/version_history.md', 'Misc', 'Version History']
+- ['misc/credit.md', 'Misc', 'Credit']
+- ['misc/contributing.md', 'Misc', 'How to Contribute']
+
+
+# Articles
+- ['articles/affy.md', 'Articles', 'PennCNV-Affy']
+- ['articles/plugin.md', 'Articles', 'PennCNV Plug-in']
+

@@ -1,0 +1,17 @@
+NOTICE: All program notification/warning messages that appear in STDERR will be also written to log file ex1.log
+NOTICE: Reading marker coordinates and population frequency of B allele (PFB) from example.pfb ... Done with 93129 records
+NOTICE: Reading LRR and BAF values for from father.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all autosome markers from father.txt by 0.0221
+NOTICE: Median-adjusting BAF values for all autosome markers from father.txt by 0.0029
+NOTICE: quality summary for father.txt: LRR_mean=0.0027 LRR_median=0.0000 LRR_SD=0.1335 BAF_mean=0.5063 BAF_median=0.5000 BAF_SD=0.0390 BAF_DRIFT=0.000037 WF=0.0184 GCWF=0.0136
+NOTICE: Reading LRR and BAF values for from mother.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all autosome markers from mother.txt by -0.0199
+NOTICE: Median-adjusting BAF values for all autosome markers from mother.txt by 0.0324
+NOTICE: quality summary for mother.txt: LRR_mean=0.0039 LRR_median=0.0000 LRR_SD=0.1374 BAF_mean=0.5044 BAF_median=0.5000 BAF_SD=0.0418 BAF_DRIFT=0.000140 WF=0.0100 GCWF=0.0028
+NOTICE: Reading LRR and BAF values for from offspring.txt ... Done with 93129 records in 4 chromosomes
+NOTICE: Data from chromosome X will not be used in analysis
+NOTICE: Median-adjusting LRR values for all autosome markers from offspring.txt by -0.0087
+NOTICE: Median-adjusting BAF values for all autosome markers from offspring.txt by 0.0260
+NOTICE: quality summary for offspring.txt: LRR_mean=0.0028 LRR_median=0.0000 LRR_SD=0.1263 BAF_mean=0.5045 BAF_median=0.5000 BAF_SD=0.0429 BAF_DRIFT=0.000293 WF=-0.0171 GCWF=-0.0100

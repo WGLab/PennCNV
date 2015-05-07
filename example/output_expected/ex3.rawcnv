@@ -1,0 +1,11 @@
+chr3:37957465-37961253        numsnp=3      length=3,789       state2,cn=1 father.txt startsnp=rs9837352 endsnp=rs9844203 conf=15.148
+chr3:75511365-75650909        numsnp=7      length=139,545     state2,cn=1 father.txt startsnp=rs4677005 endsnp=rs2004089 conf=27.091
+chr3:153830172-153837935      numsnp=6      length=7,764       state2,cn=1 father.txt startsnp=rs2203686 endsnp=rs1517241 conf=14.035
+chr11:81181640-81194909       numsnp=9      length=13,270      state2,cn=1 father.txt startsnp=rs7947005 endsnp=rs12293984 conf=36.952
+chr20:10440279-10511908       numsnp=10     length=71,630      state2,cn=1 father.txt startsnp=rs8114269 endsnp=rs682562 conf=39.900
+chr11:55127597-55204003       numsnp=11     length=76,407      state2,cn=1 mother.txt startsnp=rs2456022 endsnp=rs7934845 conf=22.915
+chr11:539119-548884           numsnp=4      length=9,766       state5,cn=3 mother.txt startsnp=rs4963136 endsnp=rs2061586 conf=7.135
+chr11:55127597-55193702       numsnp=8      length=66,106      state1,cn=0 offspring.txt startsnp=rs2456022 endsnp=rs17498926 conf=48.362
+chr3:3974670-4071644          numsnp=50     length=96,975      state2,cn=1 offspring.txt startsnp=rs11716390 endsnp=rs17039742 conf=218.547
+chr11:81181640-81194909       numsnp=9      length=13,270      state2,cn=1 offspring.txt startsnp=rs7947005 endsnp=rs12293984 conf=41.127
+chr20:10440279-10511908       numsnp=10     length=71,630      state2,cn=1 offspring.txt startsnp=rs8114269 endsnp=rs682562 conf=41.561
