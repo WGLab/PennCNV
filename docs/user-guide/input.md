@@ -212,9 +212,9 @@ Snp50000   KS2231000715    0.0037  0.0254
 
  
 
-If after the [Data] line, we do not see the “SNP Name”, “Sample ID”, “B Allele Freq” and “Log R Ratio”, then it is necessary to contact the data provider and ask them to re-generate a report file that contains all these required fields. Having extra fields in the file, like the X, Y, X Raw and Y Raw fields, are just fine, but only the LRR and BAF values are useful for CNV calling.
+If after the [Data] line, we do not see the SNP Name, Sample ID, B Allele Freq and Log R Ratio, then it is necessary to contact the data provider and ask them to re-generate a report file that contains all these required fields. Having extra fields in the file, like the X, Y, X Raw and Y Raw fields, are just fine, but only the LRR and BAF values are useful for CNV calling.
 
-Tip: The report file can be generated directly from BeadStudio project files, click “Analysis” menu, select “Report”, then select “Final Report”, then make sure to drag the “Log R Ratio” and “B Allele Freq” field from the “Available Fields” to “Displayed Fields” so that these two signal intensity measures are exported to the final report file. Optionally, remove all other junk fields like GType, GC score, X Raw and so on from the “Displayed Fields” to speed up the process and decrease file size.
+Tip: The report file can be generated directly from BeadStudio project files, click Analysis menu, select Report, then select Final Report, then make sure to drag the Log R Ratio and B Allele Freq field from the Available Fields to Displayed Fields so that these two signal intensity measures are exported to the final report file. Optionally, remove all other junk fields like GType, GC score, X Raw and so on from the Displayed Fields to speed up the process and decrease file size.
 
  
 
@@ -223,11 +223,11 @@ The PennCNV package provides a convenient script to convert this long and bulk r
 [kaiwang@cc ~/]$ split_illumina_report.pl -prefix rawdata1/ M00290_ Ballel_logR.txt
 NOTICE: Writting to output signal file rawdata1/KS2231000715
 NOTICE: Writting to output signal file rawdata1/KS2231007035
-……
+
 NOTICE: Writting to output signal file rawdata1/KS3205046076
 NOITCE: Finished processing 2193946 lines in report file M00290 _Ballel_logR.txt, and generated 48 output signal intensity files
 
-The output file name corresponds to the “Sample ID” field in the original report file. In the above command, the -prefix argument is used to specify the prefix of the file name (in this case, save the file to the rawdata1/ directory). We can use “-suffix .txt” to add a suffix to file name. Furthermore, we can use -numeric argument so that the output file name is in split1, split2, split3 format. In some cases, the genotyping center may provide the report file in comma-delimited format rather than tab-delimited format; the -comma argument can be used in this case to handle such files.
+The output file name corresponds to the Sample ID field in the original report file. In the above command, the -prefix argument is used to specify the prefix of the file name (in this case, save the file to the rawdata1/ directory). We can use -suffix .txt to add a suffix to file name. Furthermore, we can use -numeric argument so that the output file name is in split1, split2, split3 format. In some cases, the genotyping center may provide the report file in comma-delimited format rather than tab-delimited format; the -comma argument can be used in this case to handle such files.
 
  
 
@@ -241,7 +241,7 @@ Now uncompress the ZIP file, and we will see a directory called "tutorial". Ente
 
 bs
 
-Click the “Column Chooser …” button in the tool bar (the third button to the right), and the column chooser window will appear. Then select the desired columns (GType, Log R Ratio and B Allele Frequency) to be included in output files. For example, if you see that the “B Allele Freq” is shown in the “Hidden Subcolumns” box, you can select it, then click the “<=Show” button, so that it can be moved to the “Displayed Subcolumns” box. The “Displayed Columns” box should contain at least the “Name” field and all individual identifiers. It is strongly recommended to also include “Chr” and “Position” field here. You can hide things like “Address” and “Index” and move them to the “Hidden Columns” box.
+Click the Column Chooser  button in the tool bar (the third button to the right), and the column chooser window will appear. Then select the desired columns (GType, Log R Ratio and B Allele Frequency) to be included in output files. For example, if you see that the B Allele Freq is shown in the Hidden Subcolumns box, you can select it, then click the <=Show button, so that it can be moved to the Displayed Subcolumns box. The Displayed Columns box should contain at least the Name field and all individual identifiers. It is strongly recommended to also include Chr and Position field here. You can hide things like Address and Index and move them to the Hidden Columns box.
 
  
 
@@ -253,15 +253,15 @@ bs
 
  
 
-Now the BeadStudio window looks like below. Click the “Select All Rows” button (first button in the tool bar) to select all data:
+Now the BeadStudio window looks like below. Click the Select All Rows button (first button in the tool bar) to select all data:
 
 bs
 
  
 
-Then click the “Export Displayed Data to File” button (the third button in toolbar), and save the file as something like tutorial.txt. This file will be a tab-delimited file, with one SNP per line, and each line contains genotype, log R Ratio and B Allele Frequency information for all individuals. (If you are using BeadStudio version 3, there will be a dialog asking whether you want to export all data, clicking either “Yes” or “No” is fine, since you have already selected all data). The file size for tutorial.txt is about 50MB for three individuals.
+Then click the Export Displayed Data to File button (the third button in toolbar), and save the file as something like tutorial.txt. This file will be a tab-delimited file, with one SNP per line, and each line contains genotype, log R Ratio and B Allele Frequency information for all individuals. (If you are using BeadStudio version 3, there will be a dialog asking whether you want to export all data, clicking either Yes or No is fine, since you have already selected all data). The file size for tutorial.txt is about 50MB for three individuals.
 
-Tip: when your project file contains many (>1000) samples, the data export may be very slow (to see how fast the export process is, you can monitor the output file size and see how fast it grows, or you can use the Windows Task Manager to see the CPU usage: if CPU usage by beadstudio.exe is below 10% then you have a problem). To expedite the export process, you can use column chooser to make “Index” as “Displayed Columns”, then click Sort to sort by index, then hide the “Index” column by column chooser, then export the data again. When the data is sorted by index, the exporting is considerably faster for large sample size; however, in this case the marker positions are not sorted sequentially in the output file and may be inconvenient in follow-up analysis. The order of markers in output file does not affect CNV calling by PennCNV.
+Tip: when your project file contains many (>1000) samples, the data export may be very slow (to see how fast the export process is, you can monitor the output file size and see how fast it grows, or you can use the Windows Task Manager to see the CPU usage: if CPU usage by beadstudio.exe is below 10% then you have a problem). To expedite the export process, you can use column chooser to make Index as Displayed Columns, then click Sort to sort by index, then hide the Index column by column chooser, then export the data again. When the data is sorted by index, the exporting is considerably faster for large sample size; however, in this case the marker positions are not sorted sequentially in the output file and may be inconvenient in follow-up analysis. The order of markers in output file does not affect CNV calling by PennCNV.
 
  
 
@@ -519,11 +519,11 @@ AB
 
  
 
-The first line is referred to as the “header” line, which contains information on the meaning of each column. Each subsequent line contains information on one SNP per line for all individuals.
+The first line is referred to as the header line, which contains information on the meaning of each column. Each subsequent line contains information on one SNP per line for all individuals.
 
-Notes: The header line informs PennCNV what each column means. In practice, only the “Name” column, the “*.Log R Ratio” column and the “*.B Allele Frequency” column are necessary for generating CNV calls by PennCNV. However, other columns may sometimes provide additional information. For example, the Chr and Position column can help sort the signal intensity file (if not already sorted) and examine the LRR and BAF values for a specific region. The *.GType column can help interpret CNV calls and increase the confidence of calls, such as inferring the parental origin of de novo CNVs, or for confirming homozygous deletions with multiple NC genotypes in a region.
+Notes: The header line informs PennCNV what each column means. In practice, only the Name column, the *.Log R Ratio column and the *.B Allele Frequency column are necessary for generating CNV calls by PennCNV. However, other columns may sometimes provide additional information. For example, the Chr and Position column can help sort the signal intensity file (if not already sorted) and examine the LRR and BAF values for a specific region. The *.GType column can help interpret CNV calls and increase the confidence of calls, such as inferring the parental origin of de novo CNVs, or for confirming homozygous deletions with multiple NC genotypes in a region.
 
-We will need to split the file into several files, one for each individual. We can use a standard Linux command “cut” to do that:
+We will need to split the file into several files, one for each individual. We can use a standard Linux command cut to do that:
 
 [kai@adenine tutorial1 ENS40]$ cut -f 1-6 tutorial.txt > sample1.txt
 [kai@adenine tutorial1 ENS40]$ cut -f 1-3,7-9 tutorial.txt > sample2.txt
@@ -531,12 +531,12 @@ We will need to split the file into several files, one for each individual. We c
 
 The above commands take the desired tab-delimited columns in the tutorial.txt file and generate a new 6-column file for each sample. The first three columns (Name, Chr, Position) in the original tutorial.txt file is kept in all output files.
 
-Alternatively, if the input file is very large (for example, a 6GB file containing genotyping information for 600 individuals), it is very slow to run the “cut” command many times due to the overhead of scanning hard drives (for example, scanning 3.6 terabytes of data). Instead of using the “cut” program, we can use the kcolumn.pl program in the PennCNV package to achieve the same goal but only scan the inputfile file once:
+Alternatively, if the input file is very large (for example, a 6GB file containing genotyping information for 600 individuals), it is very slow to run the cut command many times due to the overhead of scanning hard drives (for example, scanning 3.6 terabytes of data). Instead of using the cut program, we can use the kcolumn.pl program in the PennCNV package to achieve the same goal but only scan the inputfile file once:
 
 [kai@adenine tutorial1 ENS40]$ kcolumn.pl tutorial.txt split 3 -heading 3 -tab -out sample
-The above command specifies that we want to split the tutorial.txt file by tab-delimited column, and the first 3 columns are heading columns (columns that are kept in every output file), and every 3 columns will be written into a different output file. The --tab argument tells the program that the tutorial.txt file is tab-delimited (by default, the kcolumn.pl program use both space and tab character to define columns), and the --out argument specifies that the output file names should start with “sample”. Note that you can use both double dash or single dash in the command line (so --output has the same meaning as -output), and you can omit trailing letters of the argument as long as there is no ambiguity with another argument (so the --output argument has the same meaning as the -o or -ou or -out or -outp or -outpu argument). Also note that if the input file is extremely large (for example, a 12GB file containing genotyping information for 1,200 individuals), we may need to use the --start_split and --end_split arguments and run the kcolumn.pl program multiple times to overcome limitations on simultaneous file handles imposed by the operating system. For example, you can run the program twice: the first time using “-start 1 -end 1000” and the second time using “-start 1001 -end 2000”.
+The above command specifies that we want to split the tutorial.txt file by tab-delimited column, and the first 3 columns are heading columns (columns that are kept in every output file), and every 3 columns will be written into a different output file. The --tab argument tells the program that the tutorial.txt file is tab-delimited (by default, the kcolumn.pl program use both space and tab character to define columns), and the --out argument specifies that the output file names should start with sample. Note that you can use both double dash or single dash in the command line (so --output has the same meaning as -output), and you can omit trailing letters of the argument as long as there is no ambiguity with another argument (so the --output argument has the same meaning as the -o or -ou or -out or -outp or -outpu argument). Also note that if the input file is extremely large (for example, a 12GB file containing genotyping information for 1,200 individuals), we may need to use the --start_split and --end_split arguments and run the kcolumn.pl program multiple times to overcome limitations on simultaneous file handles imposed by the operating system. For example, you can run the program twice: the first time using -start 1 -end 1000 and the second time using -start 1001 -end 2000.
 
-By default the output file names will be appended by “split1”, “split2” and so on; however, you can use the -name_by_header argument (or simply -name argument) so that the output file name is generated based on the name annotation in the first line of the tutorial.txt file.
+By default the output file names will be appended by split1, split2 and so on; however, you can use the -name_by_header argument (or simply -name argument) so that the output file name is generated based on the name annotation in the first line of the tutorial.txt file.
 
 Tip: The -name argument tells the program that the output file name should be based on the first word in the first line of the inputfile (for example, 99HI0697A and 99HI0698C). Sometimes the sample name contains non-word characters such as "-"; in this case, you can also add the "--beforestring .GType " argument to the above command in addition to the -name argument; this means that any string before the ".GType" should be used as output file name, so that the output file names are sample.99HI0697A, sample.99HI0698C and so on.
 
@@ -562,7 +562,7 @@ PennCNV can still process these types of arrays or data using the PennCNV-Affy f
 
 Normalized signal file
 
-The user need to provide a normalized signal file, possibly by a simple re-formatting of the original file received from data provider. The file has a simple tab-delimited text format: first line gives the sample identifiers, while following lines gives signal intensity values. The first field must be “probeset_id”. In addition, all values must be log2 based, and negative values are possible. It is very important that this file has been normalized (any algorithm should suffice) so that the signal intensity between different samples are comparable to each other: a simple way to check this is to get all intensity values for sample1, calculate its median, 25% and 75% quantile, then compare that of sample2 and sample3 to make sure that they are largely comparable.
+The user need to provide a normalized signal file, possibly by a simple re-formatting of the original file received from data provider. The file has a simple tab-delimited text format: first line gives the sample identifiers, while following lines gives signal intensity values. The first field must be probeset_id. In addition, all values must be log2 based, and negative values are possible. It is very important that this file has been normalized (any algorithm should suffice) so that the signal intensity between different samples are comparable to each other: a simple way to check this is to get all intensity values for sample1, calculate its median, 25% and 75% quantile, then compare that of sample2 and sample3 to make sure that they are largely comparable.
 
 probeset_id     sample1        sample2        sample3        sample4
 rs11127467-A    1.749100        1.753865        1.867269        1.362796
@@ -575,11 +575,11 @@ CN10000     1.513383        1.478411        1.609585        1.664764
 CN20000     0.141706        0.348727        0.299755        0.321022
 CN30000      1.172695        1.382350        1.348478        1.388686
 
-If the marker name ends with “-A” and “-B”, it will be treated as a SNP, so two lines will be required to describe its signal intensity values. Otherwise, the marker will be treated as a non-polymorphic marker (CN marker), and only one line is required to describe its signal intensity values. For example, the rs11127467, SNP45265 and marker4438516 above are all SNP markers, while the CN10000 is a CN marker.
+If the marker name ends with -A and -B, it will be treated as a SNP, so two lines will be required to describe its signal intensity values. Otherwise, the marker will be treated as a non-polymorphic marker (CN marker), and only one line is required to describe its signal intensity values. For example, the rs11127467, SNP45265 and marker4438516 above are all SNP markers, while the CN10000 is a CN marker.
 
 Genotype call file
 
-This file is required even if using an oligonucleotide array. It is also a tab-delimited text file, with one marker per line. The first line gives the sample identifiers, while following lines give the genotype calls. The first field again must be “probeset_id”. The order of the samples in this file should match that in the signal file, even if the actual sample name differ.
+This file is required even if using an oligonucleotide array. It is also a tab-delimited text file, with one marker per line. The first line gives the sample identifiers, while following lines give the genotype calls. The first field again must be probeset_id. The order of the samples in this file should match that in the signal file, even if the actual sample name differ.
 
 probeset_id     sample1      sample2      sample3      sample4
 rs11127467      0       0       0       1
@@ -619,7 +619,7 @@ rs300773        2       105035  0.816649899396378
 rs2126131       2       119028  0.811015664477009
 CN2000      2       120357  2
 
-Note that different array manufacturers (such as Affymetrix and Illumina) may use different definition of “B” allele even for the same SNP.
+Note that different array manufacturers (such as Affymetrix and Illumina) may use different definition of B allele even for the same SNP.
 
 When reading the signal intensity file, PennCNV will only process markers annotated in the PFB file. Therefore, if we want to remove some markers from CNV analysis, due to their low quality, known issues (within segmental duplication region, or within pseudo-autosomal region), we can simply remove these markers from the PFB file, without changing the signal intensity file per se. Similarly, if we want to call CNV on a different genome assembly (NCBI36 versus NCBI35), we can simply change the PFB file to reflect the new chromosome coordinates, without the need to change signal intensity files.
 
@@ -670,13 +670,13 @@ The first large block (A) specifies the transition probabilities. However, in Pe
 
 The second large block (B) is not used by PennCNV (the very original PennCNV program was adapted from the UMDHMM framework that use this format of HMM model file, so for compatibility with previous versions, the same HMM format is used in all updated version, despite that fact that many fields are just useless). The pi values specify the initial probability for different copy number states in the HMM chain.
 
-The third large block (B1, B2, B3) specifies the expected (mean) signal intensity values, as well as their standard deviation. B1 is used for LRR, B2 is used for BAF, while B3 is used for LRR of CN markers which typically have larger variance than SNP markers. The two signal intensity values, including LRR and BAF, are both used by PennCNV. Furthermore, a UF factor is used by PennCNV that specified the fraction of expected “bad” markers, that is, markers that behave badly and do not meet expectation. For Illumina arrays, 0.01 seem to be a good choice; for Affymetrix arrays, this value should be slightly higher to 0.03 or 0.05. Obviously, this value reflects the “sensitivity” of the calling algorithm especially on very small CNV regions: when higher UF value is used, the signal from smaller yet real CNV region may be treated as random noise in the data but the algorithm is more robust to random fluctuation of signal values).
+The third large block (B1, B2, B3) specifies the expected (mean) signal intensity values, as well as their standard deviation. B1 is used for LRR, B2 is used for BAF, while B3 is used for LRR of CN markers which typically have larger variance than SNP markers. The two signal intensity values, including LRR and BAF, are both used by PennCNV. Furthermore, a UF factor is used by PennCNV that specified the fraction of expected bad markers, that is, markers that behave badly and do not meet expectation. For Illumina arrays, 0.01 seem to be a good choice; for Affymetrix arrays, this value should be slightly higher to 0.03 or 0.05. Obviously, this value reflects the sensitivity of the calling algorithm especially on very small CNV regions: when higher UF value is used, the signal from smaller yet real CNV region may be treated as random noise in the data but the algorithm is more robust to random fluctuation of signal values).
 
  
 
 GCModel file
 
-This file specifies the GC content of the 1Mb genomic region surrounding each marker (500kb each side). It is used by the -gcmodel argument in PennCNV, and has been useful to salvage samples affected by “genomic waves” (see Diskin et al for details). An example is given below:
+This file specifies the GC content of the 1Mb genomic region surrounding each marker (500kb each side). It is used by the -gcmodel argument in PennCNV, and has been useful to salvage samples affected by genomic waves (see Diskin et al for details). An example is given below:
 
 Name    Chr     Position        GC
 rs1730628       13      102611656       38.3258512126866

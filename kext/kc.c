@@ -1878,7 +1878,7 @@ eigenvector of the transformation if it satisfies the eigenvalue equation Ax =
 lx for some scalar l (lamda). In this situation, the scalar l is called an 
 eigenvalue of A corresponding to the eigenvector x. The eigenvalue equation 
 means that under the transformation A eigenvectors experience only changes in 
-magnitude and sign — the direction of Ax is the same as that of x
+magnitude and sign  the direction of Ax is the same as that of x
 
 If x is an eigenvector of the linear transformation A with eigenvalue l, then 
 any scalar multiple x is also an eigenvector of A with the same eigenvalue. 
@@ -2006,7 +2006,7 @@ void matrix_solve (double **a, int n, double **b, int m)
 void matrix_ludecomp(double **a, int n, int *indx, double *d)
 /* perform LU decomposition on nxn matrix A
 indx is an output vector that records the row permutation effected by the partial
-pivoting; d is output as ±1 depending on whether the number of row interchanges was even
+pivoting; d is output as 1 depending on whether the number of row interchanges was even
 or odd, respectively.
 */
 {
@@ -2296,7 +2296,7 @@ void matrix_svd(double **a, int m, int n, double *w, double **v)
 /* Singular Value Decomposition
  * Code adapted from Numerial Recipe
  Given a matrix a[0..m-1][0..n-1], this routine computes its singular value decomposition, A =
-U·W·V^T. The matrix U (mxn) replaces a on output. The diagonal matrix of singular values W is output
+UWV^T. The matrix U (mxn) replaces a on output. The diagonal matrix of singular values W is output
 as a vector w[0..n-1]. The matrix V (not the transpose V^T ) is output as v[0..n-1][0..n-1].
 
  * see the matrix_svd2 function for another implementation from Perl Data Language
@@ -4170,7 +4170,7 @@ betai(a, b, x) = ---------- |  t       (1 - t)       dt
 }
 
 double betacf(double a, double b, double x)
-/* continued fraction for incomplete beta function by modified Lentz’s method
+/* continued fraction for incomplete beta function by modified Lentzs method
 */
 {
         int m,m2;

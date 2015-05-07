@@ -37,7 +37,7 @@ Usage:
 
  
 
-The user can try to run these examples one by one and get some idea on what PennCNV can do and how to use the command line options. For example, let’s first try the first example:
+The user can try to run these examples one by one and get some idea on what PennCNV can do and how to use the command line options. For example, lets first try the first example:
 
 [kaiwang@cc ~/project/penncnv/example]$ runex.pl 1
 Exercise 1: individual-based calling and write the output to ex1.rawcnv
@@ -68,7 +68,7 @@ Note: when running the examples, the program suppose that the PennCNV executable
 
 To add the penncnv directory to PATH environment variable: In Unix/Linux system with BASH shell, suppose the penncnv is installed in the /home/user1/penncnv directory, then you can either execute "export PATH=$PATH:/home/user1/penncnv" to add the directory to the system PATH environment variable, or directly add the above command to the ~/.bashrc file. In Windows system, go to "Control Panel", click "System", click "Advanced" tab, click "Environment variables" button, then select "Path" and click "Edit" button, manually type in the path and append it to the current path environment variables.
 
-In the above command, the program gives the first example, which use individual-based CNV calling algorithm on three input files (father.txt, mother.txt and offspring.txt), and then write the output to the ex1.rawcnv file. The actual command line arguments are printed after “Running command”. Some LOG information was printed out in the screen between the two ******* lines, but they are also written to the ex1.log file as well. We can check the content of the ex1.rawcnv file:
+In the above command, the program gives the first example, which use individual-based CNV calling algorithm on three input files (father.txt, mother.txt and offspring.txt), and then write the output to the ex1.rawcnv file. The actual command line arguments are printed after Running command. Some LOG information was printed out in the screen between the two ******* lines, but they are also written to the ex1.log file as well. We can check the content of the ex1.rawcnv file:
 
 [kaiwang@cc ~/project/penncnv/example]$ cat ex1.rawcnv
 chr3:37957465-37961253        numsnp=3      length=3,789       state2,cn=1 father.txt startsnp=rs9837352 endsnp=rs9844203 conf=15.133

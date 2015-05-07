@@ -30,7 +30,7 @@ Before performing this step, we need to download the library files for the genom
 
 [kai@node126 ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_6.cdf -a birdseed --read-models-birdseed lib/GenomeWideSNP_6.birdseed.models --special-snps lib/GenomeWideSNP_6.specialSNPs --out-dir apt --cel-files listfile
 
-The above command generates genotyping calls using all CEL files specified in the listfile, and generates several output files in the apt/ directory. The listfile contains a list of CEL file names, with one name per line, and with the first line being “cel_files”. The output files for this command include birdseed.confidences.txt, birdseed.report.txt and birdseed.calls.txt. In addition, a birdseed.report.txt file is generated, that will be helpful to infer sample gender to generate a sexfile (see Substep 1.3 below).
+The above command generates genotyping calls using all CEL files specified in the listfile, and generates several output files in the apt/ directory. The listfile contains a list of CEL file names, with one name per line, and with the first line being cel_files. The output files for this command include birdseed.confidences.txt, birdseed.report.txt and birdseed.calls.txt. In addition, a birdseed.report.txt file is generated, that will be helpful to infer sample gender to generate a sexfile (see Substep 1.3 below).
 
 For a typical modern computer, the command should take less than one day for 1000-2000 CEL files. The command should usually work well by the default parameters set by APT program.
 
@@ -62,7 +62,7 @@ Follow the same procedure as 500K array, but download the specific cdf files fro
 
 Subsetp 1.2 Allele-specific signal extraction from CEL files
 
-This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here “allele-specific” refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
+This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here `allele-specific` refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
 
 Genome-wide 6.0 array
 
@@ -90,7 +90,7 @@ The signal extraction needs to be done for each array type separately. An exampl
 
 [kaiwang@cc ~/]$ apt-probeset-summarize --cdf-file CD_Mapping50K_Xba240_rev3/Full/Mapping50K_Xba240/LibFiles/Mapping50K_Xba240.CDF --out-dir apt_xba/ -a quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true *.CEL
 
-A note on normalization target: the “--target-sketch” argument above gives a reference signal distribution, such that a new array can be normalized using the percentiles in the reference distribution. It is useful and necessary if the user has only a few dozen CEL files, and wants to use the default clustering file provided in the PennCNV-Affy package.
+A note on normalization target: the `--target-sketch` argument above gives a reference signal distribution, such that a new array can be normalized using the percentiles in the reference distribution. It is useful and necessary if the user has only a few dozen CEL files, and wants to use the default clustering file provided in the PennCNV-Affy package.
 
 For a typical modern computer, the command should take less than one day for 1000-2000 CEL files. Several output files will be generated in the apt/ directory, including quant-norm.pm-only.med-polish.expr.summary.txt, which contains the signal values (one allele per line, one sample per column). For SNP probes, two lines are used per probe, for A and B alleles, respectively. For non-polymorphic probes (so-called CN probes), only one line is used per probe. It is very important to check that the APT programs finish completely, before proceeding to next steps. Check the LOG files to see whether it reports a success.
 
@@ -154,7 +154,7 @@ The above command generates LRR and BAF values using the summary file generated 
 
 For a typical modern computer, the command should take several hours to process files generated from 1000-2000 CEL files. A new tab-delimited file called gw6.lrr_baf.txt will be generated that contains one SNP per line and one sample per two columns (LRR column and BAF column).
 
-If the user does not have sufficient number of CEL files for the above substep 1.1 and 1.3, then you can alternatively use the default canonical clustering file provided in the PennCNV-Affy package. Right now several files are provided: hapmap.genocluster for GW6 arrays, agre.genocluster for GW5 arrays, and affy500k.nsp.genocluster/affy500k.sty.genocluster for Mapping 500K arrays. The results won’t be optimal and are probably highly unreliable (the QC measures during PennCNV calling can give some clue on the signal-to-noise ratio of the resulting signal intensity files).
+If the user does not have sufficient number of CEL files for the above substep 1.1 and 1.3, then you can alternatively use the default canonical clustering file provided in the PennCNV-Affy package. Right now several files are provided: hapmap.genocluster for GW6 arrays, agre.genocluster for GW5 arrays, and affy500k.nsp.genocluster/affy500k.sty.genocluster for Mapping 500K arrays. The results won't be optimal and are probably highly unreliable (the QC measures during PennCNV calling can give some clue on the signal-to-noise ratio of the resulting signal intensity files).
 
  
 
@@ -308,11 +308,11 @@ SNP_A-4265735
 
  
 
-The first line is referred to as the “header” line, which contains information on the meaning of each column. Each subsequent line contains information on one SNP per line for all individuals.
+The first line is referred to as the header line, which contains information on the meaning of each column. Each subsequent line contains information on one SNP per line for all individuals.
 
 After this file is generated, we need to split this huge file into individual signal intensity files (one for each subject), then we can follow the procedures outlined in the PennCNV tutorial, and generate the CNV calls using a similar procedure as for Illumina arrays. The only difference is that the HMM file (gw6.hmm) and the PFB file (affygw6.hg18.pfb and affygw5.hg18.pfb) should be used for Affymetrix CNV calling. Several basic steps are briefly described below:
 
-Use the kcolumn.pl program to split the gw6.lrr_baf.txt file, the “split 2” argument should be used, since every two columns (Log R Ratio and B Allele Frequency) should be in each output file. An example is given below:
+Use the kcolumn.pl program to split the gw6.lrr_baf.txt file, the split 2 argument should be used, since every two columns (Log R Ratio and B Allele Frequency) should be in each output file. An example is given below:
 
 kcolumn.pl gw6.lrr_baf.txt split 2 -tab -head 3 -name -out gw6
 

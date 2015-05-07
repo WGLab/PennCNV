@@ -8,7 +8,7 @@ The PennCNV was originally developed for Illumina HumanHap550 array (in the Geno
 
 For other Illumina&Affymetrix SNP arrays (for example, the Illumina Omni 2.5M array, or the Affy cytogenetics array), the user needs to compile your own PFB file that specifies the chromosome coordinates and PFB value for each marker in the array. Use the compile_pfb.pl program included in the PennCNV package for doing that.
 
-For other types of arrays, such as oligonucleotide arrays, and for situations where user does not have access to the raw data but can access processed “signal” values, please check Input Files section in the tutorial for potential solutions. Besides commonly used SNP arrays, users have also reported success on Agilent non-SNP array, Perlegen SNP array, Affymetrix 100K SNP arrays.
+For other types of arrays, such as oligonucleotide arrays, and for situations where user does not have access to the raw data but can access processed signal values, please check Input Files section in the tutorial for potential solutions. Besides commonly used SNP arrays, users have also reported success on Agilent non-SNP array, Perlegen SNP array, Affymetrix 100K SNP arrays.
 
 1. **How to make a PFB file?**
 
@@ -16,7 +16,7 @@ The PFB file is described in the Input Files section in the tutorial. If you alr
 
 1. **Does PennCNV handle non-polymorphic probes?**
 
-Yes. In principle, it can also handle oligonucleotide arrays without SNP markers. There are two ways to represent non-polymorphic probes: (1) if the marker name contains the word “cnv” (for Illumina arrays) or “CN” (for Affymetrix arrays), they will be treated as non-polymorphic markers by PennCNV. (2) if the allele frequency annotation in the PFB file for a marker is more than 1, then this marker will be treated as a non-polymorphic marker by PennCNV program. The second situation is suitable for custom designed arrays.
+Yes. In principle, it can also handle oligonucleotide arrays without SNP markers. There are two ways to represent non-polymorphic probes: (1) if the marker name contains the word cnv (for Illumina arrays) or CN (for Affymetrix arrays), they will be treated as non-polymorphic markers by PennCNV. (2) if the allele frequency annotation in the PFB file for a marker is more than 1, then this marker will be treated as a non-polymorphic marker by PennCNV program. The second situation is suitable for custom designed arrays.
 
  
 
@@ -30,7 +30,7 @@ How to use genomic wave adjustment independent of CNV calling?
 
 Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Email me for a script to generate GC model file for these custom arrays.
 
-A sample generates >1000 CNV calls, what’s wrong?
+A sample generates >1000 CNV calls, whats wrong?
 
 Most probably it has low signal quality. Please check the QC&Annotation section in the tutorial to see how to take advantage of the filter_cnv.pl program for automatic QC analysis.
 

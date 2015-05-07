@@ -12,7 +12,7 @@ The ho1v1.hg18.pfb.gz and ho1v1.hg18.gcmodel.gz files are provided for HumanOmni
 
 Updated 2011Apr25: A user (Denise Kay) submitted an updated ho1v1.hg18.pfb.gz file in which 32,290 markers have modified PFB=2; these are originally designed as SNP markers by Illumina but their quality is too low so it is best to treat them as intensity-only markers by flagging PFB=2.
 
-Updated 2011Mar18: Dr. Luis M. Franco from Baylor College of Medicine provided PFB file for the Illumina OmniExpress array compiled from 96 unrelated Caucasian individuals. The number of SNPs in the file’s current form is 703,965 ( pseudoautosomal and Y-chromosome SNPs are excluded).
+Updated 2011Mar18: Dr. Luis M. Franco from Baylor College of Medicine provided PFB file for the Illumina OmniExpress array compiled from 96 unrelated Caucasian individuals. The number of SNPs in the files current form is 703,965 ( pseudoautosomal and Y-chromosome SNPs are excluded).
 
 Updated 2011Aug16: Dr. Colm O'Dushlaine lifted over the PFB file for Illumina OmniExpress array to hg19 coordinate.
 
@@ -36,7 +36,7 @@ tutorial_beadstudio.zip
 This file is an exported text file from the Illumina BeadStudio software using the above project file. It is useful for users without access to BeadStudio to test PennCNV.
 
 tutorial_text.zip
-This “serial dilution” data set contains genotyping data on a sample genotyped five times, each time with ~2-fold dilutions. For more details please see the Diskin et al paper. The file is in BeadStudio project format, and can be opened by the Illumina BeadStudio software.
+This serial dilution data set contains genotyping data on a sample genotyped five times, each time with ~2-fold dilutions. For more details please see the Diskin et al paper. The file is in BeadStudio project format, and can be opened by the Illumina BeadStudio software.
 
 tutorial2.zip
  
@@ -50,7 +50,7 @@ gw6.tar.gz
 
 Genome Browser tracks for commonly used SNP arrays
 
-Click any of the link below will load the corresponding track in the UCSC Genome Browser on hg18 coordinate, or 2006 human genome assembly. It may take several minutes to load each of the track. The user can visualize the location of the marker coverage in each specific arrays and compare them with each other. If the user does not want to see the marker names in the browser, the “dense” drop-down menu option can be used in the browser page to display red vertical bars for each marker.
+Click any of the link below will load the corresponding track in the UCSC Genome Browser on hg18 coordinate, or 2006 human genome assembly. It may take several minutes to load each of the track. The user can visualize the location of the marker coverage in each specific arrays and compare them with each other. If the user does not want to see the marker names in the browser, the dense drop-down menu option can be used in the browser page to display red vertical bars for each marker.
 
 All the genome coordinates are also annotated in the PFB file supplied with the PennCNV package. The Illumina data were based on supplied annotation from Illumina's sample files. The Affymetrix data were based on na26 (July 2008) annotation from Affymetrix website.
 
