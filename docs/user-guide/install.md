@@ -1,48 +1,49 @@
-Installation on various operating systems
+# PennCNV Installation
 
-Linux system
+Below are the instructions for installing PennCNV on various operating systems. PennCNV is written in a mixture of Perl and C; therefore, re-compilation of the source code is always recommended (unless you are using Windows, for which I pre-packaged a number of dll files for different versions of Perl). In fact, many of the problems that users reported can be simply solved by re-compilation of the source code! 
+
+## Linux system
 
 If using Linux/Unix system, we can run the wget command to download the program files in a local directory:
 
-[kai@adenine tutorial1 ENS40]$ wget http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz
+```
+[kai@adenine]$ wget http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz
+```
 
-Then we uncompress the downloaded file by the tar command, which automatically generate the penncnv/ directory containing executables and library files:
+Then we uncompress the downloaded file by the `tar` command, which automatically generate the penncnv/ directory containing executables and library files:
 
-[kai@adenine tutorial1 ENS40]$ tar xvfz penncnv.latest.tar.gz
+```
+[kai@adenine]$ tar xvfz penncnv.latest.tar.gz
+```
 
-We will see the new directory called penncnv/, enter this directory, and we will see several Perl programs (file name in the *.pl format), as well as a kext/, lib/ and example/ subdirectory. Next, cd into the kext/ directory, optionally make chagne to the Makefile, and type make. If there is no error message, the installation is done!
+We will see the new directory called `penncnv/`, enter this directory, and we will see several Perl programs (file name in the \*.pl format), as well as a `kext/`, `lib/`, `docs/` and `example/` subdirectory. Next, enter the `kext/` directory, optionally make change to the `Makefile`, and type `make`. If there is no error message, the installation is done!
 
-Now try to run the detect_cnv.pl program:
+Now try to run the `detect_cnv.pl` program:
 
-[kai@adenine penncnv ENS40]$ ./detect_cnv.pl
+```
+[kai@adenine]$ ./detect_cnv.pl
+```
 
-It will show the program usage information, indicating the successful installation of the program. If an error message like /usr/bin/perl: bad interpreter: No such file or directory is shown, it indicates that Perl is installed in a different directory: try running perl ./detect_cnv.pl instead. If other types of error message are issued (such as floating point exception), we need to compile the program, see the compilation section below.
-
-If your computer is not a standard PC with a standard installation of Perl/Linux, to ensure that PennCNV runs correctly in your system, always try to re-compile the source code! See the more detailed instruction below.
+It will show the program usage information, indicating the successful installation of the program. If an error message like `/usr/bin/perl`: bad interpreter: No such file or directory is shown, it indicates that Perl is installed in a different directory: try running `perl ./detect_cnv.pl` instead. If other types of error message are issued (such as floating point exception), we need to compile the program, see the compilation section below.
 
 For Solaris, change "gcc" to "cc" in the Makefile, since normally one can create shared libraries with c compiler provided by Solaris, but not gcc itself.
 
- 
+> ADDITIONAL NOTES: If you have problem installing PennCNV in your operating system, it is perhaps due to incompatibility with the latest version of Perl 5.14/5.18 in some systems. To solve this issue, you can use perlbrew to install a lower version of Perl and run PennCNV on top of that without re-compilation. Perlbrew defaults the installation to non-threaded and non-multi perl versions. In order to use (for example), as precompiled code for perl-5.8.8 (x86_64-linux-thread-multi, one would have to set their perlbrew install to install a version where thread and multi is available. So, in the install I had to do "perlbrew install perl-[insert version here] --thread --multi". See more instructions at the end of this page.
 
-ADDITIONAL NOTES: If you have problem installing PennCNV in your operating system, it is perhaps due to incompatibility with the latest version of Perl 5.14/5.18 in some systems. To solve this issue, you can use perlbrew to install a lower version of Perl and run PennCNV on top of that without re-compilation. Perlbrew defaults the installation to non-threaded and non-multi perl versions. In order to use (for example), as precompiled code for perl-5.8.8 (x86_64-linux-thread-multi, one would have to set their perlbrew install to install a version where thread and multi is available. So, in the install I had to do "perlbrew install perl-[insert version here] --thread --multi". See more instructions at the end of this page.
-
- 
-
-Installation under Windows - overview
+## Installation under Windows - overview
 
 There are two ways to use PennCNV in a Windows system: either install Cygwin and use PennCNV under Cygwin shell, or install ActivePerl and use PennCNV in a regular Windows command shell. These two methods are described in the following two sections.
 
-If you really like to use Windows, and if you do not want to use command line, you can alternatively try to use PennCNV inside BeadStudio software by the Universal CNV adapter. You can access the webpage describing this procedure in the PennCNV Plug-in page.
+If you really like to use Windows, and if you do not want to use command line, you can alternatively try to use PennCNV inside BeadStudio software by the Universal CNV adapter. You can access [the webpage](/misc/plugin.md) describing this procedure on using PennCNV Plug-in .
 
- 
-
-Windows system with Cygwin
+### Windows system with Cygwin
 
 In this section we describe the method for running PennCNV under Cygwin.
 
-We first need to download and save the PennCNV package as zip file from a web browser to local hard drive, and use a unzipping software to unzip the files. Do make sure the kext/, lib/ and example/ directories are present after unzipping, since some software under Windows is unable to generate directory structures from *.tar.gz file.
+We first need to download and save the PennCNV package as zip file from a web browser to local hard drive, and use a unzipping software to unzip the files. Do make sure the `kext/`, `lib/` and `example/` directories are present after unzipping, since some software under Windows is unable to generate directory structures from `\*.tar.gz` file.
 
 We next need to install cygwin in the system. Do make sure that you select the devel package during cygwin installation, since the devel package is NOT selected in default installation process. (Basically by clicking the word next to devel in the package-selection dialog, you will see the option cycle through default, reinstall, uninstall and install: stop clicking when seeing install as the option and then go the next installation step (see figure below). Depending on your network connection speed and computer speed, it may take 5-30 minutes for downloading the package and another 5-10 minutes to install the package.
+
 
 cygwin install
 
