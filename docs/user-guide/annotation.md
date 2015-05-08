@@ -126,7 +126,7 @@ We often want to know which CNVs severely affects genes, so examination of exon 
 
 Those CNV calls without exonic overlap with have “NOT_FOUND” appended to the end of the line, so a `fgrep -v NOT_FOUND` can be added to get rid of these CNVs affecting non-exonic regions.
 
-## Finding overlapping microRNA, evolutionarily conserved elements, transcription factor binding sites, etc for CNV calls
+## Finding overlapping functional elements for CNV calls
 
 The `scan_region.pl` program can perform these tasks using the UCSC genome annotation file. Please use the “-m” argument for the scan_region.pl program to read a complete manual on how to achieve these goals.
 
