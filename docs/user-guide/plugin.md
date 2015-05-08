@@ -1,9 +1,12 @@
-              
-This note describes the procedure to run PennCNV within Illumina BeadStudio/GenomeStudio software to facilitate automatic processing and visualization of CNV calls. This procedure has been only tested on 32-bit Windows XP with ActivePerl 5.8.8 and BeadStudio 3.1 installation, or with ActivePerl 5.10.1 and GenomeStudio 2009 installation. Note: 64-bit Windows system should be compatible to most 32-bit executables, as long as all components of the program are compiled in 32-bit code; therefore, if you install 32-bit Perl in the 64-bit Windows computer, in principle PennCNV can still run without re-compilation, and this has been confirmed by some users.
+## Overview
+
+This note describes the procedure to run PennCNV within Illumina BeadStudio/GenomeStudio software to facilitate automatic processing and visualization of CNV calls. This procedure has been only tested on 32-bit Windows XP with ActivePerl 5.8.8 and BeadStudio 3.1 installation, or with ActivePerl 5.10.1 and GenomeStudio 2009 installation. 
+
+> Note: 64-bit Windows system should be compatible to most 32-bit executables, as long as all components of the program are compiled in 32-bit code; therefore, if you install 32-bit Perl in the 64-bit Windows computer, in principle PennCNV can still run without re-compilation, and this has been confirmed by some users.
 
 Before using PennCNV within BeadStudio, the user should be aware of the some of the advantages and disadvantages. The advantage is obvious: one can simply click mouse buttons and perform CNV detection and visualization. The disadvantages are: (1) it is very slow: The CNV calling is implemented by exporting signal files from BeadStudio one by one, and then calling PennCNV again and again for each file, and each time reloading all necessary model files into memory, which is a very inefficient way to perform CNV analysis by PennCNV. (2) it does not allow flexible post-processing of CNV calling results. (3) It does not allow family-based PennCNV calls by PennCNV. In general, due to the inefficiency of running PennCNV within BeadStudio/GenomeStudio, if you have many hundred or thousand samples and you only use Windows system and you do not want to wait multiple days to run CNV analysis, you are probably better off using command line in Windows shell or in Cygwin to run PennCNV, while using the BeadStudio plug-in for validating important CNV calls in chosen samples. We have now provided auxiliary programs (`visualize_cnv.pl`) to transform PennCNV output directly to BeadStudio/GenomeStudio bookmarks, so that you can run PennCNV in command line, then directly import the calls to Illumina Genome Viewer for visualization.
 
-The procedure for using PennCNV with BeadStudio/GenomeStudio is described below in step-by-step fashion.
+## Installation
 
 Make sure your computer has at least 2GB (preferably 4GB) memory. (if the computer has less memory, PennCNV can still run on virtual memory, but the speed is extremely slow!) Now download PennCNV, unzip the file and then move the resulting penncnv folder into `C:\penncnv\`. Download the ActivePerl for windows version 5.8.8, install the ActivePerl program with all default options (the default installation location is `C:\perl`, and the executable will be `C:\perl\bin\perl.exe`).
 
@@ -13,7 +16,11 @@ If you have not done so, download the Illumina Universal CNV Adapter plugin from
 
 Now go to the installation directory, rename the `UniversalCNVAdapterPlugin.dll.config` file to `UniversalCNVAdapterPlugin.dll.config.bak`, so that we can restore to the original settings if wanted. Next copy `UniversalCNVAdapterPlugin.dll.config` file from `C:\penncnv\extra\` to here. This configuration file contains necessary command line options for running PennCNV through BeadStudio/GenomeStudio.
 
-Now we can open a project file. As an example, we can use the same project file as used in the PennCNV tutorial (download here), which contains genotyping data for 3 individuals (father, mother and autistic child) within a family. (If using GenomeStudio, there will be a warning message that the file cannot be opened in BeadStudio after being opened in GenomeStudio, just click "yes" to accept this.) Click Analysis menu, then click CNV analysis (see below).
+## Usage instructions
+
+The procedure for using PennCNV with BeadStudio/GenomeStudio is described below in step-by-step fashion.
+
+First, we can try to open a project file. As an example, we can use the same project file as used in the PennCNV tutorial (download [here](download.md)), which contains genotyping data for 3 individuals (father, mother and autistic child) within a family. (If using GenomeStudio, there will be a warning message that the file cannot be opened in BeadStudio after being opened in GenomeStudio, just click "yes" to accept this.) Click Analysis menu, then click CNV analysis (see below).
 
 ![beadstudio](img/penncnv_beadstudio_tutorial_clip_image002.jpg)
 
