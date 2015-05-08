@@ -4,7 +4,7 @@ PennCNV is a free software tool for Copy Number Variation (CNV) detection from S
 
 PennCNV implements a hidden Markov model (HMM) that integrates multiple sources of information to infer CNV calls for individual genotyped samples. It differs form segmentation-based algorithm in that it considered SNP allelic ratio distribution as well as other factors, in addition to signal intensity alone. In addition, PennCNV can optionally utilize family information to generate family-based CNV calls by several different algorithms. Furthermore, PennCNV can generate CNV calls given a specific set of candidate CNV regions, through a validation-calling algorithm.
 
-This website is built for the "original" Perl/C-based PennCNV developed for SNP arrays (see references below). Other tools of the PennCNV family include PennCNV2 (C++ based PennCNV for tumor data) and PennCNV3 (Hadoop-based PennCNV for NGS data).
+This website is built for the "original" Perl/C-based PennCNV developed for SNP arrays (see references below). Other tools of the PennCNV family include [PennCNV2](http://sourceforge.net/projects/penncnv-2/) (C++ based PennCNV for tumor/NGS data) and PennCNV3 (Hadoop-based PennCNV for NGS data).
 
 ## Reference:
 
