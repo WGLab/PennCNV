@@ -1,6 +1,6 @@
 ## PennCNV main package
 
-The link to latest stable version of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for Windows. (Due to the problem of several unzipping software under Windows in handling *.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical).
+The link to latest stable version of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for Windows. (Due to the problem of several unzipping software under Windows in handling \*.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical).
 
 - [tar.gz file](https://github.com/WangGenomicsLab/PennCNV/archive/v1.0.0.tar.gz)
 - [zip file](https://github.com/WangGenomicsLab/PennCNV/archive/v1.0.0.zip)
