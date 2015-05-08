@@ -2,8 +2,8 @@
 
 The link to latest version (2011Jun16 version) of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for several commonly used system architecture, including 32-bit Windows. (Due to the problem of several unzipping software under Windows in handling *.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical). Files were updated 2011Jun28 to fix a small packaging issue. DO NOT STOP HERE, READ THE PARAGRAPHS BELOW TO DOWNLOAD UPDATED FILES.
 
-- [penncnv.latest.tar.gz](http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz)
-- [penncnv.latest.zip](http://www.openbioinformatics.org/penncnv/download/penncnv.latest.zip)
+- [tar.gz file](https://github.com/WangGenomicsLab/PennCNV/archive/v1.0.0.tar.gz)
+- [zip file](https://github.com/WangGenomicsLab/PennCNV/archive/v1.0.0.zip)
 
 ## User-supplied files and programs
 
