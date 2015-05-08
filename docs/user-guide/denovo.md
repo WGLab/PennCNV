@@ -48,7 +48,7 @@ The above table shows the BAF and LRR for the father, mother and the child, resp
 
 So let us take a look at the above example with 50 SNPs within the CNV region in all family members. A total of 13 SNPs are informative for this analysis and they were marked in bold fonts. We can unambiguously determine that the de novo event occurred on the paternal chromosome for all 13 SNPs, and on the maternal chromsome for ZERO SNP. If we do a binomial test (against expectation of 0.5), we would have a two-sided P-value of 0.0002, which means that it is highly unlikely to be a random observation. Therefore, we have high confidence that the predicted de novo CNV is a bona fide de novo CNV.
 
-The PennCNV package provides a convenience script to automate the entire process above, and assigns P-values to predicted de novo CNV calls (currently for autosomes only). In the example/ directory in the PennCNV distribution, we can test the following command (since we know that there is a de novo CNV call in chr3 for the offspring already):
+The PennCNV package provides a convenience script to automate the entire process above, and assigns P-values to predicted de novo CNV calls (currently for autosomes only). In the `example/` directory in the PennCNV distribution, we can test the following command (since we know that there is a de novo CNV call in chr3 for the offspring already):
 
 ```
 [kaiwang@cc ~/penncnv/example]$ infer_snp_allele.pl -pfb example.pfb -hmm example.hmm -denovocn 1 father.txt mother.txt offspring.txt -start rs11716390 -end rs17039742 -out tempfile 
