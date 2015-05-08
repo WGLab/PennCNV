@@ -4,7 +4,7 @@ The procedure below outlines how to process raw CEL files and generates canonica
 
 ![pipeline](img/penncnv_tutorial_affy_gw6_clip_image001.jpg)
 
-### - Step 1. Generate the signal intensity data based on raw CEL files
+## Step 1. Generate the signal intensity data based on raw CEL files
 
 The goal of the first step is to generate the cross-marker normalized signal intensity data from an Affymetrix genotyping project to a text file, so that it can be analyzed subsequently by the PennCNV software. This step has 3 substeps.
 
@@ -16,7 +16,7 @@ Next download the PennCNV-Affy programs and library files from http://www.openbi
 
 Next download the Affymetrix Power Tools (APT) software package from http://www.affymetrix.com/support/developer/powertools/index.affx. We need to log into the website to download the software (the registration is free).
 
-### -- Substep 1.1 Generate genotyping calls from CEL files
+### - Substep 1.1 Generate genotyping calls from CEL files
 
 This step uses the apt-probeset-genotype program in Affymetrix Power Tools (APT) to generate genotyping calls from the raw CEL files using the Birdseed algorithm (for genome-wide 6.0 array) or BRLMM-P (for genome-wide 5.0 array) algorithm. Note that the genotyping calling requires lots of CEL files.
 
@@ -60,7 +60,7 @@ Follow the same procedure as 500K array, but download the specific cdf files fro
 [kaiwang@cc ~/]$ apt-probeset-genotype -c CD_Mapping50K_Xba240_rev3/Full/Mapping50K_Xba240/LibFiles/Mapping50K_Xba240.CDF --chrX-snps CD_Mapping50K_Xba240_rev3/Full/Mapping50K_Xba240/LibFiles/Mapping50K_Xba240.chrx --out-dir apt_xba *.CEL
 ```
 
-### -- Subsetp 1.2 Allele-specific signal extraction from CEL files
+### - Subsetp 1.2 Allele-specific signal extraction from CEL files
 
 This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here `allele-specific` refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
 
@@ -102,7 +102,7 @@ A note on normalization target: the `--target-sketch` argument above gives a ref
 
 For a typical modern computer, the command should take less than one day for 1000-2000 CEL files. Several output files will be generated in the apt/ directory, including `quant-norm.pm-only.med-polish.expr.summary.txt`, which contains the signal values (one allele per line, one sample per column). For SNP probes, two lines are used per probe, for A and B alleles, respectively. For non-polymorphic probes (so-called CN probes), only one line is used per probe. It is very important to check that the APT programs finish completely, before proceeding to next steps. Check the LOG files to see whether it reports a success.
 
-### -- Substep 1.3 Generate canonical genotype clustering file
+### - Substep 1.3 Generate canonical genotype clustering file
 
 This step generates a file that contains the parameters for the canonical clustering information for each SNP or CN marker, such that this file can be used later on to calculate LRR and BAF values.
 
@@ -158,7 +158,7 @@ Similar command as genome-wide arrays should be used for Nsp and Sty array separ
 
 Same as above. Get the PFB file here. It functions both as a --locfile in the command line above, and as a --pfbfile in CNV calling later on.
 
-### -- Substep 1.4 LRR and BAF calculation
+### - Substep 1.4 LRR and BAF calculation
 
 This step use the allele-specific signal intensity measures generated from the last step to calculate the Log R Ratio (LRR) values and the B Allele Frequency (BAF) values for each marker in each individual. The normalize_affy_geno_cluster.pl program in the downloaded PennCNV-Affy package (see gw6/bin/ directory) is used:
 
@@ -174,7 +174,7 @@ If the user does not have sufficient number of CEL files for the above substep 1
 
  
 
-## - Step 2: Split the signal file into individual files for CNV calling by PennCNV
+## Step 2: Split the signal file into individual files for CNV calling by PennCNV
 
 The first a few lines and first a few columns of the tab-delimited gw6.lrr_baf.txt file may look like this:
 
