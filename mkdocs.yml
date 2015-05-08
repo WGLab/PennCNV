@@ -28,8 +28,8 @@ pages:
 - ['user-guide/validation.md', 'User Guide', 'Validation-based CNV calling']
 - ['user-guide/annotation.md', 'User Guide', 'CNV annotation']
 - ['user-guide/visualization.md', 'User Guide', 'CNV visualization']
-- ['user-guide/affy.md', '', 'PennCNV-Affy']
-- ['user-guide/plugin.md', 'Articles', 'PennCNV Plug-in']
+- ['user-guide/affy.md', 'User Guide', 'PennCNV-Affy']
+- ['user-guide/plugin.md', 'User Guide', 'PennCNV Plug-in']
 
 # Misc
 - ['misc/faq.md', 'Misc', 'FAQ']
