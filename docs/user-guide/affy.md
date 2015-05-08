@@ -10,9 +10,7 @@ The goal of the first step is to generate the cross-marker normalized signal int
 
 Suppose all the files from a genotyping project is stored in a directory called gw6/. Under this directory, there are several sub-directories: a CEL/ directory that stores the raw CEL files for each genotyped sample, a lib/ directory that stores library and annotation files provided by Affymetrix and by PennCNV-Affy,. We will try to write output files to the apt/ directory.
 
-We need to download the PennCNV software from http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz and uncompress the file.
-
-Next download the PennCNV-Affy programs and library files from http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz and uncompress the file. These files are required for signal pre-processing and also for CNV calling. There will be a lib/ directory that contains some PennCNV-specific library files for genome-wide 6.0 array; in addition, the library files for the genome-wide 5.0 arrays and Mapping 500K arrays are in the libgw5/ and gw6/lib500k/ directories, respectively.
+We need to download the PennCNV software and uncompress the file. Next download the [PennCNV-Affy programs and library files](http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz) and uncompress the file. These files are required for signal pre-processing and also for CNV calling. There will be a `lib/` directory that contains some PennCNV-specific library files for genome-wide 6.0 array; in addition, the library files for the genome-wide 5.0 arrays and Mapping 500K arrays are in the `libgw5/` and `gw6/`, `lib500k/` directories, respectively.
 
 Next download the Affymetrix Power Tools (APT) software package from http://www.affymetrix.com/support/developer/powertools/index.affx. We need to log into the website to download the software (the registration is free).
 
