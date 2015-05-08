@@ -78,13 +78,13 @@ If using a very old machine with very old version of make program, the fancy cha
 
 ## The last resort
 
-If all the above methods do not work, then you can resort to reinstallation of Perl manually. (Note that sometimes, `perlbrew` cannot correctly compile/install perl even if appropriate arguments were supplied based on their documentation.) This is indeed incredibly simple if you just follow step-by-step instructions below. Suppose that I want to install Perl in `~/usr/perl` directory.
+If all the above methods do not work, then you can resort to reinstallation of Perl manually. In fact, I was not able to compile PennCNV in Perl 5.20.2, but was able to compile PennCNV on Perl 5.14.2 and other earlier versions. Although `perlbrew` is commonly used for installing another version of Perl, sometimes `perlbrew` cannot correctly compile/install perl even if appropriate arguments were supplied based on their documentation. So it is best to just install Perl yourself: this is indeed incredibly simple if you just follow step-by-step instructions below. Suppose that I want to install Perl in `~/usr/perl-5.14.2` directory.
 
 ```
 [kaiwang@biocluster ~/]$ wget http://www.cpan.org/src/perl-5.14.2.tar.gz
 [kaiwang@biocluster ~/]$ tar xvfz perl-5.14.2.tar.gz 
 [kaiwang@biocluster ~/]$ cd perl-5.14.2
-[kaiwang@biocluster ~/]$ ./Configure -des -Dprefix=/home/kaiwang/usr/perl -Accflags='-fPIC' -Dusethreads
+[kaiwang@biocluster ~/]$ ./Configure -des -Dprefix=/home/kaiwang/usr/perl-5.14.2 -Accflags='-fPIC' -Dusethreads
 [kaiwang@biocluster ~/]$ make
 [kaiwang@biocluster ~/]$ make test
 [kaiwang@biocluster ~/]$ make install
