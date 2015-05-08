@@ -21,7 +21,13 @@ pages:
 - ['user-guide/install.md', 'User Guide', 'Install PennCNV']
 - ['user-guide/startup.md', 'User Guide', 'Quick Start-Up Guide']
 - ['user-guide/input.md', 'User Guide', 'Prepare Input Files']
-
+- ['user-guide/test.md', 'User Guide', 'CNV calling']
+- ['user-guide/trio.md', 'User Guide', 'Trio-based CNV calling']
+- ['user-guide/joint.md', 'User Guide', 'Joint-based CNV calling']
+- ['user-guide/denovo.md', 'User Guide', 'de novo CNV calling']
+- ['user-guide/validation.md', 'User Guide', 'Validation-based CNV calling']
+- ['user-guide/annotation.md', 'User Guide', 'CNV annotation']
+- ['user-guide/visualization.md', 'User Guide', 'CNV visualization']
 
 # Misc
 - ['misc/faq.md', 'Misc', 'FAQ']
