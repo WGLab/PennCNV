@@ -9,27 +9,27 @@ The link to latest version (2011Jun16 version) of PennCNV main package is given 
 
 Users can use the `compile_pfb.pl` program included in PennCNV to generate a PFB file for their specific arrays. A few additional PFB files are provided below:
 
-- The hc12v1.hg18.pfb.gz and hc12v1.hg18.gcmodel.gz file are provided for HumanCytoSNP12 V1 array with 300K markers on that array specifically (based on Caucasian populations).
+- The [hc12v1.hg18.pfb.gz](http://www.openbioinformatics.org/penncnv/download/hc12v1.hg18.pfb.gz) and [hc12v1.hg18.gcmodel.gz](http://www.openbioinformatics.org/penncnv/download/hc12v1.hg18.gcmodel.gz) file are provided for HumanCytoSNP12 V1 array with 300K markers on that array specifically (based on Caucasian populations).
 
-- The ho1v1.hg18.pfb.gz and ho1v1.hg18.gcmodel.gz files are provided for HumanOmni1 QuadV1 array specifically (based on Caucasian populations).
+- The [ho1v1.hg18.pfb.gz](http://www.openbioinformatics.org/penncnv/download/ho1v1.hg18.pfb.gz) and [ho1v1.hg18.gcmodel.gz](http://www.openbioinformatics.org/penncnv/download/ho1v1.hg18.gcmodel.gz) files are provided for HumanOmni1 QuadV1 array specifically (based on Caucasian populations).
 
-- Updated 2011Apr25: A user (Denise Kay) submitted an updated ho1v1.hg18.pfb.gz file in which 32,290 markers have modified PFB=2; these are originally designed as SNP markers by Illumina but their quality is too low so it is best to treat them as intensity-only markers by flagging PFB=2.
+- **Updated 2011Apr25**: A user (Denise Kay) submitted an updated [ho1v1.hg18.pfb.gz](http://www.openbioinformatics.org/penncnv/download/ho1v1.hg18.MOD.zip) file in which 32,290 markers have modified PFB=2; these are originally designed as SNP markers by Illumina but their quality is too low so it is best to treat them as intensity-only markers by flagging PFB=2.
 
-- Updated 2011Mar18: Dr. Luis M. Franco from Baylor College of Medicine provided PFB file for the Illumina OmniExpress array compiled from 96 unrelated Caucasian individuals. The number of SNPs in the files current form is 703,965 ( pseudoautosomal and Y-chromosome SNPs are excluded).
+- **Updated 2011Mar18**: Dr. Luis M. Franco from Baylor College of Medicine provided [PFB file](http://www.openbioinformatics.org/penncnv/download/OmniExpress_hg18.pfb.gz) for the Illumina OmniExpress array compiled from 96 unrelated Caucasian individuals. The number of SNPs in the files current form is 703,965 ( pseudoautosomal and Y-chromosome SNPs are excluded).
 
-- Updated 2011Aug16: Dr. Colm O'Dushlaine lifted over the PFB file for Illumina OmniExpress array to hg19 coordinate.
+- **Updated 2011Aug16**: Dr. Colm O'Dushlaine lifted over the PFB file for Illumina OmniExpress array to [hg19 coordinate](http://www.openbioinformatics.org/penncnv/download/OmniExpress_hg19.pfb.gz).
 
-- Updated 2013Nov06: Dr. Lijian Yu from Harvard University provided Affymetrix PFB files in hg19 coordinate, using version na33 annotations from Affymetrix. Fie updated on 2014Jul23 to fix white space problem in the file.
+- **Updated 2013Nov06**: Dr. Lijian Yu from Harvard University provided Affymetrix PFB files in [hg19 coordinate](http://www.openbioinformatics.org/penncnv/download/affygw6.hg19.pfb.gz), using version na33 annotations from Affymetrix. Fie updated on 2014Jul23 to fix white space problem in the file.
 
-- Updated 2014Sep13: Stephen Sanders from UCSF provided PFB file for Illumina Omni 5 array, generated from 600 controls from the Simon Simplex Collection.
+- **Updated 2014Sep13**: Stephen Sanders from UCSF provided [PFB file](http://www.openbioinformatics.org/penncnv/download/YALE_Merged_PFB_hg19.pfb) for Illumina Omni 5 array, generated from 600 controls from the Simon Simplex Collection.
 
 A few user contributed programs/scripts are provided below:
 
-- User contributed programs (Uploaded 2010Dec01) : The `penncnv_to_plink.pl` program can be used to convert PennCNV output into PLINK input format. Run it with -h argument to read the documentation. The program is written and provided by Matthew Gillman at the Wellcome Trust Sanger Institute.
+- **User contributed programs (Uploaded 2010Dec01)**: The [penncnv_to_plink.pl](http://www.openbioinformatics.org/penncnv/download/penncnv_to_plink.pl) program can be used to convert PennCNV output into PLINK input format. Run it with -h argument to read the documentation. The program is written and provided by Matthew Gillman at the Wellcome Trust Sanger Institute.
 
-- User contributed programs (Uploaded 2011Feb27): The plot_raw_PennCNV.R program can plot from PennCNV rawcnv file on screen or to a high solution png file. Example screen shot 1, 2, 3 and 4. This program is written band provided by Dr. Bowang Chen. See updated script below.
+- **User contributed programs (Uploaded 2011Feb27)**: The [plot_raw_PennCNV.R](http://www.openbioinformatics.org/penncnv/download/plot_raw_PennCNV.R) program can plot from PennCNV rawcnv file on screen or to a high solution png file. Example screen shot [1](img/PennCNV_76neu_3unique_chr18.png), [2](img/PennCNV_76neu_3unique_chr22.png), [3](img/test_chr02.png) and [4](img/test_chr18.png). This program is written band provided by Dr. Bowang Chen. See updated script below.
 
-- User contributed programs (Uploaded 2012Jul16): The plot_raw_PennCNV2PDF.R program can plot from PennCNV rawcnv file to a high solution PDF file. This new script exports all plots to a pdf file, by default 70 samples/page (can be changed by users). It is much fast now, it plots a 50000+ line raw file to a 400+ page pdf in ~2 minutes. Example output is here. Example command line is "R CMD BATCH --no-save --no-restore "--args filename=\"$filename\" PDFname=\"$PDFname\"" $path_R/plot_raw_PennCNV2PDF.R ". This program is written band provided by Dr. Bowang Chen@German Cancer Research Center.
+- **User contributed programs (Uploaded 2012Jul16)**: The [plot_raw_PennCNV2PDF.R](http://www.openbioinformatics.org/penncnv/download/plot_raw_PennCNV2PDF.R) program can plot from PennCNV rawcnv file to a high solution PDF file. This new script exports all plots to a pdf file, by default 70 samples/page (can be changed by users). It is much fast now, it plots a 50000+ line raw file to a 400+ page pdf in ~2 minutes. Example output is here. Example command line is "R CMD BATCH --no-save --no-restore "--args filename=\"$filename\" PDFname=\"$PDFname\"" $path_R/plot_raw_PennCNV2PDF.R ". This program is written band provided by Dr. Bowang Chen@German Cancer Research Center.
 
 ## PennCNV example data sets
 
@@ -53,7 +53,7 @@ This package contains PennCNV-Affy protocols and helper scripts for handling Aff
 - [gw6.tar.gz](http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz)
  
 
-## Genome Browser tracks for commonly used SNP arrays
+## Genome Browser tracks for SNP arrays
 
 Click any of the link below will load the corresponding track in the UCSC Genome Browser on hg18 coordinate, or 2006 human genome assembly. It may take several minutes to load each of the track. The user can visualize the location of the marker coverage in each specific arrays and compare them with each other. If the user does not want to see the marker names in the browser, the dense drop-down menu option can be used in the browser page to display red vertical bars for each marker.
 
