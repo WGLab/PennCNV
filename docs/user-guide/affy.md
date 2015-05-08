@@ -10,9 +10,7 @@ The goal of the first step is to generate the cross-marker normalized signal int
 
 Suppose all the files from a genotyping project is stored in a directory called gw6/. Under this directory, there are several sub-directories: a CEL/ directory that stores the raw CEL files for each genotyped sample, a lib/ directory that stores library and annotation files provided by Affymetrix and by PennCNV-Affy,. We will try to write output files to the apt/ directory.
 
-We need to download the PennCNV software from http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz and uncompress the file.
-
-Next download the PennCNV-Affy programs and library files from http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz and uncompress the file. These files are required for signal pre-processing and also for CNV calling. There will be a lib/ directory that contains some PennCNV-specific library files for genome-wide 6.0 array; in addition, the library files for the genome-wide 5.0 arrays and Mapping 500K arrays are in the libgw5/ and gw6/lib500k/ directories, respectively.
+We need to download the PennCNV software and uncompress the file. Next download the [PennCNV-Affy programs and library files](http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz) and uncompress the file. These files are required for signal pre-processing and also for CNV calling. There will be a `lib/` directory that contains some PennCNV-specific library files for genome-wide 6.0 array; in addition, the library files for the genome-wide 5.0 arrays and Mapping 500K arrays are in the `libgw5/` and `gw6/`, `lib500k/` directories, respectively.
 
 Next download the Affymetrix Power Tools (APT) software package from http://www.affymetrix.com/support/developer/powertools/index.affx. We need to log into the website to download the software (the registration is free).
 
@@ -24,7 +22,9 @@ This step uses the apt-probeset-genotype program in Affymetrix Power Tools (APT)
 
 Before performing this step, we need to download the library files for the genome-wide 6.0 array from http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp6_libraryfile.zip, and save the decompressed files to the lib/ directory. Several files in this directory, including a CDF file and a Birdseed model file, will be used in the genotype calling step.
 
-[kai@node126 ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_6.cdf -a birdseed --read-models-birdseed lib/GenomeWideSNP_6.birdseed.models --special-snps lib/GenomeWideSNP_6.specialSNPs --out-dir apt --cel-files listfile
+```
+[kai@cc ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_6.cdf -a birdseed --read-models-birdseed lib/GenomeWideSNP_6.birdseed.models --special-snps lib/GenomeWideSNP_6.specialSNPs --out-dir apt --cel-files listfile
+```
 
 The above command generates genotyping calls using all CEL files specified in the listfile, and generates several output files in the apt/ directory. The listfile contains a list of CEL file names, with one name per line, and with the first line being cel_files. The output files for this command include birdseed.confidences.txt, birdseed.report.txt and birdseed.calls.txt. In addition, a birdseed.report.txt file is generated, that will be helpful to infer sample gender to generate a sexfile (see Substep 1.3 below).
 
@@ -39,7 +39,7 @@ For a typical modern computer, the command should take less than one day for 100
 For genome-wide 5.0 arrays, the command line is slightly different. First download the CDF and model files for GW5 array from http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp5_libraryfile_rev1.zip and http://www.affymetrix.com/Auth/support/downloads/library_files/GenomeWideSNP_5.r2.zip. Then save decompressed files to the lib/ directory.  There are several CDF files but we will need to use the GenomeWideSNP_5.Full.r2.cdf file. The genotype calling can be done using a command like this:
 
 ```
-[kai@node126 ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_5.Full.r2.cdf --chrX-snps lib/GenomeWideSNP_5.Full.chrx --read-models-brlmmp lib/GenomeWideSNP_5.models -a brlmm-p --out-dir apt --cel-files listfile
+[kai@cc ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_5.Full.r2.cdf --chrX-snps lib/GenomeWideSNP_5.Full.chrx --read-models-brlmmp lib/GenomeWideSNP_5.models -a brlmm-p --out-dir apt --cel-files listfile
 ```
 
 **Mapping 500K array**
@@ -47,7 +47,7 @@ For genome-wide 5.0 arrays, the command line is slightly different. First downlo
 For Mapping 500K array set with Nsp and Sty arrays, the genotype calling and signal extraction need to be done separately for each array. The command for genotype calling should use brlmm (instead of brlmm-p) as the algorithm (this is the default algorithm). In addition, there is no need to specify the --read-models-brlmmp argument as shown above for Affy 5.0 arrays.
 
 ```
-[kai@beta ~/]$ apt-probeset-genotype -c lib/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.cdf --chrX-snps lib/affy500k/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.chrx --out-dir apt_nsp/ --cel-files list.nsp
+[kai@cc ~/]$ apt-probeset-genotype -c lib/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.cdf --chrX-snps lib/affy500k/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.chrx --out-dir apt_nsp/ --cel-files list.nsp
 ```
 
 As mentioned in the note above, if the program takes forever to run (during "computing prior" step), try to analyze only 500 samples and write the prior to a file (via --write-prior argument), then reanalyze the entire sample using --read-priors-brlmm argument to expedite the process.
@@ -69,7 +69,7 @@ This step uses the Affymetrix Power Tools software to extract allele-specific si
 An example command is given below:
 
 ```
-[kai@node123 ~/]$ apt-probeset-summarize --cdf-file lib/GenomeWideSNP_6.cdf --analysis quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch lib/hapmap.quant-norm.normalization-target.txt --out-dir apt --cel-files listfile
+[kai@cc ~/]$ apt-probeset-summarize --cdf-file lib/GenomeWideSNP_6.cdf --analysis quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch lib/hapmap.quant-norm.normalization-target.txt --out-dir apt --cel-files listfile
 ```
 
 The above command read signal intensity values for PM probes in all the CEL files specified in listfile, apply quantile normalization to the values, apply median polish on the data, then generates signal intensity values for A and B allele for each SNP. The file hapmap.quant-norm.normalization-target.txt is provided in the PennCNV-Affy package: it is generated using all HapMap samples, as a reference quantile distribution to use in the normalization process, so that the quantile normalization procedures for different genotyping projects are more comparable to each other.
@@ -79,7 +79,7 @@ The above command read signal intensity values for PM probes in all the CEL file
 For genome-wide 5.0 arrays, the target-sketch can be found in the libgw5/ directory. An example command is given below:
 
 ```
-[kai@node123 ~/]$ apt-probeset-summarize --cdf-file lib/GenomeWideSNP_5.Full.r2.cdf --analysis quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch libgw5/agre.quant-norm.normalization-target.txt --out-dir apt --cel-files listfile
+[kai@cc ~/]$ apt-probeset-summarize --cdf-file lib/GenomeWideSNP_5.Full.r2.cdf --analysis quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch libgw5/agre.quant-norm.normalization-target.txt --out-dir apt --cel-files listfile
 ```
 
 **Mapping 500K array**
@@ -87,7 +87,7 @@ For genome-wide 5.0 arrays, the target-sketch can be found in the libgw5/ direct
 The signal extraction needs to be done for each array type separately. The pm-only option need to be used in --analysis argument since Mapping 500K array contains both PM and MM probes for each probe set.
 
 ```
-[kai@beta ~/]$ apt-probeset-summarize --cdf-file lib/affy500k/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.cdf --out-dir apt_nsp/ --cel-files list.nsp -a quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch lib/hapmap.nsp.quant-norm.normalization-target.txt
+[kai@cc ~/]$ apt-probeset-summarize --cdf-file lib/affy500k/CD_Mapping250K_Nsp_rev4/Full/Mapping250K_Nsp/LibFiles/Mapping250K_Nsp.cdf --out-dir apt_nsp/ --cel-files list.nsp -a quant-norm.sketch=50000,pm-only,med-polish,expr.genotype=true --target-sketch lib/hapmap.nsp.quant-norm.normalization-target.txt
 ```
 
 **Mapping 100K array**
@@ -113,7 +113,7 @@ If the user has only a few dozen CEL files, then it is unlikely that a clusterin
 To generate canonical genotype clusters, use the `generate_affy_geno_cluster.pl` program in the downloaded PennCNV-Affy package (see `gw6/bin/` directory).
 
 ```
-[kai@beta ~/]$ generate_affy_geno_cluster.pl birdseed.calls.txt birdseed.confidences.txt quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../lib/affygw6.hg18.pfb -sexfile file_sex -out gw6.genocluster
+[kai@cc ~/]$ generate_affy_geno_cluster.pl birdseed.calls.txt birdseed.confidences.txt quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../lib/affygw6.hg18.pfb -sexfile file_sex -out gw6.genocluster
 ```
 
 The `affygw6.hg18.pfb` file is provided in PennCNV-Affy package, which contains the annotated marker positions in hg18 (NCBI 36) human genome assembly. The `file_sex` file is a two-column file that annotates the sex information for each CEL file, one file per line, and each line contains the file name and the sex separated by tab. The file_sex file is important for chrX markers and chrY markers, such that only females are used for constructing canonical clusters for chrX markers and that only males are used for constructing canonical clusters for chrY markers. For example, the first 10 lines of a `file_sex` file is below:
@@ -143,7 +143,7 @@ For a typical modern computer, the command should take several hours to process 
 An example command is given below:
 
 ```
-[kai@beta ~/ project/affycnv/gw5/apt]$ generate_affy_geno_cluster.pl brlmm-p.calls.txt brlmm-p.confidences.txt quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../libgw5/affygw5.hg18.pfb -sexfile file_sex -out gw5.genocluster
+[kai@cc ~/ project/affycnv/gw5/apt]$ generate_affy_geno_cluster.pl brlmm-p.calls.txt brlmm-p.confidences.txt quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../libgw5/affygw5.hg18.pfb -sexfile file_sex -out gw5.genocluster
 ```
 
 **Mapping 500K array**
@@ -151,7 +151,7 @@ An example command is given below:
 Similar command as genome-wide arrays should be used for Nsp and Sty array separately.
 
 ```
-[kai@beta ~/]$ generate_affy_geno_cluster.pl ../apt_nsp/brlmm.calls.txt ../apt_nsp/brlmm.confidences.txt ../apt_nsp/quant-norm.pm-only.med-polish.expr.summary.txt -locfile lib/affy500k.hg18.pfb -sexfile file_sex -out nsp.genocluster
+[kai@cc ~/]$ generate_affy_geno_cluster.pl ../apt_nsp/brlmm.calls.txt ../apt_nsp/brlmm.confidences.txt ../apt_nsp/quant-norm.pm-only.med-polish.expr.summary.txt -locfile lib/affy500k.hg18.pfb -sexfile file_sex -out nsp.genocluster
 ```
 
 **Mapping 100K array**
@@ -163,7 +163,7 @@ Same as above. Get the PFB file here. It functions both as a --locfile in the co
 This step use the allele-specific signal intensity measures generated from the last step to calculate the Log R Ratio (LRR) values and the B Allele Frequency (BAF) values for each marker in each individual. The normalize_affy_geno_cluster.pl program in the downloaded PennCNV-Affy package (see gw6/bin/ directory) is used:
 
 ```
-[kai@adenine ~/]$ normalize_affy_geno_cluster.pl gw6.genocluster quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../lib/affygw6.hg18.pfb -out gw6.lrr_baf.txt
+[kai@cc ~/]$ normalize_affy_geno_cluster.pl gw6.genocluster quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../lib/affygw6.hg18.pfb -out gw6.lrr_baf.txt
 ```
 
 The above command generates LRR and BAF values using the summary file generated in last step, and using a cluster file called gw6.genocluster generated in the last step. The location file specifies the chromosome position of each SNP or CN probe, and this information is printed in the output files as well to facilitate future data processing.
@@ -171,8 +171,6 @@ The above command generates LRR and BAF values using the summary file generated 
 For a typical modern computer, the command should take several hours to process files generated from 1000-2000 CEL files. A new tab-delimited file called gw6.lrr_baf.txt will be generated that contains one SNP per line and one sample per two columns (LRR column and BAF column).
 
 If the user does not have sufficient number of CEL files for the above substep 1.1 and 1.3, then you can alternatively use the default canonical clustering file provided in the PennCNV-Affy package. Right now several files are provided: hapmap.genocluster for GW6 arrays, agre.genocluster for GW5 arrays, and `affy500k.nsp.genocluster/affy500k.sty.genocluster` for Mapping 500K arrays. The results won't be optimal and are probably highly unreliable (the QC measures during PennCNV calling can give some clue on the signal-to-noise ratio of the resulting signal intensity files).
-
- 
 
 ## Step 2: Split the signal file into individual files for CNV calling by PennCNV
 
@@ -210,8 +208,6 @@ In the above command, the signallistfile is the file that contains all the signa
 For the 500K array, one can concatentate the two subarrays together into one single file, then use PennCNV (for example `cat nsp.NA06985.txt sty.NA06985.txt > combined.NA06986.txt` to generate a combined file, then call CNV from the combined file (the extra header line in the middle of the combined file will be ignored by PennCNV).
 
 Please check the "CNV calling" section in the left menu bar in the webpage for additional explanations to the output files and log files on the CNV calls.
-
- 
 
 ## Additional topics
 
