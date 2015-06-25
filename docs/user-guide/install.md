@@ -34,7 +34,7 @@ For Solaris, change "gcc" to "cc" in the Makefile, since normally one can create
 
 There are two ways to use PennCNV in a Windows system: either install Cygwin and use PennCNV under Cygwin shell, or install ActivePerl and use PennCNV in a regular Windows command shell. These two methods are described in the following two sections.
 
-> *IMPORTANT NOTES*: My recommendation to Windows users is that you just do these two things: (1) Install 32-bit Perl 5.8.8 from [here](install 5.8.8 from https://code.google.com/p/nesating/downloads/detail?name=ActivePerl-5.8.8.822-MSWin32-x86-280952.zip&can=2&q=). (2) Download and unpack PennCNV. Then just use it. There is no need for compilation or any other complication. But if you do not have anything more challenging to do or if you just want to kill some time, then feel free to play the compilation game below.
+> *IMPORTANT NOTES*: My recommendation to Windows users is that you just do these two things: (1) Install 32-bit Perl 5.8.8 from [here](https://code.google.com/p/nesating/downloads/detail?name=ActivePerl-5.8.8.822-MSWin32-x86-280952.zip&can=2&q=). (2) Download and unpack PennCNV. Then just use it. There is no need for compilation or any other complication. But if you do not have anything more challenging to do or if you just want to kill some time, then feel free to play the compilation game below.
 
 If you really like to use Windows, and if you do not want to use command line, you can alternatively try to use PennCNV inside BeadStudio software by the Universal CNV adapter. You can access [the webpage](plugin.md) describing this procedure on using PennCNV Plug-in.
 
