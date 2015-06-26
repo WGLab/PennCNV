@@ -24,6 +24,8 @@ Users can use the `compile_pfb.pl` program included in PennCNV to generate a PFB
 
 - **Updated 2014Sep13**: Stephen Sanders from UCSF provided [PFB file](http://www.openbioinformatics.org/penncnv/download/YALE_Merged_PFB_hg19.pfb) for Illumina Omni 5 array, generated from 600 controls from the Simon Simplex Collection.
 
+- **Updated 2015Jun26**: Stephen Atkinson from Imperial College London provided [PFB file](http://www.openbioinformatics.org/penncnv/download/humancoreexome-12v1-1_a.pfb) for Illumina HumanCoreExome_v12-A beadchip, and an [HMM file](http://www.openbioinformatics.org/penncnv/download/exome.hmm) for this chip constrcuted by [Szatkiewicz et al](http://www.ncbi.nlm.nih.gov/pubmed/23938935).
+
 A few user contributed programs/scripts are provided below:
 
 - **User contributed programs (Uploaded 2010Dec01)**: The [penncnv_to_plink.pl](http://www.openbioinformatics.org/penncnv/download/penncnv_to_plink.pl) program can be used to convert PennCNV output into PLINK input format. Run it with -h argument to read the documentation. The program is written and provided by Matthew Gillman at the Wellcome Trust Sanger Institute.
