@@ -2,7 +2,7 @@
 
 The link to latest stable version of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for Windows. (Due to the problem of several unzipping software under Windows in handling \*.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical).
 
-- [GitHub Repository](https://github.com/WangGenomicsLab/GenGen/releases)
+- [GitHub Repository](https://github.com/WangGenomicsLab/PennCNV/releases)
 
 Alternatively, users can download the cutting edge version from GitHub by `git clone git@github.com:WangGenomicsLab/PennCNV.git`.
 
