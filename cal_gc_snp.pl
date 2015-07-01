@@ -217,7 +217,7 @@ A sample output file look like this:
 	rs2276302       11      113355350       43.8200598569652
 
 The GC column contains the GC percentage for a region surrounding the SNP. By 
-default a 200kb region will be used (100kb each side of the SNP), but the 
+default a 1Mb region will be used (500kb each side of the SNP), but the 
 --numwindow argument can be used to adjust the window size.
 
 For questions, bugs or comments, please email kai@openbioinformatics.org.
