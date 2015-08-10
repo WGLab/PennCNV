@@ -34,7 +34,9 @@ For Solaris, change "gcc" to "cc" in the Makefile, since normally one can create
 
 There are two ways to use PennCNV in a Windows system: either install Cygwin and use PennCNV under Cygwin shell, or install ActivePerl and use PennCNV in a regular Windows command shell. These two methods are described in the following two sections.
 
-If you really like to use Windows, and if you do not want to use command line, you can alternatively try to use PennCNV inside BeadStudio software by the Universal CNV adapter. You can access [the webpage](plugin.md) describing this procedure on using PennCNV Plug-in .
+> *IMPORTANT NOTES*: My recommendation to Windows users is that you just do these two things: (1) Install 32-bit Perl 5.8.8 from [here](https://code.google.com/p/nesating/downloads/detail?name=ActivePerl-5.8.8.822-MSWin32-x86-280952.zip&can=2&q=). (2) Download and unpack PennCNV. Then just use it. There is no need for compilation or any other complication. But if you do not have anything more challenging to do or if you just want to kill some time, then feel free to play the compilation game below.
+
+If you really like to use Windows, and if you do not want to use command line, you can alternatively try to use PennCNV inside BeadStudio software by the Universal CNV adapter. You can access [the webpage](plugin.md) describing this procedure on using PennCNV Plug-in.
 
 ### Windows system with Cygwin
 
@@ -78,13 +80,13 @@ If using a very old machine with very old version of make program, the fancy cha
 
 ## The last resort
 
-If all the above methods do not work, then you can resort to reinstallation of Perl manually. (Note that sometimes, `perlbrew` cannot correctly compile/install perl even if appropriate arguments were supplied based on their documentation.) This is indeed incredibly simple if you just follow step-by-step instructions below. Suppose that I want to install Perl in `~/usr/perl` directory.
+If all the above methods do not work, then you can resort to reinstallation of Perl manually. In fact, I was not able to compile PennCNV in Perl 5.20.2, but was able to compile PennCNV on Perl 5.14.2 and other earlier versions. Although `perlbrew` is commonly used for installing another version of Perl, sometimes `perlbrew` cannot correctly compile/install perl even if appropriate arguments were supplied based on their documentation. So it is best to just install Perl yourself: this is indeed incredibly simple if you just follow step-by-step instructions below. Suppose that I want to install Perl in `~/usr/perl-5.14.2` directory.
 
 ```
 [kaiwang@biocluster ~/]$ wget http://www.cpan.org/src/perl-5.14.2.tar.gz
 [kaiwang@biocluster ~/]$ tar xvfz perl-5.14.2.tar.gz 
 [kaiwang@biocluster ~/]$ cd perl-5.14.2
-[kaiwang@biocluster ~/]$ ./Configure -des -Dprefix=/home/kaiwang/usr/perl -Accflags='-fPIC' -Dusethreads
+[kaiwang@biocluster ~/]$ ./Configure -des -Dprefix=/home/kaiwang/usr/perl-5.14.2 -Accflags='-fPIC' -Dusethreads
 [kaiwang@biocluster ~/]$ make
 [kaiwang@biocluster ~/]$ make test
 [kaiwang@biocluster ~/]$ make install

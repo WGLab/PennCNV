@@ -1,9 +1,10 @@
 ## PennCNV main package
 
-The link to latest version (2011Jun16 version) of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for several commonly used system architecture, including 32-bit Windows. (Due to the problem of several unzipping software under Windows in handling *.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical). Files were updated 2011Jun28 to fix a small packaging issue. DO NOT STOP HERE, READ THE PARAGRAPHS BELOW TO DOWNLOAD UPDATED FILES.
+The link to latest stable version of PennCNV main package is given below. The package includes both source codes and pre-compiled executables for Windows. (Due to the problem of several unzipping software under Windows in handling \*.tar.gz files, Windows users should try to download the zip file instead. The contents of these two files are identical).
 
-- [penncnv.latest.tar.gz](http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz)
-- [penncnv.latest.zip](http://www.openbioinformatics.org/penncnv/download/penncnv.latest.zip)
+- [GitHub Repository](https://github.com/WangGenomicsLab/PennCNV/releases)
+
+Alternatively, users can download the cutting edge version from GitHub by `git clone git@github.com:WangGenomicsLab/PennCNV.git`.
 
 ## User-supplied files and programs
 
@@ -23,11 +24,13 @@ Users can use the `compile_pfb.pl` program included in PennCNV to generate a PFB
 
 - **Updated 2014Sep13**: Stephen Sanders from UCSF provided [PFB file](http://www.openbioinformatics.org/penncnv/download/YALE_Merged_PFB_hg19.pfb) for Illumina Omni 5 array, generated from 600 controls from the Simon Simplex Collection.
 
+- **Updated 2015Jun26**: Stephen Atkinson from Imperial College London provided [PFB file](http://www.openbioinformatics.org/penncnv/download/humancoreexome-12v1-1_a.pfb) for Illumina HumanCoreExome_v12-A beadchip, and an [HMM file](http://www.openbioinformatics.org/penncnv/download/exome.hmm) for this chip constrcuted by [Szatkiewicz et al](http://www.ncbi.nlm.nih.gov/pubmed/23938935).
+
 A few user contributed programs/scripts are provided below:
 
 - **User contributed programs (Uploaded 2010Dec01)**: The [penncnv_to_plink.pl](http://www.openbioinformatics.org/penncnv/download/penncnv_to_plink.pl) program can be used to convert PennCNV output into PLINK input format. Run it with -h argument to read the documentation. The program is written and provided by Matthew Gillman at the Wellcome Trust Sanger Institute.
 
-- **User contributed programs (Uploaded 2011Feb27)**: The [plot_raw_PennCNV.R](http://www.openbioinformatics.org/penncnv/download/plot_raw_PennCNV.R) program can plot from PennCNV rawcnv file on screen or to a high solution png file. Example screen shot [1](img/PennCNV_76neu_3unique_chr18.png), [2](img/PennCNV_76neu_3unique_chr22.png), [3](img/test_chr02.png) and [4](img/test_chr18.png). This program is written band provided by Dr. Bowang Chen. See updated script below.
+- **User contributed programs (Uploaded 2011Feb27)**: The [plot_raw_PennCNV.R](http://www.openbioinformatics.org/penncnv/download/plot_raw_PennCNV.R) program can plot from PennCNV rawcnv file on screen or to a high solution png file. Example screen shot [1](img/PennCNV_76neu_3unique_chr18.png), [2](../img/PennCNV_76neu_3unique_chr22.png), [3](../img/test_chr02.png) and [4](../img/test_chr18.png). This program is written band provided by Dr. Bowang Chen. See updated script below.
 
 - **User contributed programs (Uploaded 2012Jul16)**: The [plot_raw_PennCNV2PDF.R](http://www.openbioinformatics.org/penncnv/download/plot_raw_PennCNV2PDF.R) program can plot from PennCNV rawcnv file to a high solution PDF file. This new script exports all plots to a pdf file, by default 70 samples/page (can be changed by users). It is much fast now, it plots a 50000+ line raw file to a 400+ page pdf in ~2 minutes. Example output is here. Example command line is "R CMD BATCH --no-save --no-restore "--args filename=\"$filename\" PDFname=\"$PDFname\"" $path_R/plot_raw_PennCNV2PDF.R ". This program is written band provided by Dr. Bowang Chen@German Cancer Research Center.
 

@@ -134,6 +134,8 @@ The `scan_region.pl` program can perform these tasks using the UCSC genome annot
 
 The PennCNV program implements a very preliminary functionality of case-control association analysis, to identify a stretch of SNPs that tend to have copy number changes in cases versus controls using Fisher’s Exact Test. This function is very preliminary and very rough, but can be a first-pass effort to identify potentially interesting regions in a case-control setting.
 
+A more formal way to do case-control association analysis can be accomplished by ParseCNV, which is availalbe [here](http://parsecnv.sourceforge.net/). ParseCNV takes CNV calls as input and creates probe based statistics for CNV occurrence in (cases and controls, families, or population with quantitative trait) then calls CNVRs based on neighboring SNPs of similar significance. CNV calls may be from aCGH, SNP array, Exome Sequencing, or Whole Genome Sequencing.
+
 A phenotype file needs to be supplied for this analysis. The file contains two tab-delimited columns, representing file name and the disease label, respectively. The disease label can be 1 (indicating non-affected) or 2 (indicating affected), or can be “control” and “case”. In fact, The disease label can be anything: if using the “-control_label” argument, then any string that match the control label will be treated as controls, otherwise treated as cases. The following is an example phenofile:
 
 ```
