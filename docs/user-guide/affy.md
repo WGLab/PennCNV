@@ -2,7 +2,7 @@
 
 The procedure below outlines how to process raw CEL files and generates canonical genotype clusters, then convert signal intensity for each sample to LRR/BAF values, then generates CNV calls. For this protocol to work, one need to use at least 100 CEL files to generate a reasonably good clustering file. If the user has only a few CEL files, then it is necessary to use the default canonical clustering file in the PennCNV-Affy package, but in this case the CNV calls may not be reliable.
 
-![pipeline](img/penncnv_tutorial_affy_gw6_clip_image001.jpg)
+![pipeline](../img/penncnv_tutorial_affy_gw6_clip_image001.jpg)
 
 ## Step 1. Generate the signal intensity data based on raw CEL files
 

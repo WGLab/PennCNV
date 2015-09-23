@@ -18,11 +18,11 @@ NOTICE: Processing sample offspring.txt CNV chr3:3974670-4071644 with copy numbe
 
 This command basically check the ex1.rawcnv file for all CNV calls made on the signal file (`offspring.txt`), and then plot the signal intensity (LRR/BAF) for these CNV calls. The plotting function requires R to work, so make sure that your system has R installed. The output file names are shown above. One CN=0 example example is given below. We can see that the LRR drop to very low levels, yet BAF randomly distribute between 0 and 1. By default, the CNV region, as well as the left side and right side region with identical sizes, are shown in the figure, with the CNV marked by two gray vertical lines.
 
-![CN=0 call](img/offspring.txt.chr11.55127597.JPG)
+![CN=0 call](../img/offspring.txt.chr11.55127597.JPG)
 
 Another CN=1 example is shown below. The LRR drop to around -0.6 region, yet the BAF cluster around either 0 or 1, but not near 0.5. It is a de novo CNV, which can be furhter validated by the de novo validation procedure.
 
-![CN=1](img/offspring.txt.chr3.3974670.JPG)
+![CN=1](../img/offspring.txt.chr3.3974670.JPG)
 
 The visualize_cnv.pl plotting function is quite rudimentary. If you want really fancy output, you can edit the source code (search to the R code section) to modify the subroutine that generates R code.
 
@@ -43,11 +43,11 @@ The above command converts the CNV calls to BED format, with the track name as �
 
 Now go to http://www.genome.ucsc.edu/cgi-bin/hgGateway, make sure that the “genome” dropdown list is “human”, and the “assembly” dropdown list is “Mar 2006”. Click “add custom tracks” button, in the “paste URL or data” text box, click “browse …” and select the sampleall.bed file, then click “submit”. We will see the screen below:
 
-![cnv](img/penncnv_visualization_clip_image002.jpg)
+![cnv](../img/penncnv_visualization_clip_image002.jpg)
 
 Now click “go to genome browser”. In the “position/search” box, type a gene of interest, or a genomic region of interest (for example, try typing LRRN1), then use “zoom in” and “zoom out” to examine the genomic regions for CNVs. The offspring (sample3.txt) has a deletion CNV (marked as red box in the custom track) downstream of LRRN1. (However, UCSC known gene prediction shows that this deletion is within the UNQ3037 gene; in general, UCSC known gene annotation has more genes than RefSeq Gene annotations).
 
-![cnv](img/penncnv_visualization_clip_image004.jpg)
+![cnv](../img/penncnv_visualization_clip_image004.jpg)
 
 The track will be only visible to yourself in your web browser for a limited period of time: other people will be able to see it, so do not be afraid of uploading your data to UCSC Genome Browser.
 
@@ -72,13 +72,13 @@ NOTICE: converting the CNV call file sampleall.cnv into BeadStudio bookmark form
 
 Now we can go back to BeadStudio again, open the project file for the trio. Click “Tool” menu, click “show genome viewer…”. In the Genome Viewer window, click “View” menu, select “Bookmark viewer”. Then click “Import bookmark analysis file”, then select the sampelall.xml file to be loaded. We will see the window below:
 
-![cnv](img/penncnv_visualization_clip_image006.jpg)
+![cnv](../img/penncnv_visualization_clip_image006.jpg)
 
 Now click “Close” button, and then we can examine the CNV calls in the Illumina Genome Viewer now. An example of the de novo CNV is shown below:
 
-![cnv](img/penncnv_visualization_clip_image008.jpg)
+![cnv](../img/penncnv_visualization_clip_image008.jpg)
 
 Do make sure that “Immediate Mode” is checked, or click “Update Plots” every time when you change sample selections. Double clicking a region can zoom in the specific region for more detailed examination of the CNV calls. For example:
 
-![cnv](img/penncnv_visualization_clip_image010.jpg)
+![cnv](../img/penncnv_visualization_clip_image010.jpg)
 

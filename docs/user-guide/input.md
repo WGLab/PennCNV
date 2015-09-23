@@ -86,25 +86,25 @@ For this tutorial, we can download the tutorial project file as a single tutoria
                                   
 Now uncompress the ZIP file, and we will see a directory called "tutorial". Enter this directory, and then double click the project file tutorial.bsc. The BeadStudio software should be automatically invoked and the genotyping data will be loaded into the software interface:
 
-![beadstudio](img/penncnv_input_clip_image002.jpg)
+![beadstudio](../img/penncnv_input_clip_image002.jpg)
 
 Click the Column Chooser  button in the tool bar (the third button to the right), and the column chooser window will appear. Then select the desired columns (GType, Log R Ratio and B Allele Frequency) to be included in output files. For example, if you see that the B Allele Freq is shown in the Hidden Subcolumns box, you can select it, then click the <=Show button, so that it can be moved to the Displayed Subcolumns box. The Displayed Columns box should contain at least the Name field and all individual identifiers. It is strongly recommended to also include Chr and Position field here. You can hide things like Address and Index and move them to the Hidden Columns box.
 
 
-![beadstudio](img/penncnv_input_clip_image004.jpg)
+![beadstudio](../img/penncnv_input_clip_image004.jpg)
 
-![beadstudio](img/penncnv_input_clip_image006.jpg)
+![beadstudio](../img/penncnv_input_clip_image006.jpg)
 
 
 Now the BeadStudio window looks like below. Click the Select All Rows button (first button in the tool bar) to select all data:
 
-![beadstudio](img/penncnv_input_clip_image008.jpg)
+![beadstudio](../img/penncnv_input_clip_image008.jpg)
 
 Then click the Export Displayed Data to File button (the third button in toolbar), and save the file as something like tutorial.txt. This file will be a tab-delimited file, with one SNP per line, and each line contains genotype, log R Ratio and B Allele Frequency information for all individuals. (If you are using BeadStudio version 3, there will be a dialog asking whether you want to export all data, clicking either Yes or No is fine, since you have already selected all data). The file size for tutorial.txt is about 50MB for three individuals.
 
 > Tip: when your project file contains many (>1000) samples, the data export may be very slow (to see how fast the export process is, you can monitor the output file size and see how fast it grows, or you can use the Windows Task Manager to see the CPU usage: if CPU usage by beadstudio.exe is below 10% then you have a problem). To expedite the export process, you can use column chooser to make Index as Displayed Columns, then click Sort to sort by index, then hide the Index column by column chooser, then export the data again. When the data is sorted by index, the exporting is considerably faster for large sample size; however, in this case the marker positions are not sorted sequentially in the output file and may be inconvenient in follow-up analysis. The order of markers in output file does not affect CNV calling by PennCNV.
 
-![beadstudio](img/penncnv_input_clip_image010.jpg)
+![beadstudio](../img/penncnv_input_clip_image010.jpg)
 
 Now transfer the tutorial.txt file to a machine where PennCNV is installed, and we will use the PennCNV software to generate CNV calls for these three individuals.
 
