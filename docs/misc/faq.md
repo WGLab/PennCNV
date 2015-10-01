@@ -71,7 +71,7 @@ chr22:49191432-49691432
 
     For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-```
+    ```
     chr1:121100001-128000000
     chr2:91000001-95700000
     chr3:89400001-93200000
@@ -96,11 +96,11 @@ chr22:49191432-49691432
     chr22:9600001-16300000
     chrX:56600001-65000000
     chrY:11200001-12500000
-```
+    ```
 
-For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
+    For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-```
+    ```
     chr1:121500000-128900000
     chr2:90500000-96800000
     chr3:87900000-93900000
@@ -125,7 +125,7 @@ For centromeric regions, the following definition can be used (NCBI37/hg19 human
     chr22:12200000-17900000
     chrX:58100000-63000000
     chrY:11600000-13400000
-```
+    ```
 
 1. **Does chromosome X requires special handling?**
 
