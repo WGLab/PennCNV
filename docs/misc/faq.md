@@ -61,13 +61,13 @@
 
     The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
 
-```
+    ```
 chr1:1-500000
 chr1:246749719-247249719
 ......
 chr22:1-500000
 chr22:49191432-49691432
-```
+    ```
 
     For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
