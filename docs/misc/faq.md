@@ -136,7 +136,7 @@ PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1
 
     Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
 
-1. How to handle "weirld characters" in signal intensity files?
+1. **How to handle "weirld characters" in signal intensity files?**
 
     Sometimes, Illumina BeadStudio/Genome studio may export signal intensity values with weird characters. This could occur in non-English version of BeadStudio, in non-English version of Windows, in non-human SNP arrays, or any other reasons. For example, the LRR values for several markers in a file may display as "ABCDE" rather than a number, and PennCNV will ignore these values and ignore these markers in analysis. If they are "-inf" instead, PennCNV will treat them as -5. This should usually affect only a few markers for each sample.
 
