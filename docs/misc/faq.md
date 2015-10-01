@@ -131,17 +131,18 @@ chr22:49191432-49691432
 
     Yes. By default PennCNV only works on autosomes, without generating CNV calls for chrX and chrY. Several important issues for sex chromosome CNV calling are:
 
-    The -chrx argument should be used for chrX CNV calling.
-Whenever possible, the --sexfile argument should be used to specify sample sex. This is a tab-delimited two-column file, containing signal file names and sex (male or female).
-PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1 threshold is used by default and it works well for Illumina but not Affy arrays. The --bafxhet argument can be used to change this default value. This value is calculated as fraction of chrX markers with BAF values between 0.25 and 0.75, so it is not the same (but smaller) as genotype heterozygosity rate from your genotype calling software.
-Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
-How to handle "weirld characters" in signal intensity files?
+    The `-chrx` argument should be used for chrX CNV calling. Whenever possible, the `--sexfile` argument should be used to specify sample sex. This is a tab-delimited two-column file, containing signal file names and sex (male or female).
+PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1 threshold is used by default and it works well for Illumina but not Affy arrays. The `--bafxhet`argument can be used to change this default value. This value is calculated as fraction of chrX markers with BAF values between 0.25 and 0.75, so it is not the same (but smaller) as genotype heterozygosity rate from your genotype calling software.
+
+    Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
+
+1. How to handle "weirld characters" in signal intensity files?
 
     Sometimes, Illumina BeadStudio/Genome studio may export signal intensity values with weird characters. This could occur in non-English version of BeadStudio, in non-English version of Windows, in non-human SNP arrays, or any other reasons. For example, the LRR values for several markers in a file may display as "ABCDE" rather than a number, and PennCNV will ignore these values and ignore these markers in analysis. If they are "-inf" instead, PennCNV will treat them as -5. This should usually affect only a few markers for each sample.
 
     But some other times, all the signal intensity values are wrong so PennCNV will not work at all. For example, all the decimal points in LRR/BAF become "comma", so they are not valid numbers. In that case, users can do "perl -pe 's/,/./g' < inputfile > outputfile" to generate a new signal intensity file for CNV calling. One example is shown below:
 
-```
+    ```
 [kaiwang@cc ~]$ head -n 3 sample.split1
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0,1223288      0,5079593
@@ -153,7 +154,7 @@ Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio     
 rs109696 3       108367588       AB      -0.1223288      0.5079593
 rs109701 13      39306521        BB      -0.1577153      1
 rs109702 16      6508957 BB      -0.001872403    0.9723207
-```
+    ```
 
 1. **How to call CNVs if I have signal data for 50 SNPs in a candidate region?**
 
