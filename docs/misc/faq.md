@@ -51,6 +51,7 @@ scan_region.pl cnvcall imm_region -minqueryfrac 0.5 > cnvcall.imm
 fgrep -v -f cnvcall.imm cnvcall > cnvcall.clean
 ```
 
+
     This command first scan the cnvcall file against known immunoglobulin regions, and any CNV call that overlap with immunoglobulin regions are written to the cnvcall.imm file (the --minqueryfrac means that at least 50% of the length in the CNV call must overlap with the immunoglobulin region, to exclude cases where a very large CNV call happens to encompass the immunoglobulin regions). Then the fgrep program is used to remove these regions from the file and generate a cleaned cnvcall.clean file. The imm_region file contains immunoglobulin regions. For the 2006 human genome assembly, these four regions can be put into the file:
 
 ```
