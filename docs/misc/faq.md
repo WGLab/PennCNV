@@ -24,7 +24,7 @@
 
     To further understand this, one can open BeadStudio and examine by eye the mean intensity of chrX from multiple female individuals. The mean is not ZERO, but higher than ZERO, indicating that female chrX is not even similar to 2-copy autosomes. For more deails and discussions, refer to Sup Figure 1 of the 2007 PennCNV paper in Genome Research.
 
-1. ** How to use genomic wave adjustment independent of CNV calling?**
+1. **How to use genomic wave adjustment independent of CNV calling?**
 
     Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Email me for a script to generate GC model file for these custom arrays.
 
@@ -142,19 +142,20 @@ PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1
 
     But some other times, all the signal intensity values are wrong so PennCNV will not work at all. For example, all the decimal points in LRR/BAF become "comma", so they are not valid numbers. In that case, users can do "perl -pe 's/,/./g' < inputfile > outputfile" to generate a new signal intensity file for CNV calling. One example is shown below:
 
+    
     ```
 [kaiwang@cc ~]$ head -n 3 sample.split1
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0,1223288      0,5079593
 rs109701 13      39306521        BB      -0,1577153      1
 rs109702 16      6508957 BB      -0,001872403    0,9723207
-
 [kaiwang@cc ~]$ perl -pe 's/,/./g' < sample.split1 | head -n 3 
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0.1223288      0.5079593
 rs109701 13      39306521        BB      -0.1577153      1
 rs109702 16      6508957 BB      -0.001872403    0.9723207
     ```
+    
 
 1. **How to call CNVs if I have signal data for 50 SNPs in a candidate region?**
 
