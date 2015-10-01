@@ -46,7 +46,8 @@
 
     The CNV calls in immunoglobulin regions are most likely cell line artifact, so they should be removed as part of the QC procedure. The scan_region.pl program can be used to do this conveniently:
 
-```scan_region.pl cnvcall imm_region -minqueryfrac 0.5 > cnvcall.imm
+```
+scan_region.pl cnvcall imm_region -minqueryfrac 0.5 > cnvcall.imm
 fgrep -v -f cnvcall.imm cnvcall > cnvcall.clean
 ```
 
