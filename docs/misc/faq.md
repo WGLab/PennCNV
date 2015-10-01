@@ -48,12 +48,14 @@
 
     This command first scan the cnvcall file against known immunoglobulin regions, and any CNV call that overlap with immunoglobulin regions are written to the cnvcall.imm file (the --minqueryfrac means that at least 50% of the length in the CNV call must overlap with the immunoglobulin region, to exclude cases where a very large CNV call happens to encompass the immunoglobulin regions). Then the fgrep program is used to remove these regions from the file and generate a cleaned cnvcall.clean file. The imm_region file contains immunoglobulin regions. For the 2006 human genome assembly, these four regions can be put into the file:
 
+    
 ```
  chr22:20715572-21595082
  chr14:105065301-106352275
  chr2:88937989-89411302
  chr14:21159897-22090937
 ```
+    
 
 1. **How to remove CNV calls in centromeric and telomeric regions?**
 
@@ -181,15 +183,15 @@ rs109702 16      6508957 BB      -0.001872403    0.9723207
 
 1. **Is there other similar software for CNV calling?**
 
-Some of the free software for CNV calling from SNP arrays include QuantiSNP, cnvPartition, BirdSuite, dChip, CNAT, CNAG, GenoCN and CORKEN. There are two recent free review articles on SNP arrays and CNVs here and here. There are quite a few companies that sell CNV calling software as well, including GoldenHelix, Partek, Nexus Copy Number software.
+    Some of the free software for CNV calling from SNP arrays include QuantiSNP, cnvPartition, BirdSuite, dChip, CNAT, CNAG, GenoCN and CORKEN. There are two recent free review articles on SNP arrays and CNVs here and here. There are quite a few companies that sell CNV calling software as well, including GoldenHelix, Partek, Nexus Copy Number software.
 
 1. **How to call CNVs from tumor samples?**
 
-PennCNV considers normal copy to be 2 copies, and only gives integer estimate of copy number. For tumors, it is best to use an algorithm that specifically handles tumor samples, that gives continuous estimates of copy number and that accounts for aneuploidy levels as well as sample heterogeneity levels. This paper gives an overview of these issues and provides a software that only works in BeadStudio though. Other similar software include GAP, SOMATICs, GenoCN.
+    PennCNV considers normal copy to be 2 copies, and only gives integer estimate of copy number. For tumors, it is best to use an algorithm that specifically handles tumor samples, that gives continuous estimates of copy number and that accounts for aneuploidy levels as well as sample heterogeneity levels. This paper gives an overview of these issues and provides a software that only works in BeadStudio though. Other similar software include GAP, SOMATICs, GenoCN.
 
 1. **What published study used PennCNV?**
 
-Some citations can be found [here](http://scholar.google.com/scholar?q=penncnv&hl=en&btnG=Search&as_sdt=800000000001).
+    Some citations can be found [here](http://scholar.google.com/scholar?q=penncnv&hl=en&btnG=Search&as_sdt=800000000001).
 
 1. **What databases are available for checking CNVs?**
 
