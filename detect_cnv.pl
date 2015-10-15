@@ -3035,6 +3035,8 @@ sub calCC {
 	my (@newarray1, @newarray2);
 	@$array1 == @$array2 or print STDERR "WARNING: Unequal dimensions of arrays: ${\(scalar @$array1)} vs ${\(scalar @$array2)}\n";
 	for my $i (0 .. @$array1-1) {
+		defined $array1->[$i] or next;
+		defined $array2->[$i] or next;
 		$array1->[$i] eq 'NA' and next;
 		$array2->[$i] eq 'NA' and next;
 		push @newarray1, $array1->[$i];
