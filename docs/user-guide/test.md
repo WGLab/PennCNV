@@ -4,7 +4,7 @@ Suppose we already generated the necessary input signal intensity file, includin
 
 A general flowchart for CNV calling algorithm by PennCNV is described in the figure below:
 
-![flowchart_cnv_algorithm](img/penncnv_test_clip_image002.gif)
+![flowchart_cnv_algorithm](../img/penncnv_test_clip_image002.gif)
 
 As we can see from the flowchart, for CNV calling, we need to have LRR and BAF values (contained within the signal intensity file `sample*.txt`), the population frequency of B alleles and SNP genome coordinates (contained within the file `hh550.hg18.pfb`), and an appropriate HMM model (contained within the hh550.hmm file).
 

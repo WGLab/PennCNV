@@ -24,7 +24,7 @@
 
     To further understand this, one can open BeadStudio and examine by eye the mean intensity of chrX from multiple female individuals. The mean is not ZERO, but higher than ZERO, indicating that female chrX is not even similar to 2-copy autosomes. For more deails and discussions, refer to Sup Figure 1 of the 2007 PennCNV paper in Genome Research.
 
-1. ** How to use genomic wave adjustment independent of CNV calling?**
+1. **How to use genomic wave adjustment independent of CNV calling?**
 
     Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Email me for a script to generate GC model file for these custom arrays.
 
@@ -44,118 +44,118 @@
 
 1. **How to remove CNV calls in immunoglobulin regions?**
 
-    The CNV calls in immunoglobulin regions are most likely cell line artifact, so they should be removed as part of the QC procedure. The scan_region.pl program can be used to do this conveniently:
-
-```scan_region.pl cnvcall imm_region -minqueryfrac 0.5 > cnvcall.imm
-fgrep -v -f cnvcall.imm cnvcall > cnvcall.clean
-```
+    The CNV calls in immunoglobulin regions are most likely cell line artifact, so they should be removed as part of the QC procedure. The `scan_region.pl` program can be used to do this conveniently: `scan_region.pl cnvcall imm_region -minqueryfrac 0.5 > cnvcall.imm; fgrep -v -f cnvcall.imm cnvcall > cnvcall.clean`
 
     This command first scan the cnvcall file against known immunoglobulin regions, and any CNV call that overlap with immunoglobulin regions are written to the cnvcall.imm file (the --minqueryfrac means that at least 50% of the length in the CNV call must overlap with the immunoglobulin region, to exclude cases where a very large CNV call happens to encompass the immunoglobulin regions). Then the fgrep program is used to remove these regions from the file and generate a cleaned cnvcall.clean file. The imm_region file contains immunoglobulin regions. For the 2006 human genome assembly, these four regions can be put into the file:
 
-```
-chr22:20715572-21595082
-chr14:105065301-106352275
-chr2:88937989-89411302
-chr14:21159897-22090937
-```
+    
+    ```
+ chr22:20715572-21595082
+ chr14:105065301-106352275
+ chr2:88937989-89411302
+ chr14:21159897-22090937
+    ```
+    
 
 1. **How to remove CNV calls in centromeric and telomeric regions?**
 
-The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
+    The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
 
-```
+    ```
 chr1:1-500000
 chr1:246749719-247249719
 ......
 chr22:1-500000
 chr22:49191432-49691432
-```
+    ```
 
-For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
+    For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-```
-chr1:121100001-128000000
-chr2:91000001-95700000
-chr3:89400001-93200000
-chr4:48700001-52400000
-chr5:45800001-50500000
-chr6:58400001-63400000
-chr7:57400001-61100000
-chr8:43200001-48100000
-chr9:46700001-60300000
-chr10:38800001-42100000
-chr11:51400001-56400000
-chr12:33200001-36500000
-chr13:13500001-18400000
-chr14:13600001-19100000
-chr15:14100001-18400000
-chr16:34400001-40700000
-chr17:22100001-23200000
-chr18:15400001-17300000
-chr19:26700001-30200000
-chr20:25700001-28400000
-chr21:10000001-13200000
-chr22:9600001-16300000
-chrX:56600001-65000000
-chrY:11200001-12500000
-```
+    ```
+    chr1:121100001-128000000
+    chr2:91000001-95700000
+    chr3:89400001-93200000
+    chr4:48700001-52400000
+    chr5:45800001-50500000
+    chr6:58400001-63400000
+    chr7:57400001-61100000
+    chr8:43200001-48100000
+    chr9:46700001-60300000
+    chr10:38800001-42100000
+    chr11:51400001-56400000
+    chr12:33200001-36500000
+    chr13:13500001-18400000
+    chr14:13600001-19100000
+    chr15:14100001-18400000
+    chr16:34400001-40700000
+    chr17:22100001-23200000
+    chr18:15400001-17300000
+    chr19:26700001-30200000
+    chr20:25700001-28400000
+    chr21:10000001-13200000
+    chr22:9600001-16300000
+    chrX:56600001-65000000
+    chrY:11200001-12500000
+    ```
 
-For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
+    For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-```
-chr1:121500000-128900000
-chr2:90500000-96800000
-chr3:87900000-93900000
-chr4:48200000-52700000
-chr5:46100000-50700000
-chr6:58700000-63300000
-chr7:58000000-61700000
-chr8:43100000-48100000
-chr9:47300000-50700000
-chr10:38000000-42300000
-chr11:51600000-55700000
-chr12:33300000-38200000
-chr13:16300000-19500000
-chr14:16100000-19100000
-chr15:15800000-20700000
-chr16:34600000-38600000
-chr17:22200000-25800000
-chr18:15400000-19000000
-chr19:24400000-28600000
-chr20:25600000-29400000
-chr21:10900000-14300000
-chr22:12200000-17900000
-chrX:58100000-63000000
-chrY:11600000-13400000
-```
+    ```
+    chr1:121500000-128900000
+    chr2:90500000-96800000
+    chr3:87900000-93900000
+    chr4:48200000-52700000
+    chr5:46100000-50700000
+    chr6:58700000-63300000
+    chr7:58000000-61700000
+    chr8:43100000-48100000
+    chr9:47300000-50700000
+    chr10:38000000-42300000
+    chr11:51600000-55700000
+    chr12:33300000-38200000
+    chr13:16300000-19500000
+    chr14:16100000-19100000
+    chr15:15800000-20700000
+    chr16:34600000-38600000
+    chr17:22200000-25800000
+    chr18:15400000-19000000
+    chr19:24400000-28600000
+    chr20:25600000-29400000
+    chr21:10900000-14300000
+    chr22:12200000-17900000
+    chrX:58100000-63000000
+    chrY:11600000-13400000
+    ```
 
 1. **Does chromosome X requires special handling?**
 
     Yes. By default PennCNV only works on autosomes, without generating CNV calls for chrX and chrY. Several important issues for sex chromosome CNV calling are:
 
-    The -chrx argument should be used for chrX CNV calling.
-Whenever possible, the --sexfile argument should be used to specify sample sex. This is a tab-delimited two-column file, containing signal file names and sex (male or female).
-PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1 threshold is used by default and it works well for Illumina but not Affy arrays. The --bafxhet argument can be used to change this default value. This value is calculated as fraction of chrX markers with BAF values between 0.25 and 0.75, so it is not the same (but smaller) as genotype heterozygosity rate from your genotype calling software.
-Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
-How to handle "weirld characters" in signal intensity files?
+    The `-chrx` argument should be used for chrX CNV calling. Whenever possible, the `--sexfile` argument should be used to specify sample sex. This is a tab-delimited two-column file, containing signal file names and sex (male or female).
+PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1 threshold is used by default and it works well for Illumina but not Affy arrays. The `--bafxhet`argument can be used to change this default value. This value is calculated as fraction of chrX markers with BAF values between 0.25 and 0.75, so it is not the same (but smaller) as genotype heterozygosity rate from your genotype calling software.
+
+    Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
+
+1. **How to handle "weirld characters" in signal intensity files?**
 
     Sometimes, Illumina BeadStudio/Genome studio may export signal intensity values with weird characters. This could occur in non-English version of BeadStudio, in non-English version of Windows, in non-human SNP arrays, or any other reasons. For example, the LRR values for several markers in a file may display as "ABCDE" rather than a number, and PennCNV will ignore these values and ignore these markers in analysis. If they are "-inf" instead, PennCNV will treat them as -5. This should usually affect only a few markers for each sample.
 
     But some other times, all the signal intensity values are wrong so PennCNV will not work at all. For example, all the decimal points in LRR/BAF become "comma", so they are not valid numbers. In that case, users can do "perl -pe 's/,/./g' < inputfile > outputfile" to generate a new signal intensity file for CNV calling. One example is shown below:
 
-```
+    
+    ```
 [kaiwang@cc ~]$ head -n 3 sample.split1
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0,1223288      0,5079593
 rs109701 13      39306521        BB      -0,1577153      1
 rs109702 16      6508957 BB      -0,001872403    0,9723207
-
 [kaiwang@cc ~]$ perl -pe 's/,/./g' < sample.split1 | head -n 3 
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0.1223288      0.5079593
 rs109701 13      39306521        BB      -0.1577153      1
 rs109702 16      6508957 BB      -0.001872403    0.9723207
-```
+    ```
+    
 
 1. **How to call CNVs if I have signal data for 50 SNPs in a candidate region?**
 
@@ -185,15 +185,15 @@ rs109702 16      6508957 BB      -0.001872403    0.9723207
 
 1. **Is there other similar software for CNV calling?**
 
-Some of the free software for CNV calling from SNP arrays include QuantiSNP, cnvPartition, BirdSuite, dChip, CNAT, CNAG, GenoCN and CORKEN. There are two recent free review articles on SNP arrays and CNVs here and here. There are quite a few companies that sell CNV calling software as well, including GoldenHelix, Partek, Nexus Copy Number software.
+    Some of the free software for CNV calling from SNP arrays include QuantiSNP, cnvPartition, BirdSuite, dChip, CNAT, CNAG, GenoCN and CORKEN. There are two recent free review articles on SNP arrays and CNVs here and here. There are quite a few companies that sell CNV calling software as well, including GoldenHelix, Partek, Nexus Copy Number software.
 
 1. **How to call CNVs from tumor samples?**
 
-PennCNV considers normal copy to be 2 copies, and only gives integer estimate of copy number. For tumors, it is best to use an algorithm that specifically handles tumor samples, that gives continuous estimates of copy number and that accounts for aneuploidy levels as well as sample heterogeneity levels. This paper gives an overview of these issues and provides a software that only works in BeadStudio though. Other similar software include GAP, SOMATICs, GenoCN.
+    PennCNV considers normal copy to be 2 copies, and only gives integer estimate of copy number. For tumors, it is best to use an algorithm that specifically handles tumor samples, that gives continuous estimates of copy number and that accounts for aneuploidy levels as well as sample heterogeneity levels. This paper gives an overview of these issues and provides a software that only works in BeadStudio though. Other similar software include GAP, SOMATICs, GenoCN.
 
 1. **What published study used PennCNV?**
 
-Some citations can be found [here](http://scholar.google.com/scholar?q=penncnv&hl=en&btnG=Search&as_sdt=800000000001).
+    Some citations can be found [here](http://scholar.google.com/scholar?q=penncnv&hl=en&btnG=Search&as_sdt=800000000001).
 
 1. **What databases are available for checking CNVs?**
 

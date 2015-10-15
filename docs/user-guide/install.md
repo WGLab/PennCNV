@@ -46,11 +46,11 @@ We first need to download and save the PennCNV package as zip file from a web br
 
 We next need to install cygwin in the system. Do make sure that you select the devel package during cygwin installation, since the devel package is NOT selected in default installation process. (Basically by clicking the word next to devel in the package-selection dialog, you will see the option cycle through default, reinstall, uninstall and install: stop clicking when seeing install as the option and then go the next installation step (see figure below). Depending on your network connection speed and computer speed, it may take 5-30 minutes for downloading the package and another 5-10 minutes to install the package.
 
-![cygwin install](img/penncnv_installation_clip_image001.jpg)
+![cygwin install](../img/penncnv_installation_clip_image001.jpg)
 
 After cygwin is installed in your system, you can then open the Cygwin BASH shell and run PennCNV program from there. Note that in cygwin, to access the `penncnv/` directory in local hard drive, we need to use a pathname similar to `cd /cygdrive/c/penncnv`, rather than `cd c:\penncnv`. When running the `detect_cnv.pl` program, if you see an error message, it possibly indicates that the devel package has not been installed in cygwin environment.
 
-![cygwin command](img/penncnv_installation_clip_image002.jpg)
+![cygwin command](../img/penncnv_installation_clip_image002.jpg)
 
 ### Windows system with ActivePerl
 
@@ -60,7 +60,7 @@ Like the last section, we first need to download and uncompress the PennCNV pack
 
 Now we can open a Windows command shell (click the start, then click Run, then type in cmd, then type enter). Go to the directory where PennCNV is installed (for example, `cd c:\penncnv`), then type `perl .\detect_cnv.pl`, and we should see the program usage information here. In fact, we can also try typing `.\detect_cnv.pl` directly, and it should also work (if ActivePerl is installed with default options for handling \*.pl extensions). See example below.
 
-![windows command](img/penncnv_installation_clip_image003.jpg)
+![windows command](../img/penncnv_installation_clip_image003.jpg)
 
 ## Mac OS X
 
