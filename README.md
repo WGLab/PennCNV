@@ -1,3 +1,5 @@
+![Logo](http://genomics.usc.edu/images/lab/logo/penncnv.png)
+
 # Introduction to the PennCNV software
 
 PennCNV is a free software tool for Copy Number Variation (CNV) detection from SNP genotyping arrays. Currently it can handle signal intensity data from Illumina and Affymetrix arrays. With appropriate preparation of file format, it can also handle other types of SNP arrays and oligonucleotide arrays.
