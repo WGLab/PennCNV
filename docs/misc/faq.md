@@ -165,7 +165,7 @@ rs109702 16      6508957 BB      -0.001872403    0.9723207
 
 1. **How to identify a subset of the most confident de novo CNV calls?**
 
-    The 2009Aug27 vesion of PennCNV added a script for validating de novo CNVs and assigning P-values to de novo calls. If you want to know whether a particularly interesting de novo CNV is real or not, or if you want to select a set of most confident de novo CNVs for experimental validation, then this program should definitely be used. Check it out here.
+    The 2009Aug27 vesion of PennCNV added a script for validating de novo CNVs and assigning P-values to de novo calls. If you want to know whether a particularly interesting de novo CNV is real or not, or if you want to select a set of most confident de novo CNVs for experimental validation, then this program should definitely be used. Check it out [here](../user-guide/denovo.md).
 
 1. **Can PennCNV give allele-specific CNV calls?**
 
