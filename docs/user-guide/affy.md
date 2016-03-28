@@ -80,6 +80,8 @@ generate_affy_geno_cluster.pl AxiomGT1.calls.txt AxiomGT1.confidences.txt AxiomG
 normalize_affy_geno_cluster.pl batch1.genocluster AxiomGT1.summary.txt -nopower2 -locfile mapfileAX.dat -out batch1_lrr_baf.txt
 ```
 
+Please note the `-nopower2` argument above. The signal intensity values have not been log2 normalized, so the `-nopower2` argument is needed.
+
 Then follow the PennCNV-Affy workflow. 
 
 ### - Subsetp 1.2 Allele-specific signal extraction from CEL files
