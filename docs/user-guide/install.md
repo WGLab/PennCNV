@@ -137,7 +137,7 @@ regtool -v list /HKLM/Software/Cygnus\ Solutions/Cygwin
 
     **Symptom**: when typing "make" to compile the program, gcc complains that " /usr/bin/ld: cannot find -lperl"
 
-    **Solution**: The error is caused by the fact that perl is not installed in a standard way so the path to libperl is not annotated in the "perl -MExtUtils::Embed -e ldopts" command output.
+    **Solution**: The error is caused by the fact that perl is not installed in a standard way so the path to libperl is not annotated in the "perl -MExtUtils::Embed -e ldopts" command output. (Sometimes this issue can be easily solved by `sudo apt-get install libperl-dev` in Ubuntu.)
 If you run "perl -V", you can try to find something like"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE" in the dynamic linking section. Now make sure that the"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/libperl.so"
 file actually exist. Then in the Makefile, just add"-L/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/" to the command it should fix the problem.
 
