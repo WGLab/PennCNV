@@ -133,13 +133,14 @@ sub readMarkerPos {
 
 	open (SIG, $signalfile) or confess "Error: cannot read from file $signalfile: $!";
 	$header = <SIG>;
-	$header =~ m/(.+)Pos/ or confess "error: the header file of signalfile $signalfile does not contain Pos annotation";
+	defined $header or die "Error: signal file does not contain header line\n";
+	$header =~ m/(.+)Pos/ or confess "error: the header line of signalfile $signalfile does not contain Pos annotation: <$header>";
 	$header_seg = $1;
 	$pos_index = ($header_seg =~ tr/\t/\t/+0);
-	$header =~ m/(.+)Chr/ or confess "error: the header file of signalfile $signalfile does not contain Chr annotation";
+	$header =~ m/(.+)Chr/ or confess "error: the header line of signalfile $signalfile does not contain Chr annotation: <$header>";
 	$header_seg = $1;
 	$chr_index = ($header_seg =~ tr/\t/\t/+0);
-	$header =~ m/(.*)Name/ or confess "error: the header file of signalfile $signalfile does not contain Name annotation";
+	$header =~ m/(.*)(Name|SNP)/ or confess "error: the header line  of signalfile $signalfile does not contain Name/SNP annotation: <$header>";
 	$header_seg = $1;
 	$name_index = ($header_seg =~ tr/\t/\t/+0);
 	

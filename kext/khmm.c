@@ -1314,7 +1314,7 @@ void ViterbiLogNP_SEQ (CHMM *phmm, int T, double k, double theta, double *O1, in
                 if (delta[T][i] > *pprob) {
                         *pprob = delta[T][i];
                         q[T] = i;
-                        fprintf(stderr, "state i=%i is better than prob=$f\n", i, *pprob);
+                        fprintf(stderr, "state i=%i is better than prob=%f\n", i, *pprob);
 
                 }
         }
