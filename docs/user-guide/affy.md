@@ -72,6 +72,8 @@ The command generates 4 output files:
 * AxiomGT1.report.txt (contains various summaries for the samples analyzed, including the computed gender, call rate and heterozygosity).
 * AxiomGT1.summary.txt
 
+The manuscript reporting the above procedure has been published [here](http://www.sciencedirect.com/science/article/pii/S0006322316327111). Detailed procedure for CNV calling on the Axiom array can be found in the supplementary materials in the published manuscript.
+
 ### - Subsetp 1.2 Allele-specific signal extraction from CEL files
 
 This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here `allele-specific` refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
