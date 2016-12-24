@@ -26,7 +26,7 @@
 
 1. **How to use genomic wave adjustment independent of CNV calling?**
 
-    Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Email me for a script to generate GC model file for these custom arrays.
+    Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Use the `cal_gc_snp.pl` script to generate GC model file for these custom arrays.
 
 1. **A sample generates >1000 CNV calls, whats wrong?**
 
@@ -165,7 +165,7 @@ rs109702 16      6508957 BB      -0.001872403    0.9723207
 
 1. **How to identify a subset of the most confident de novo CNV calls?**
 
-    The 2009Aug27 vesion of PennCNV added a script for validating de novo CNVs and assigning P-values to de novo calls. If you want to know whether a particularly interesting de novo CNV is real or not, or if you want to select a set of most confident de novo CNVs for experimental validation, then this program should definitely be used. Check it out here.
+    The 2009Aug27 vesion of PennCNV added a script for validating de novo CNVs and assigning P-values to de novo calls. If you want to know whether a particularly interesting de novo CNV is real or not, or if you want to select a set of most confident de novo CNVs for experimental validation, then this program should definitely be used. Check it out [here](../user-guide/denovo.md).
 
 1. **Can PennCNV give allele-specific CNV calls?**
 

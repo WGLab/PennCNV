@@ -60,6 +60,20 @@ Follow the same procedure as 500K array, but download the specific cdf files fro
 [kaiwang@cc ~/]$ apt-probeset-genotype -c CD_Mapping50K_Xba240_rev3/Full/Mapping50K_Xba240/LibFiles/Mapping50K_Xba240.CDF --chrX-snps CD_Mapping50K_Xba240_rev3/Full/Mapping50K_Xba240/LibFiles/Mapping50K_Xba240.chrx --out-dir apt_xba *.CEL
 ```
 
+**Axiom array**
+
+The instructions below were provided by Professor George Kirov at Cardiff University.
+
+Using APT: `apt-probeset-genotype --analysis-files-path Axiom_UKB_WCSG.xml --out-dir Batch1 --summaries --cel-files list_CEL_files.txt` (The user has to choose the appropriate `Axiom_UKB_WCSG.xml` file that suits their analysis). Follow instructions provided by APT.
+
+The command generates 4 output files:
+* AxiomGT1.calls.txt
+* AxiomGT1.confidences.txt (contains confidences for the genotype calls).
+* AxiomGT1.report.txt (contains various summaries for the samples analyzed, including the computed gender, call rate and heterozygosity).
+* AxiomGT1.summary.txt
+
+The manuscript reporting the above procedure has been published [here](http://www.sciencedirect.com/science/article/pii/S0006322316327111). Detailed procedure for CNV calling on the Axiom array can be found in the supplementary materials in the published manuscript.
+
 ### - Subsetp 1.2 Allele-specific signal extraction from CEL files
 
 This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here `allele-specific` refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
@@ -158,15 +172,36 @@ Similar command as genome-wide arrays should be used for Nsp and Sty array separ
 
 Same as above. Get the PFB file here. It functions both as a --locfile in the command line above, and as a --pfbfile in CNV calling later on.
 
+
+**Axiom array**
+
+Next, use PennCNV-Affy: 
+
+```
+generate_affy_geno_cluster.pl AxiomGT1.calls.txt AxiomGT1.confidences.txt AxiomGT1.summary.txt --nopower2 -locfile mapfile.dat -sexfile sex_batch1.txt -out batch1.genocluster`
+```
+
+Please note the `-nopower2` argument above. The signal intensity values have not been log2 normalized, so the `-nopower2` argument is needed.
+
+Then follow the PennCNV-Affy workflow. 
+
 ### - Substep 1.4 LRR and BAF calculation
 
-This step use the allele-specific signal intensity measures generated from the last step to calculate the Log R Ratio (LRR) values and the B Allele Frequency (BAF) values for each marker in each individual. The normalize_affy_geno_cluster.pl program in the downloaded PennCNV-Affy package (see gw6/bin/ directory) is used:
+This step use the allele-specific signal intensity measures generated from the last step to calculate the Log R Ratio (LRR) values and the B Allele Frequency (BAF) values for each marker in each individual. The `normalize_affy_geno_cluster.pl` program in the downloaded PennCNV-Affy package (see gw6/bin/ directory) is used:
 
 ```
 [kai@cc ~/]$ normalize_affy_geno_cluster.pl gw6.genocluster quant-norm.pm-only.med-polish.expr.summary.txt -locfile ../lib/affygw6.hg18.pfb -out gw6.lrr_baf.txt
 ```
 
-The above command generates LRR and BAF values using the summary file generated in last step, and using a cluster file called gw6.genocluster generated in the last step. The location file specifies the chromosome position of each SNP or CN probe, and this information is printed in the output files as well to facilitate future data processing.
+The above command generates LRR and BAF values using the summary file generated in last step, and using a cluster file called `gw6.genocluster` generated in the last step. The location file specifies the chromosome position of each SNP or CN probe, and this information is printed in the output files as well to facilitate future data processing.
+
+For axiom array, this command is used:
+
+```
+normalize_affy_geno_cluster.pl batch1.genocluster AxiomGT1.summary.txt -nopower2 -locfile mapfileAX.dat -out batch1_lrr_baf.txt
+```
+
+Please note the `-nopower2` argument above. The signal intensity values have not been log2 normalized, so the `-nopower2` argument is needed.
 
 For a typical modern computer, the command should take several hours to process files generated from 1000-2000 CEL files. A new tab-delimited file called gw6.lrr_baf.txt will be generated that contains one SNP per line and one sample per two columns (LRR column and BAF column).
 

@@ -66,11 +66,15 @@ Now we can open a Windows command shell (click the start, then click Run, then t
 
 Users need to recompile the source code for execution in Mac OS. This information was provided by Markus Ringner: In the Makefile, replace `-shared` with `-dynamiclib`, replace `khmm.so` with `khmm.dylib`.
 
+## Using Docker image for PennCNV
+
+PennCNV has been dockerized by Roman Hillje at the University of Zurich, Switzerland. The docker image and related documentation are available at https://hub.docker.com/r/romanhaa/penncnv/. Please refer to the website for detailed instructions.
+
 ## Compilation from source
 
 Unless you are using Windows, compilation from source is always recommended.
 
-If using a very old machine with very old version of make program, the fancy characters like $@ and $^ in the Makefile may not be recognized correctly. If thats the case, just manually change the character to appropriate file names.
+If using a very old machine with very old version of make program, the fancy characters like $@ and $^ in the Makefile may not be recognized correctly. If that is the case, just manually change the character to appropriate file names.
 
 **Compilation in Cygwin**: change khmm.so to khmm.dll in the Makefile file before compilation.*
 
@@ -137,9 +141,9 @@ regtool -v list /HKLM/Software/Cygnus\ Solutions/Cygwin
 
     **Symptom**: when typing "make" to compile the program, gcc complains that " /usr/bin/ld: cannot find -lperl"
 
-    **Solution**: The error is caused by the fact that perl is not installed in a standard way so the path to libperl is not annotated in the "perl -MExtUtils::Embed -e ldopts" command output.
-If you run "perl -V", you can try to find something like"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE" in the dynamic linking section. Now make sure that the"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/libperl.so"
-file actually exist. Then in the Makefile, just add"-L/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/" to the command it should fix the problem.
+    **Solution**: The error is caused by the fact that perl is not installed in a standard way so the path to libperl is not annotated in the "perl -MExtUtils::Embed -e ldopts" command output. (Sometimes this issue can be easily solved by `sudo apt-get install libperl-dev` in Ubuntu.)
+
+    If you run "perl -V", you can try to find something like"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE" in the dynamic linking section. Now make sure that the"/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/libperl.so" file actually exist. Then in the Makefile, just add"-L/usr/lib64/perl5/5.8.8/x86_64-linux-thread-multi/CORE/" to the command it should fix the problem.
 
     To give a more clear example, suppose after using "perl -V", you know that the library "libperl.so" file is in the "/usr/lib"  folder. But if you run "perl -MExtUtils::Embed -e ldopts" you found the following: " -Wl,-E  -L/usr/local/lib  -L/usr/lib/perl/5.10/CORE -lperl -ldl -lm -lpthread -lc -lcrypt", so /usr/lib is not annotated here. 
 
