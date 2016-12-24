@@ -104,7 +104,7 @@ sub processArgument {
 	my @command_line = @ARGV;		#command line argument
 
 	GetOptions ('verbose|v'=>\$verbose, 'help|h'=>\$help, 'man|m'=>\$man, 
-		'train'=>\$train, 'ctrain'=>\$ctrain, 'test'=>\$test, 'trio'=>\$trio, 'quartet'=>\$quartet, 'joint'=>\$joint, 'summary'=>\$summary, 'cctest'=>\$cctest, 'validate'=>\$validate, 
+		'train'=>\$train, 'ctrain'=>\$ctrain, 'test|wgs'=>\$test, 'trio'=>\$trio, 'quartet'=>\$quartet, 'joint'=>\$joint, 'summary'=>\$summary, 'cctest'=>\$cctest, 'validate'=>\$validate, 
 		'hmmfile=s'=>\$hmmfile, 'pfbfile=s'=>\$pfbfile, 'cnvfile=s'=>\$cnvfile, 'output=s'=>\$output, 'sexfile=s'=>\$sexfile, 'logfile=s'=>\$logfile, 
 		'minsnp=i'=>\$minsnp, 'minlength=s'=>\$minlength, 'minconf=f'=>\$minconf,
 		'chrx'=>\$chrx, 'chry'=>\$chry, 'medianadjust!'=>\$medianadjust, 'bafadjust!'=>\$bafadjust, 'sdadjust!'=>\$sdadjust, 
@@ -2326,13 +2326,16 @@ sub validateRegion {
 		$nextstate > 4 and $stateindex--;
 		khmm::GetStateProb_CHMM ($hmm_model, @region_lrr-1, \@region_lrr, \@region_baf, \@region_pfb, \@region_snpdist, \$logprob, $nextstate);
 		push @logprob, [$logprob + log ($prior_prob->[$stateindex]), $nextstate];
-		push @rawll, $logprob;
+		#push @rawll, $logprob;
+		push @rawll, $logprob + log ($prior_prob->[$stateindex]);
 	}
 	
 	$valioutfh and print $valioutfh "$startsnp\t$endsnp\t", join ("\t", @rawll), "\n";
 	
 	@logprob = sort {$b->[0]<=>$a->[0]} @logprob;
-	my $beststate = $logprob[0]->[1];
+	my $beststate = $logprob[0]->[0];	#best state should be the first state! 20160621
+	$verbose and print STDERR "NOTICE: best state is $beststate\n";
+	
 	if ($chrx) {
 		$sample_sex or confess "Error: the sample_sex is not defined for chrX CNV calling\n";
 		if ($sample_sex eq 'male') {
@@ -3123,6 +3126,7 @@ sub median {
         Analysis Type:
  	    --train			train optimized HMM model (not recommended to use)
  	    --test			test HMM model to identify CNV
+            --wgs			test HMM model to identify CNV from transformed wgs data
  	    --trio			posterior CNV calls for father-mother-offspring trio
  	    --quartet			posterior CNV calls for quartet
  	    --joint			joint CNV calls for trio
@@ -3215,6 +3219,11 @@ previous versions of the program).
 
 generate CNV calls given a list of signal intensity files, a HMM model file and 
 a PFB file.
+
+=item B<--wgs>
+
+generate CNV calls given a list of signal intensity files, a HMM model file and
+a PFB file, which are transformed from whole-genome sequence data using PennCNV-Seq protocols.
 
 =item B<--trio>
 

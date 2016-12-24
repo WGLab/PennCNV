@@ -150,6 +150,7 @@ sub analyzeDeNovoCNV {
 	
 	if ($cf+$cm) {
 		my $p = khmm::bitest ($cf+$cm, $cf, 0.5) * 2;
+		$p > 1 and $p = 1;	#for sign test the bitest value may be over 1 (when there is 1 pos and 1 neg)
 		print STDERR "NOTICE: Evidence for parental origin for the putative de novo CNVs (de novo CN=$denovocn in trio @nffile ): Marker= ${\(scalar @$sigf)} Paternal_origin(F)= $cf Maternal_origin(M)= $cm P-value= $p\n";
 	} else {
 		print STDERR "NOTICE: No evidence of parental origin for the putative de novo CNVs (de novo CN=$denovocn in trio @nffile )\n";
