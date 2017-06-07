@@ -8,6 +8,7 @@ This website is built for the "original" Perl/C-based PennCNV developed for SNP 
 
 ## What's new:
 
+- 20170606: Zoltan Kutalik shared an article on how to improve PENNCNV CNV calls [here](https://www.ncbi.nlm.nih.gov/pubmed/27402902). They defined a new quality score (QS) estimating the probability of a CNV called by PennCNV to be confirmed by other software.
 - 20161024: Prof. George Kirov shared a recently published paper reporting the use of PennCNV on Affy Axiom arrays [here](http://www.sciencedirect.com/science/article/pii/S0006322316327111). Detailed procedure for CNV calling is given in the supplementary materials.
 - 20160805: PennCNV has been dockerized by Roman Hillje at the University of Zurich, Switzerland. The docker image and related documentation are available at https://hub.docker.com/r/romanhaa/penncnv/. 
 
