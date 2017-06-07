@@ -5,7 +5,7 @@ repo_name: GitHub
 site_description: PennCNV software distribution site
 site_author: Kai Wang, et al
 site_favicon: favicon.ico
-copyright: 2007-2015 PennCNV
+copyright: 2007-2017 PennCNV
 google_analytics: ['UA-7565671-1', 'www.openbioinformatics.org/penncnv']
 
 docs_dir: docs
