@@ -106,14 +106,14 @@ sub analyzeDeNovoCNV {
 			AA_BB_A=>'M',
 			BB_AA_A=>'F',
 			BB_AA_B=>'M',
-			AA_AB_AAB=>'F',
-			AA_AB_ABB=>'M',
-			AB_AA_AAB=>'M',
-			AB_AA_ABB=>'F',
-			BB_AB_ABB=>'F',
-			BB_AB_AAB=>'M',
-			AB_BB_ABB=>'M',
-			AB_BB_AAB=>'F'
+                        AA_AB_ABB=>'M',
+                        AB_AA_ABB=>'F',
+                        BB_AB_AAB=>'M',
+                        AB_BB_AAB=>'F',
+                        AA_BB_ABB=>'M',
+                        BB_AA_AAB=>'M',
+                        AA_BB_AAB=>'F',
+                        BB_AA_ABB=>'F'
 			);
 	
 	my ($sigf, $sigm, $sigo) = @$triosig;
