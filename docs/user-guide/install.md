@@ -7,16 +7,16 @@ Below are the instructions for installing PennCNV on various operating systems. 
 If using Linux/Unix system, we can run the wget command to download the program files in a local directory:
 
 ```
-[kai@adenine]$ wget http://www.openbioinformatics.org/penncnv/download/penncnv.latest.tar.gz
+[kai@adenine]$ wget https://github.com/WGLab/PennCNV/archive/v1.0.4.tar.gz
 ```
 
 Then we uncompress the downloaded file by the `tar` command, which automatically generate the penncnv/ directory containing executables and library files:
 
 ```
-[kai@adenine]$ tar xvfz penncnv.latest.tar.gz
+[kai@adenine]$ tar xvfz v1.0.4.tar.gz
 ```
 
-We will see the new directory called `penncnv/`, enter this directory, and we will see several Perl programs (file name in the \*.pl format), as well as a `kext/`, `lib/`, `docs/` and `example/` subdirectory. Next, enter the `kext/` directory, optionally make change to the `Makefile`, and type `make`. If there is no error message, the installation is done!
+We will see the new directory, enter this directory, and we will see several Perl programs (file name in the \*.pl format), as well as a `kext/`, `lib/`, `docs/` and `example/` subdirectory. Next, enter the `kext/` directory, optionally make change to the `Makefile`, and type `make`. If there is no error message, the installation is done!
 
 Now try to run the `detect_cnv.pl` program:
 
