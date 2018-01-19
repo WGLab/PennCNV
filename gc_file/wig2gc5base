@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+tab  = '\t'
+endl = '\n'
+arg = sys.argv[1:]
+
+usage = 'wig2gc5base <in.wig> <gc5Base.txt>'
+argc  = 2 
+
+def main():
+    if len(arg) < argc:
+        print usage
+        sys.exit()
+
+
+    in_wig_file = arg.pop(0)
+    out_gc_file = arg.pop(0)
+
+    index_bin = 585
+    count = 1024
+    span = 5
+    source_file = 'hg38.gc5Base.bw'
+
+    in_wig_fp = open(in_wig_file, 'r')
+    out_gc_fp = open(out_gc_file, 'w')
+    gc_list = list()
+    chrm = ''
+    start = -1 
+    end = -1 
+    offset = 0
+    interval_id = 0
+    name = chrm + '.%d' % interval_id
+    valid_count = 0
+    sum_data = 0
+    sum_sqr = 0
+    curr_pos = 0
+    while 1:
+        line = in_wig_fp.readline()
+        if not line: break
+        if line[0:4] == 'vari':
+            print line
+            if len(gc_list) > 0:
+                sum_data = sum(gc_list)
+                sum_sqr = get_sum_sqr(gc_list)
+
+                lowerLimit = min(gc_list)
+                upperLimit = max(gc_list)
+                dataRange = upperLimit - lowerLimit
+
+                name = chrm + '.%d' % interval_id
+                valid_count = len(gc_list)
+                out_gc_fp.write('%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\t%.f\t%.f\n' % (index_bin, chrm, start-1, end, name, span, valid_count, offset, source_file, lowerLimit, dataRange, valid_count, sum_data, sum_sqr) ) 
+                offset += valid_count 
+                interval_id += 1
+
+                gc_list = list()
+
+            line = line.strip().split(' ')
+            for item in line:
+                if 'chrom' in item:
+                    item = item.split('=')
+                    chrm = item[1]        
+
+            start = -1
+            end = -1
+            continue
+        else: 
+            line = line.strip().split(tab)
+            curr_pos = int(line[0])
+            if start == -1: start = curr_pos 
+            if curr_pos + 4 - start < 5120: 
+                gcvalue = float(line[1])
+                gc_list.append(gcvalue)
+                end = curr_pos + 4
+            else:
+                sum_data = sum(gc_list)
+                sum_sqr = get_sum_sqr(gc_list)
+
+                lowerLimit = min(gc_list)
+                upperLimit = max(gc_list)
+                dataRange = upperLimit - lowerLimit
+
+                name = chrm + '.%d' % interval_id
+                valid_count = len(gc_list)
+                out_gc_fp.write('%d\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\t%.f\t%.f\n' % (index_bin, chrm, start-1, end, name, span, valid_count, offset, source_file, lowerLimit, dataRange, valid_count, sum_data, sum_sqr) ) 
+                interval_id += 1
+                offset += valid_count 
+
+                gc_list = list()
+                start = curr_pos 
+                end = curr_pos + 4
+                gcvalue = float(line[1])
+                gc_list.append(gcvalue)
+
+    in_wig_fp.close()
+    out_gc_fp.close()
+
+def get_sum_sqr(in_list):
+    sum_sqr = 0
+    for num in in_list:
+        sum_sqr += num * num
+
+    return sum_sqr
+
+if __name__ == '__main__':
+    main()
