@@ -9,6 +9,7 @@ use lib $_, $_."kext";
 eval {
 	require "khmm.pm";
 };
+
 if ($@ and $@ =~ m/^Can't locate loadable object/ || $@ =~ m/^Floating point exception/ || $@ =~ m/^Core dumped/) {	#'
 	require Config;
 	my $arch = $Config::Config{archname} || 'UNKNOWN';
@@ -33,11 +34,7 @@ our $LAST_CHANGED_DATE =	'$LastChangedDate: 2013-02-08 11:10:50 -0800 (Fri, 08 F
 
 our ($verbose, $help, $man);
 our ($inputfile, @inputfile);
-our ($train, $ctrain, $test, $hmmfile, $region, $loh, $minsnp, $minlength, $minconf,
-	$pfbfile, $trio, $quartet, $chrx, $chry, $medianadjust, $cnvfile, $heterosomic_threshold, $denovo_rate, $sdadjust, $bafadjust, $sexfile,
-	$fmprior, $listfile, $exclude_heterosomic, $output, $joint, $record_count, $logfile, $summary, $confidence, $tabout, $coordinate_from_input,
-	$gcmodelfile, $cctest, $phenofile, $onesided, $control_label, $type_filter, $directory, $flush, $validate, $delfreq, $dupfreq, $backfreq,
-	$startsnp, $endsnp, $candlist, $bafxhet_threshold, $valilog, $cnprior, $tseq, $gamma, $paramfile, $lastchr, $cache, $stroma);
+our ($train, $ctrain, $test, $hmmfile, $region, $loh, $minsnp, $minlength, $minconf, $pfbfile, $trio, $quartet, $chrx, $chry, $medianadjust, $cnvfile, $heterosomic_threshold, $denovo_rate, $sdadjust, $bafadjust, $sexfile, $fmprior, $listfile, $exclude_heterosomic, $output, $joint, $record_count, $logfile, $summary, $confidence, $tabout, $coordinate_from_input, $gcmodelfile, $cctest, $phenofile, $onesided, $control_label, $type_filter, $directory, $flush, $validate, $delfreq, $dupfreq, $backfreq, $startsnp, $endsnp, $candlist, $bafxhet_threshold, $valilog, $cnprior, $tseq, $gamma, $paramfile, $lastchr, $cache, $stroma, $refchr, $refgcfile, @ref_median);
 our (@fmprior, @cnprior, $gamma_k, $gamma_theta);
 
 
@@ -100,28 +97,37 @@ if ($train) {
 }
 
 #check the validity of arguments supplied to the program, and assign default values to various arguments
+
+sub read_refgcfile {
+	print $refgcfile."\n";
+	open (REFGC, $refgcfile) or confess "\nERROR: cannot read from refgcfile $refgcfile: $!\n";
+	chomp (@ref_median = <REFGC>);
+	close REFGC;
+}
+
 sub processArgument {
 	my @command_line = @ARGV;		#command line argument
 
-	GetOptions ('verbose|v'=>\$verbose, 'help|h'=>\$help, 'man|m'=>\$man, 
-		'train'=>\$train, 'ctrain'=>\$ctrain, 'test|wgs'=>\$test, 'trio'=>\$trio, 'quartet'=>\$quartet, 'joint'=>\$joint, 'summary'=>\$summary, 'cctest'=>\$cctest, 'validate'=>\$validate, 
-		'hmmfile=s'=>\$hmmfile, 'pfbfile=s'=>\$pfbfile, 'cnvfile=s'=>\$cnvfile, 'output=s'=>\$output, 'sexfile=s'=>\$sexfile, 'logfile=s'=>\$logfile, 
-		'minsnp=i'=>\$minsnp, 'minlength=s'=>\$minlength, 'minconf=f'=>\$minconf,
-		'chrx'=>\$chrx, 'chry'=>\$chry, 'medianadjust!'=>\$medianadjust, 'bafadjust!'=>\$bafadjust, 'sdadjust!'=>\$sdadjust, 
-		'heterosomic_threshold=i'=>\$heterosomic_threshold, 'denovo_rate=f'=>\$denovo_rate,
-		'fmprior=s'=>\$fmprior, 'listfile=s'=>\$listfile, 'exclude_heterosomic'=>\$exclude_heterosomic, 'record_count=i'=>\$record_count,
-		'confidence'=>\$confidence, 'tabout'=>\$tabout, 'loh'=>\$loh, 
-		'coordinate_from_input'=>\$coordinate_from_input, 'phenofile=s'=>\$phenofile,
-		'onesided'=>\$onesided, 'control_label=s'=>\$control_label, 'type_filter=s'=>\$type_filter, 'gcmodelfile|gcwavefile=s'=>\$gcmodelfile,
-		'directory=s'=>\$directory, 'flush!'=>\$flush, 'startsnp=s'=>\$startsnp, 'endsnp=s'=>\$endsnp, 'delfreq=f'=>\$delfreq, 'dupfreq=f'=>\$dupfreq,
-		'backfreq=f'=>\$backfreq, 'candlist=s'=>\$candlist, 'region=s'=>\$region, 'bafxhet=f'=>\$bafxhet_threshold, 'valilog=s'=>\$valilog, 'cnprior=s'=>\$cnprior,
-		'tseq'=>\$tseq, 'gamma=s'=>\$gamma, 'paramfile=s'=>\$paramfile, 'lastchr=i'=>\$lastchr, 'cache'=>\$cache, 'stroma=f'=>\$stroma,
-	) or pod2usage ();
-	
+		GetOptions ('verbose|v'=>\$verbose, 'help|h'=>\$help, 'man|m'=>\$man, 
+				'train'=>\$train, 'ctrain'=>\$ctrain, 'test|wgs'=>\$test, 'trio'=>\$trio, 'quartet'=>\$quartet, 'joint'=>\$joint, 'summary'=>\$summary, 'cctest'=>\$cctest, 'validate'=>\$validate, 
+				'hmmfile=s'=>\$hmmfile, 'pfbfile=s'=>\$pfbfile, 'cnvfile=s'=>\$cnvfile, 'output=s'=>\$output, 'sexfile=s'=>\$sexfile, 'logfile=s'=>\$logfile, 
+				'minsnp=i'=>\$minsnp, 'minlength=s'=>\$minlength, 'minconf=f'=>\$minconf,
+				'chrx'=>\$chrx, 'chry'=>\$chry, 'medianadjust!'=>\$medianadjust, 'bafadjust!'=>\$bafadjust, 'sdadjust!'=>\$sdadjust, 
+				'heterosomic_threshold=i'=>\$heterosomic_threshold, 'denovo_rate=f'=>\$denovo_rate,
+				'fmprior=s'=>\$fmprior, 'listfile=s'=>\$listfile, 'exclude_heterosomic'=>\$exclude_heterosomic, 'record_count=i'=>\$record_count,
+				'confidence'=>\$confidence, 'tabout'=>\$tabout, 'loh'=>\$loh, 
+				'coordinate_from_input'=>\$coordinate_from_input, 'phenofile=s'=>\$phenofile,
+				'onesided'=>\$onesided, 'control_label=s'=>\$control_label, 'type_filter=s'=>\$type_filter, 'gcmodelfile|gcwavefile=s'=>\$gcmodelfile,
+				'directory=s'=>\$directory, 'flush!'=>\$flush, 'startsnp=s'=>\$startsnp, 'endsnp=s'=>\$endsnp, 'delfreq=f'=>\$delfreq, 'dupfreq=f'=>\$dupfreq,
+				'backfreq=f'=>\$backfreq, 'candlist=s'=>\$candlist, 'region=s'=>\$region, 'bafxhet=f'=>\$bafxhet_threshold, 'valilog=s'=>\$valilog, 'cnprior=s'=>\$cnprior,
+				'tseq'=>\$tseq, 'gamma=s'=>\$gamma, 'paramfile=s'=>\$paramfile, 'lastchr=i'=>\$lastchr, 'cache'=>\$cache, 'stroma=f'=>\$stroma,
+				'refchr=s' => \$refchr, 'refgcfile=s' => \$refgcfile,
+				) or pod2usage ();
+
 	$help and pod2usage (-verbose=>1, -exitval=>1, -output=>\*STDOUT);
 	$man and pod2usage (-verbose=>2, -exitval=>1, -output=>\*STDOUT);
 
-	#CHECK THE NUMBER OF OPERATIONS SPECIFIED IN COMMAND LINE; ONE AND ONLY ONE OPERATION IS ALLOWED
+#CHECK THE NUMBER OF OPERATIONS SPECIFIED IN COMMAND LINE; ONE AND ONLY ONE OPERATION IS ALLOWED
 	my $num_operation = 0;
 	$train and $num_operation++;
 	$ctrain and $num_operation++;
@@ -137,7 +143,7 @@ sub processArgument {
 	$num_operation == 1 or pod2usage ("Error in argument: please specify one and only one operation such as --test, --trio, --quartet, --joint, --summary or --cctest");
 
 
-	#CHECK THE REQUIRED ARGUMENTS FOR EACH OPERATION; WARN THE USER ABOUT MISSING REQUIRED ARGUMENTS
+#CHECK THE REQUIRED ARGUMENTS FOR EACH OPERATION; WARN THE USER ABOUT MISSING REQUIRED ARGUMENTS
 	if ($train) {
 		defined $hmmfile and defined $pfbfile and defined $output or pod2usage ("Error in argument: please specify the -hmmfile, --pfbfile and --output arguments for the --train operation");
 	} elsif ($ctrain) {
@@ -161,7 +167,7 @@ sub processArgument {
 		} else {
 			defined $delfreq || defined $dupfreq or pod2usage ("Error in argument: please specify --delfreq or --dupfreq or --cnprior for the --validate operation when --candlist is not provided");
 			defined $startsnp and defined $endsnp or pod2usage ("Error in argument: please specify --startsnp and --endsnp for the --validate operation when --candlist is not provided");
-		
+
 			defined $delfreq and $delfreq <= 1 && $delfreq >=0 || pod2usage ("Error in argument: the --delfreq ($delfreq) must be between 0 and 1");
 			defined $dupfreq and $dupfreq <= 1 && $dupfreq >=0 || pod2usage ("Error in argument: the --delfreq ($dupfreq) must be between 0 and 1");
 			defined $delfreq and defined $dupfreq and $delfreq+$dupfreq<1 || pod2usage ("Error in argument: the sum of --delfreq ($delfreq) and --dupfreq ($dupfreq) must be less than 1");
@@ -181,9 +187,9 @@ sub processArgument {
 	} elsif ($tseq) {
 		defined $hmmfile or pod2usage ("Error in argument: please specify the -hmmfile arguments for the --tseq operation");
 	}
-	
-	
-	#CHECK OPERATION-SPECIFIC ARGUMENTS: PREVENT USER FROM SPECIFYING USELESS ARGUMENTS TO THE PROGRAM
+
+
+#CHECK OPERATION-SPECIFIC ARGUMENTS: PREVENT USER FROM SPECIFYING USELESS ARGUMENTS TO THE PROGRAM
 	if ($startsnp or $endsnp or defined $delfreq or defined $dupfreq or defined $backfreq or defined $candlist) {
 		$validate or pod2usage ("Error in argument: the --startsnp, --endsnp, --delfreq, --dupfreq, --backfreq or --candlist argument is only supported for the --validate operation");
 	}
@@ -218,7 +224,7 @@ sub processArgument {
 	if (defined $record_count) {
 		$ctrain or pod2usage ("Error in argument: the --record_count argument is only supported for the --ctrain operation");
 	}
-	#CNV-calling related arguments should not be specified when performing non-calling operations
+#CNV-calling related arguments should not be specified when performing non-calling operations
 	if ($chrx or $chry) {
 		$test or $trio or $quartet or $joint or $validate or pod2usage ("Error in argument: the --chrx or --chry argument is supported only for the --test, --trio, --quartet, --joint or --validation operations");
 	}
@@ -228,6 +234,23 @@ sub processArgument {
 	if ($gcmodelfile) {
 		$test or $trio or $quartet or $joint or $validate or pod2usage ("Error in argument: the --gcmodelfile argument is supported only for the --test, --trio, --quartet, --joint or --validation operations");
 	}
+	if (defined $refchr){
+		defined $refgcfile or pod2usage("Error in argument: the --refgcfile argument must be specified if --refchr is specified.")
+	}
+	if (defined $refgcfile){
+		defined $refchr or pod2usage("Error in argument: the --refchr argument must be specified if --refgcfile is specified.")
+	}
+	if (defined $refchr and defined $refgcfile){
+		$test or $trio or $quartet or $joint or $validate or pod2usage ("Error in argument: the --refchr and --refgcfile argument is supported only for the --test, --trio, --quartet, --joint or --validation operations");
+	}
+
+	if (defined $refgcfile) {
+		read_refgcfile (); 
+	}else{
+		$refchr = '11';
+		@ref_median = qw/54.8207535282258 56.8381472081218 53.1218950320513 46.9484174679487 39.9367227359694 38.3365384615385 41.9867788461538 40.4431401466837 44.5320512820513 42.1979166666667 41.6984215561224 43.1598557692308 43.4388020833333 40.8104967948718 39.8444475446429 41.5357572115385 38.7496995192308 45.0213249362245 42.3251201923077 43.5287459935897 40.7440808354592 37.0492788461538 36.5006009615385 35.8518016581633 35.2767427884615 35.1972155448718 36.5286192602041 39.4890825320513 36.5779246794872 36.7275641025641 38.3256935586735 37.791266025641 41.1777844551282 41.950534119898 42.3639823717949 41.9208733974359 41.2061543367347 35.4974959935897 35.2123397435897 36.5101841517857 36.7135416666667 36.8268229166667 37.6945153061224 40.7453926282051 47.7049278846154 47.3233173076923 44.7361288265306 46.6585536858974 39.1593549679487 36.5684789540816 38.2718466806667 37.184425 37.184425 37.184425 37.184425 35.9227764423077 41.1157852564103 41.6662348533163 39.7402844551282 40.0149238782051 46.6417211415816 49.9136618589744 45.2016225961538 51.3019172512755 52.0818309294872 51.1320112179487 49.9807185102302 49.9807185102302 49.5874473187766 50.547349024718 50.7186498397436 45.6435347576531 46.3352363782051 42.4091546474359 46.6399274553571 43.7746394230769 45.0160256410256 41.8526642628205 43.8899075255102 38.5112179487179 36.1038661858974 36.1689851721939 39.8506610576923 37.0439703525641 36.8012595663265 40.2521033653846 39.661858974359 37.5013769093564 35.5448717948718 36.9039979272959 35.2046274038462 38.2195512820513 40.074537627551 40.7097355769231 40.5470753205128 38.4104380072343 36.131109775641 35.3915264423077 34.9693080357143 36.2953725961538 37.9602363782051 39.1942362882653 37.4464142628205 36.8879206730769 35.7242588141026 36.7556202168367 37.0639022435897 40.6929086538462 38.385084502551 39.4121594551282 40.2410857371795 42.0772879464286 43.2935697115385 43.2345753205128 40.9113919005102 44.9575320512821 46.2513020833333 46.4753069196429 48.3886217948718 47.8520633012821 43.8001802884615 39.808274872449 44.5042067307692 38.3835136217949 44.9097177933673 45.5366586538462 41.7346754807692 39.2198461415816 41.9489182692308 44.3351362179487 42.7910754145408 42.3190104166667 42.0425681089744 47.0514787946429 45.3482603740699/;
+	}
+
 	if ($tabout or $coordinate_from_input) {
 		$test or $trio or $quartet or $joint or $validate or pod2usage ("Error in argument: the --tabout or --coordinate_from_input argument is supported only for the --test, --trio, --quartet, --joint or --validation operations");
 	}
@@ -253,8 +276,8 @@ sub processArgument {
 		close (PARAM);
 		$gamma_k or confess "Error: unable to read gamma values from the --paramfile $paramfile\n";
 	}
-	
-	#GET THE LIST OF INPUT FILE NAMES USED IN THE SUBSEQUENT ANALYSIS
+
+#GET THE LIST OF INPUT FILE NAMES USED IN THE SUBSEQUENT ANALYSIS
 	if (not $cctest and not $exclude_heterosomic) {		#these two operations do NOT require signal files as input
 		if (@ARGV) {
 			$listfile and pod2usage ("Error in argument: please do not specify the --listfile argument ($listfile) and provide signal file names (@ARGV) in command line simultaneously");
@@ -264,7 +287,7 @@ sub processArgument {
 			open (LIST, $listfile) or confess "\nERROR: cannot read from listfile $listfile: $!";
 			while (<LIST>) {
 				s/^\s+|\s*[\r\n]+$//g;		#get rid of leading and trailing spaces
-				$_ or print STDERR "WARNING: blank lins in $listfile detected and skipped\n" and next;
+					$_ or print STDERR "WARNING: blank lins in $listfile detected and skipped\n" and next;
 				if ($trio or $joint) {
 					m/^([^\t]+)\t([^\t]+)\t([^\t]+)$/ or confess "\nERROR: the --listfile should contain 3 tab-delimited file names per line for the --trio or --joint operation (invalid line found: <$_>)\n";
 					push @inputfile, $1, $2, $3;
@@ -279,32 +302,31 @@ sub processArgument {
 			close (LIST);
 		}
 	}
-	
-	
+
+
 	defined $flush or $flush = 1;
 	$flush and $| = 1;					#flush input/output buffer to minitor program progress in real time (when using remote connections)
 
-	if (defined $minlength) {
-		$minlength =~ m/^\d+(k|m)?$/i or pod2usage ("Error in argument: the --minlength argument should be a positive integer (suffix of k or m is okay)");
-		$minlength =~ s/k$/000/i;
-		$minlength =~ s/m$/000000/i;
-	}
+		if (defined $minlength) {
+			$minlength =~ m/^\d+(k|m)?$/i or pod2usage ("Error in argument: the --minlength argument should be a positive integer (suffix of k or m is okay)");
+			$minlength =~ s/k$/000/i;
+			$minlength =~ s/m$/000000/i;
+		}
 
 	defined $minconf and $confidence = 1;							#automatically set the --confidence argument to 1 for confidence score calculation
 
-	defined $hmmfile and readHMMFile ($hmmfile);						#check the validity of HMM file
+		defined $hmmfile and readHMMFile ($hmmfile);						#check the validity of HMM file
 
-	$minsnp ||= 3;										#by default only call CNVs containing more than or equal to 3 SNPs for Illumina HumanHap550 array
-	$heterosomic_threshold ||= 5;								#by default if there are more than 5 CNVs in the same chromosome with same CN state, it is likely to be caused by cell-line artifacts
-	$denovo_rate ||= 0.0001;								#by default de novo rate is 0.0001 (the rationale is that 1% individuals have denovo CNVs, but each individual may have 20-100 detectable CNVs, so the prior is somewhere around 0.0001 for any given CNV call)
-	defined $medianadjust or $medianadjust = 1;						#by default --medianadjust is turned on, since it usually improve calling
-	defined $sdadjust or $sdadjust = 1;							#as of Jan 2008, this is on by default (to reduce false positve rate for low-quality samples empirically)
-	defined $bafadjust or $bafadjust = 1;							#as of June 2008, this is on by default (to reduce false positve rate for low-quality samples empirically)
-	defined $bafxhet_threshold or $bafxhet_threshold = 0.1;					#as of Jan 2009, this becomes an argumen that user can change (by default is 10% markers have BAF around 0.5 the same is predicted as female; it works for Illumina SNP arrays well but not for Affy arrays).
-	$bafxhet_threshold > 0 and $bafxhet_threshold < 1 or pod2usage ("Error in argument: the --bafxhet argument ($bafxhet_threshold) should be between 0 and 1");
-	
+		$minsnp ||= 3;										#by default only call CNVs containing more than or equal to 3 SNPs for Illumina HumanHap550 array
+		$heterosomic_threshold ||= 5;								#by default if there are more than 5 CNVs in the same chromosome with same CN state, it is likely to be caused by cell-line artifacts
+		$denovo_rate ||= 0.0001;								#by default de novo rate is 0.0001 (the rationale is that 1% individuals have denovo CNVs, but each individual may have 20-100 detectable CNVs, so the prior is somewhere around 0.0001 for any given CNV call)
+		defined $medianadjust or $medianadjust = 1;						#by default --medianadjust is turned on, since it usually improve calling
+		defined $sdadjust or $sdadjust = 1;							#as of Jan 2008, this is on by default (to reduce false positve rate for low-quality samples empirically)
+		defined $bafadjust or $bafadjust = 1;							#as of June 2008, this is on by default (to reduce false positve rate for low-quality samples empirically)
+		defined $bafxhet_threshold or $bafxhet_threshold = 0.1;					#as of Jan 2009, this becomes an argumen that user can change (by default is 10% markers have BAF around 0.5 the same is predicted as female; it works for Illumina SNP arrays well but not for Affy arrays).
+		$bafxhet_threshold > 0 and $bafxhet_threshold < 1 or pod2usage ("Error in argument: the --bafxhet argument ($bafxhet_threshold) should be between 0 and 1");
+
 	$chrx and $chry and pod2usage ("Error in argument: please do not specify --chrx and --chry simultaneously");
-	$chry and pod2usage ("Error in argument: the --chry argument is not supported by this version of PennCNV yet");
 	if ($chrx or $chry) {
 		$chrx and $chry and pod2usage ("Error in argument: please do NOT specify both --chrx and --chry argument");
 		$region and pod2usage ("Error in argument: the --region argument should NOT be specified when --chrx or --chry is provided");
@@ -324,28 +346,28 @@ sub processArgument {
 	} else {
 		$region ||= "1-$lastchr";
 	}
-	
+
 	if (defined $type_filter) {
 		$type_filter eq 'dup' or $type_filter eq 'del' or pod2usage ("Error in argument: the --type_filter can be only 'del' or 'dup' but not '$type_filter'");
 	}
 	$control_label ||= 'control';								#default text label for control is "control" (or the number 1)
 
-	if ($fmprior) {
-		@fmprior = split (/,/, $fmprior);
-		map {s/^$/0/} @fmprior;								#handle situations where no number is given for a state (blank between consecutive commas)
-		@fmprior == 6 or pod2usage ("Error in argument: the --fmprior argument should be 6 comma-separated numbers that sum up to 1");
-		abs (sum (\@fmprior) - 1) < 0.01 or pod2usage ("Error in argument: the --fmprior argument should be 6 comma-separated numbers that sum up to 1");
-		unshift @fmprior, 0;								#fill in the first element of array so hidden state starts from subscript 1 to 6
-	} else {
-		@fmprior = (0, 0.01*0.5, 0.49*0.5, 0.5, 0, 0.49*0.5, 0.01*0.5);
-	}
+		if ($fmprior) {
+			@fmprior = split (/,/, $fmprior);
+			map {s/^$/0/} @fmprior;								#handle situations where no number is given for a state (blank between consecutive commas)
+				@fmprior == 6 or pod2usage ("Error in argument: the --fmprior argument should be 6 comma-separated numbers that sum up to 1");
+			abs (sum (\@fmprior) - 1) < 0.01 or pod2usage ("Error in argument: the --fmprior argument should be 6 comma-separated numbers that sum up to 1");
+			unshift @fmprior, 0;								#fill in the first element of array so hidden state starts from subscript 1 to 6
+		} else {
+			@fmprior = (0, 0.01*0.5, 0.49*0.5, 0.5, 0, 0.49*0.5, 0.01*0.5);
+		}
 	if ($cnprior) {
 		@cnprior = split (/,/, $cnprior);
 		map {s/^$/0/} @cnprior;
 		map {$_||=1e-9} @cnprior;
 		@cnprior == 5 or pod2usage ("Error in argument: the --cnprior argument should be 5 comma-separated numbers, corresponding to probability for CN=0 to CN=4");
 	}
-	
+
 	if (defined $backfreq) {
 		$backfreq > 0 and $backfreq < 0.5 or pod2usage ("Error in argument: the --backfreq argument ($backfreq) should be less than 0.5");
 	} else {
@@ -355,7 +377,7 @@ sub processArgument {
 		defined $delfreq or $delfreq = $backfreq;
 		defined $dupfreq or $dupfreq = $backfreq;
 	}
-	
+
 	if (defined $output) {									#default output is STDOUT
 		open (STDOUT, ">$output") or confess "\nERROR: cannot write to output file $output";
 	}
@@ -366,17 +388,17 @@ sub processArgument {
 		print LOG "PennCNV Command:\n\t$0 @command_line\n";
 		print LOG "PennCNV Started:\n\t", scalar (localtime), "\n";
 		close (LOG);
-		
+
 		my $notee = 0;
 		my $msg = qx/perl -v | tee 2>&1/;						#check whether tee is installed in the system
-		if ($msg =~ m/tee/ or not $msg) {						#system error message should contain "tee" word
-			$notee++;
-		} else {
-			eval {
-				open(STDERR, " | tee $logfile 1>&2");				#redirect STDERR to a logfile, but also print out the message to STDERR
-			};
-			$@ and $notee++;
-		}
+			if ($msg =~ m/tee/ or not $msg) {						#system error message should contain "tee" word
+				$notee++;
+			} else {
+				eval {
+					open(STDERR, " | tee $logfile 1>&2");				#redirect STDERR to a logfile, but also print out the message to STDERR
+				};
+				$@ and $notee++;
+			}
 		if ($notee) {
 			$verbose and print STDERR "WARNING: cannot set up dual-output of notification/warning message to STDERR and to log file $logfile (unable to execute 'tee' command in your system)\n";
 			print STDERR "NOTICE: All program notification/warning messages will be written to log file $logfile\n";
@@ -391,7 +413,7 @@ sub processArgument {
 sub generateOstateArray {
 	my ($num_element, $symbol) = @_;
 	my @return;
-	
+
 	if ($num_element == 2) {
 		for my $i (@$symbol) {
 			for my $j (@$symbol) {
@@ -418,7 +440,7 @@ sub convertQuartetIndex2State {
 	my ($index) = @_;
 	my $o2state = int ($index/343);
 	my $o1state = int (int ($index - $o2state * 343) / 49);
-	
+
 	my $mstate = int (($index - $o2state*343 - $o1state*49) / 7);
 	my $fstate = $index - $o2state*343 - $o1state*49 - $mstate*7;
 	return ($fstate, $mstate, $o1state, $o2state);
@@ -429,7 +451,7 @@ sub readTransitionMatrix {
 	my ($hmmfile) = @_;
 	my ($found_transition, $transition);
 	push @$transition, 0;					#convert 0-based index to 1-based index
-	open (HMM, $hmmfile) or confess "\nERROR: cannot read from HMM file $hmmfile: $!\n";
+		open (HMM, $hmmfile) or confess "\nERROR: cannot read from HMM file $hmmfile: $!\n";
 	while (<HMM>) {
 		m/^A:/ and ++$found_transition and next;
 		m/^B:/ and last;
@@ -437,7 +459,7 @@ sub readTransitionMatrix {
 			s/^\s+|\s*[\r\n]+$//g;
 			my @trans = split (/\s+/, $_);
 			unshift @trans, 0;			#convert 0-based index to 1-based index
-			push @$transition, [@trans];
+				push @$transition, [@trans];
 		}
 	}
 	close (HMM);
@@ -450,7 +472,7 @@ sub getRegionInfo {
 	my ($region_name, $region_chr, $region_pos, $region_lrr, $region_baf, $region_pfb, $region_snpdist);
 	my ($c, $s, $e) = @$nextregion;
 	my ($found, $last);
-	
+
 	my $info = $siginfo->{$c};
 	my ($name, $pos, $lrr, $baf) = ($info->{name}, $info->{pos}, $info->{lrr}, $info->{baf});
 	for my $i (0 .. @$name-1) {
@@ -475,15 +497,15 @@ sub getRegionInfo {
 		}
 		$last and last;
 	}
-	
-	#generally speaking, we try to make the start of the block open (shift the startsnp), but the end of the block solid (keep the endsnp)
+
+#generally speaking, we try to make the start of the block open (shift the startsnp), but the end of the block solid (keep the endsnp)
 	if ($endname->{$s}) {
 		shift @$region_name; shift @$region_chr; shift @$region_pos; shift @$region_lrr; shift @$region_baf; shift @$region_pfb; shift @$region_snpdist;
 	}
 	if ($startname->{$e}) {
 		if (not $endname->{$e}) {
-			
-			#when there is only one element (when startsnp is the end of previous block, and endsnp is begin of next block), arbitrarily create a single-SNP block
+
+#when there is only one element (when startsnp is the end of previous block, and endsnp is begin of next block), arbitrarily create a single-SNP block
 			if (@$region_name == 1) {
 				$endname->{$e}++;		#mark this SNP as constituting an end SNP, even though it is not a endSNP in the CNV file
 			} else {
@@ -513,7 +535,7 @@ sub readHMMFile {
 	$line[26] eq 'B2_sd:' or confess "\nERROR: invalid record found in HMM file: <$_> ('B2_sd:' expected)\n";
 	$line[28] eq 'B2_uf:' or confess "\nERROR: invalid record found in HMM file: <$_> ('B2_uf:' expected)\n";
 	if (@line > 30) {
-		#print STDERR "NOTICE: HMM model file $inputfile contains parameters for non-polymorphic (NP) probes\n";
+#print STDERR "NOTICE: HMM model file $inputfile contains parameters for non-polymorphic (NP) probes\n";
 		@line == 36 or @line == 38 or confess "\nERROR: invalid number of records found in HMM file: 30 or 36 or 38 lines expected\n";
 		$line[30] eq 'B3_mean:' or confess "\nERROR: invalid record found in HMM file: <$_> ('B3_mean:' expected)\n";
 		$line[32] eq 'B3_sd:' or confess "\nERROR: invalid record found in HMM file: <$_> ('B3_sd:' expected)\n";
@@ -528,28 +550,28 @@ sub readHMMFile {
 		abs (sum (\@cell) - 1) < 1e-5 or confess "\nERROR: invalid line ${\($i+1)} in HMM file: <$_> (sum of line should be 1)\n";
 		push @{$hmm{'A'}}, [@cell];
 	}
-	
+
 	@cell = split (/\s+/, $line[17]);
 	abs (sum (\@cell) - 1) < 1e-5 or confess "\nERROR: invalid line in HMM file: <$line[17]> (sum of line should be 1)\n";
 	push @{$hmm{'pi'}}, @cell;
-	
+
 	@cell = split (/\s+/, $line[19]);
 	@cell == 6 or confess "\nERROR: invalid line in HMM file: <@cell> (6 fields expected)\n";
 	push @{$hmm{'B1_mean'}}, @cell;
-	
+
 	@cell = split (/\s+/, $line[21]);
 	@cell == 6 or confess "\nERROR: invalid line in HMM file: <@cell> (6 fields expected)\n";
 	push @{$hmm{'B1_sd'}}, @cell;
 	grep {$_>0} @cell == 6 or confess "\nERROR: invalid line in HMM file: <@cell> (all values should be between greater than zero)\n";
-	
+
 	@cell = split (/\s+/, $line[23]);
 	@cell == 1 or confess "\nERROR: invalid line in HMM file: <@cell> (1 fields expected)\n";
 	push @{$hmm{'B1_uf'}}, @cell;
-	
+
 	@cell = split (/\s+/, $line[25]);
 	@cell == 5 or confess "\nERROR: invalid line in HMM file: <@cell> (5 fields expected)\n";
 	push @{$hmm{'B2_mean'}}, @cell;
-	
+
 	@cell = split (/\s+/, $line[27]);
 	@cell == 5 or confess "\nERROR: invalid line in HMM file: <@cell> (5 fields expected)\n";
 	push @{$hmm{'B2_sd'}}, @cell;
@@ -558,7 +580,7 @@ sub readHMMFile {
 	@cell = split (/\s+/, $line[29]);
 	@cell == 1 or confess "\nERROR: invalid line in HMM file: <@cell> (1 fields expected)\n";
 	push @{$hmm{'B2_uf'}}, @cell;
-	
+
 	if (@line > 30) {
 		@cell = split (/\s+/, $line[31]);
 		@cell == 6 or confess "\nERROR: invalid line in HMM file: <@cell> (6 fields exepcted)\n";
@@ -573,12 +595,12 @@ sub readHMMFile {
 		@cell == 1 or confess "\nERROR: invalid line in HMM file: <@cell> (1 fields expected)\n";
 		push @{$hmm{'B3_uf'}}, @cell;
 	}
-	
+
 	if (@line == 38) {
 		$line[37] =~ m/^\d+$/ or confess "Error: invalid line in HMM file: <$line[37]> (an integer expected for DIST)\n";
 		$hmm{dist} = $line[37];
 	}
-	
+
 	close (HMM);
 	return (\%hmm);
 }		
@@ -590,31 +612,31 @@ sub trainCHMM {
 	my $hmm = readHMMFile ($hmmfile);
 	my $gcmodel;
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the gc model for SNPs defined in snp_chr
-	
-	open (LOGR_B_PFB, ">$output.lrr_baf_pfb") or confess "\nERROR: cannot write to temporary file $output.lrr_baf_pfb: $!\n";
+
+		open (LOGR_B_PFB, ">$output.lrr_baf_pfb") or confess "\nERROR: cannot write to temporary file $output.lrr_baf_pfb: $!\n";
 
 	my ($counter, $counter_file, $siginfo, $sigdesc);
 	for my $inputfile (@$ref_inputfile) {
 		$region ||= "1-$lastchr";
-		
+
 		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
-		
-		#if the file processing fails and no signal data is read from file, move on to the next file
+
+#if the file processing fails and no signal data is read from file, move on to the next file
 		%$siginfo or next;
-		
+
 		print STDERR "NOTICE: quality summary for $inputfile: LRR_mean=", sprintf ("%.4f", $sigdesc->{lrr_mean}), " LRR_median=", sprintf ("%.4f", $sigdesc->{lrr_median}), " LRR_SD=", sprintf ("%.4f", $sigdesc->{lrr_sd}), 
-				" BAF_mean=", sprintf ("%.4f", $sigdesc->{baf_mean}), " BAF_median=", sprintf ("%.4f", $sigdesc->{baf_median}), " BAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd}), " BAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift}), " WF=", sprintf("%.4f", $sigdesc->{wf}), "\n";
+			  " BAF_mean=", sprintf ("%.4f", $sigdesc->{baf_mean}), " BAF_median=", sprintf ("%.4f", $sigdesc->{baf_median}), " BAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd}), " BAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift}), " WF=", sprintf("%.4f", $sigdesc->{wf}), "\n";
 		$sigdesc->{lrr_sd} > $hmm->{B1_sd}[2]+0.05 || $sigdesc->{lrr_sd} < $hmm->{B1_sd}[2]-0.05 and print STDERR "NOTICE: Sample does not pass quality control for training due to its LRR_SD ($sigdesc->{lrr_sd})!\n" and next;
 		$sigdesc->{baf_median} >= 0.55 || $sigdesc->{baf_median} <= 0.45 and print STDERR "NOTICE: Sample does not pass quality control for training due to its BAF_MEDIAN ($sigdesc->{baf_median})!\n" and next;
 		$sigdesc->{baf_drift} >= $hmm->{B1_uf}/10 and print STDERR "NOTICE: Sample does not pass quality control for training due to its large BAF_DRIFT ($sigdesc->{baf_drift})!\n" and next;
-		
+
 		if ($sigdesc->{cn_count}) {
 			if (not $hmm->{B3_mean}) {
 				print STDERR "WARNING: The signal file $inputfile contains Non-Polymorphic markers but the HMM file $hmmfile is for SNP markers only. It is recommended to use a HMM file containing parameters specifically for non-polymorphic markers.\n";
 			}
 		}
-			
-		#perform signal pre-processing to adjust the median LRR and BAF values
+
+#perform signal pre-processing to adjust the median LRR and BAF values
 		if ($medianadjust) {				#THIS IS A MANDATORY ARGUMENT NOW, SINCE IT ALWAYS IMPROVE PERFORMANCE!!! (use "--nomedianadjust" to disable this feature)
 			print STDERR "NOTICE: Median-adjusting LRR values for all autosome markers from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_median}), "\n";
 			adjustLRR ($siginfo, $sigdesc->{lrr_median});
@@ -630,7 +652,7 @@ sub trainCHMM {
 
 		for my $curchr (keys %$siginfo) {
 			$curchr =~ m/^(\d+)$/ or next;			#only consider autosomes
-			my $pos = $siginfo->{$curchr}{pos};
+				my $pos = $siginfo->{$curchr}{pos};
 			my $lrr = $siginfo->{$curchr}{lrr};
 			my $baf = $siginfo->{$curchr}{baf};
 			my $pfb = $siginfo->{$curchr}{pfb};
@@ -650,26 +672,26 @@ sub trainCHMM {
 	$counter or confess "\nERROR: none of the files (@$ref_inputfile) pass quality control threshold for training HMM model\n";
 	print STDERR "NOTICE: Total of $counter markers in $counter_file files will be used in training HMM models\n";
 
-	#the following paragraph sets up pseudocounts in the array to handle cases where the state is extremely rare, and it is unlikely that the training set contains such state
+#the following paragraph sets up pseudocounts in the array to handle cases where the state is extremely rare, and it is unlikely that the training set contains such state
 	my (@alllogr, @allbaf, @allpfb, @allsnpdist);
 	push @alllogr, ($hmm->{'B1_mean'}[0]) x 100; push @allbaf, ('0.5') x 100; push @allsnpdist, ('5000')x99, 10_000_000;				#state1
-	push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
+		push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
 	push @allpfb, ('0.5') x 1100; push @allsnpdist, ('5000')x999, 10_000_000;
-	
+
 	push @alllogr, ($hmm->{'B1_mean'}[1]) x 100; for (1..50) {push @allbaf, 0.001, 0.999} push @allsnpdist, ('5000')x99, 10_000_000;		#state2
-	push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
+		push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
 	push @allpfb, ('0.5') x 1100; push @allsnpdist, ('5000')x999, 10_000_000;
-	
+
 	push @alllogr, ('0') x 100; for (1..50) {push @allbaf, 0, 1} push @allsnpdist, ('5000')x99, 10_000_000;						#state4
-	push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
+		push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
 	push @allpfb, ('0.5') x 1100; push @allsnpdist, ('5000')x999, 10_000_000;
-	
+
 	push @alllogr, ($hmm->{'B1_mean'}[4]) x 100; for (1..25) {push @allbaf, 0.001, 0.33, 0.66, 0.999} push @allsnpdist, ('5000')x99, 10_000_000;	#state5
-	push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
+		push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
 	push @allpfb, ('0.5') x 1100; push @allsnpdist, ('5000')x999, 10_000_000;
-	
+
 	push @alllogr, ($hmm->{'B1_mean'}[5]) x 100; for (1..25) {push @allbaf, 0.001, 0.75, 0.25, 0.5} push @allsnpdist, ('5000')x99, 10_000_000;	#state6
-	push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
+		push @alllogr, ('0') x 1000; for (1..250) {push @allbaf, 0.001, 0.5, 0.5, 0.999}
 	push @allpfb, ('0.5') x 1100; push @allsnpdist, ('5000')x999, 10_000_000;
 
 	@alllogr==@allsnpdist and @alllogr==@allbaf and @alllogr==@allbaf or confess "FATAL ERROR: discordance in array elements: ${\(scalar @alllogr)} vs ${\(scalar @allsnpdist)} vs ${\(scalar @allbaf)}\n";
@@ -693,7 +715,7 @@ sub testSEQ {
 		my $record_count = 0;
 		my ($curchr, $name);
 		push @$name, 'padding_element';
-		
+
 		open (SIG, $inputfile) or confess "Error: cannot read from signal file $inputfile: $!\n";
 		$_ = <SIG>;
 		while (<SIG>) {
@@ -703,18 +725,18 @@ sub testSEQ {
 			push @mlstate, 0;
 		}
 		close (SIG);
-		
+
 		$name->[1] =~ m/^(\w+)/ or confess "Error: invalid marker name";
 		$curchr = $1;
-		
+
 		$record_count or confess "\nERROR: the signal file $inputfile does not contain any signal values for CNV calling\n";
 		print STDERR "NOTICE: Calling CNVs on $record_count records\n";
-		
+
 		my $hmm_model = khmm::ReadCHMM ($hmmfile);
-		
+
 		khmm::callCNVFromFile_SEQ ($hmm_model, $record_count, $fh_temp, \@mlstate, $gamma_k||0, $gamma_theta||0);
 		print STDERR "mlstate(1000-1500)=@mlstate[1000..1500]\n";
-		
+
 		my ($normal_state, $found_signal, $cnv, $startpos, $endpos, $stretch_start_i) = (3);
 		for my $i (1 .. @mlstate-1) {
 			if ($mlstate[$i] != $normal_state) {
@@ -722,7 +744,7 @@ sub testSEQ {
 					$name->[$stretch_start_i] =~ m/^\w+:(\d+)/ or confess "Error: invalid name";
 					$startpos = $1;
 					$name->[$i-1] =~ m/^\w+:\d+\-(\d+)/ or confess "Error: invalid name";		#"
-					$endpos = $1;
+						$endpos = $1;
 					push @{$cnv->{$found_signal}}, [$curchr, $startpos, $endpos, $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
 					$stretch_start_i = $i;
 					$found_signal = $mlstate[$i];
@@ -737,7 +759,7 @@ sub testSEQ {
 					$name->[$stretch_start_i] =~ m/^\w+:(\d+)/ or confess "Error: invalid name";
 					$startpos = $1;
 					$name->[$i-1] =~ m/^\w+:\d+\-(\d+)/ or confess "Error: invalid name";		#"
-					$endpos = $1;
+						$endpos = $1;
 					push @{$cnv->{$found_signal}}, [$curchr, $startpos, $endpos, $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
 					$found_signal = 0;
 				}
@@ -747,11 +769,11 @@ sub testSEQ {
 			$name->[$stretch_start_i] =~ m/^\w+:(\d+)/ or confess "Error: invalid name";
 			$startpos = $1;
 			$name->[@$name-1] =~ m/^\w+:\d+\-(\d+)/ or confess "Error: invalid name";		#"
-			$endpos = $1;
+				$endpos = $1;
 			push @{$cnv->{$found_signal}}, [$curchr, $startpos, $endpos, @$name-1-$stretch_start_i, $name->[$stretch_start_i], $name->[@$name-1]];
 		}
-		
-		#print all CNV calls, sorted by copy numbers first, then by chromosomes
+
+#print all CNV calls, sorted by copy numbers first, then by chromosomes
 		if ($tabout) {
 			printTabbedCNV ($cnv, $inputfile);				#use tab-delimited output
 		} else {
@@ -765,7 +787,7 @@ sub ctrainCHMM {
 
 	my $fh_stdout = khmm::fh_stdout ();
 	my $hmm_model = khmm::ReadCHMM ($hmmfile);
-	
+
 	print "<--------------------ORIGINAL HMM-------------------------\n";
 	khmm::PrintCHMM ($fh_stdout, $hmm_model);
 	print "--------------------------------------------------------->\n";
@@ -790,7 +812,7 @@ sub ctrainCHMM {
 
 	my $fh2 = khmm::fopen ("$output.hmm", 'w');
 	khmm::PrintCHMM ($fh2, $hmm_model);
-	
+
 	khmm::FreeCHMM ($hmm_model);
 	khmm::fclose ($fh1);
 	khmm::fclose ($fh2);
@@ -800,30 +822,30 @@ sub calculateSampleSummary {
 	my ($ref_inputfile, $pfbfile, $gcmodelfile, $directory) = @_;
 	my ($pfbinfo) = newreadPFB ($pfbfile);
 	my $gcmodel;
-	
+
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the gc model for SNPs defined in snp_chr
-	
-	for my $inputfile (@$ref_inputfile) {
-		my ($siginfo, $sigdesc) = readLRRBAF ($inputfile, "1-$lastchr", $pfbinfo, $gcmodel, $directory);
-		
-		#if the file processing fails and no signal data is read from file, move on to the next file
-		%$siginfo or next;
-		
-		print "$inputfile";
-		print "\tLRR_MEAN=", sprintf("%.4f", $sigdesc->{lrr_mean});
-		print "\tLRR_MEDIAN=", sprintf("%.4f", $sigdesc->{lrr_median});
-		print "\tLRR_SD=", sprintf ("%.4f", $sigdesc->{lrr_sd});
-		print "\tLRR_XMEAN=", sprintf("%.4f", $sigdesc->{lrr_xmean});
-		print "\tLRR_XMEDIAN=", sprintf("%.4f", $sigdesc->{lrr_xmedian});
-		print "\tLRR_XSD=", sprintf ("%.4f", $sigdesc->{lrr_xsd});
-		print "\tBAF_MEAN=", sprintf ("%.4f", $sigdesc->{baf_mean});
-		print "\tBAF_MEDIAN=", sprintf ("%.4f", $sigdesc->{baf_median});
-		print "\tBAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd});
-		print "\tBAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift});		#this number is usually small
-		print "\tBAF_XHET=", sprintf ("%.4f", $sigdesc->{baf_xhet});
-		print "\tWF=", sprintf ("%.4f", $sigdesc->{wf});
-		print "\n";
-	}
+
+		for my $inputfile (@$ref_inputfile) {
+			my ($siginfo, $sigdesc) = readLRRBAF ($inputfile, "1-$lastchr", $pfbinfo, $gcmodel, $directory);
+
+#if the file processing fails and no signal data is read from file, move on to the next file
+			%$siginfo or next;
+
+			print "$inputfile";
+			print "\tLRR_MEAN=", sprintf("%.4f", $sigdesc->{lrr_mean});
+			print "\tLRR_MEDIAN=", sprintf("%.4f", $sigdesc->{lrr_median});
+			print "\tLRR_SD=", sprintf ("%.4f", $sigdesc->{lrr_sd});
+			print "\tLRR_XMEAN=", sprintf("%.4f", $sigdesc->{lrr_xmean});
+			print "\tLRR_XMEDIAN=", sprintf("%.4f", $sigdesc->{lrr_xmedian});
+			print "\tLRR_XSD=", sprintf ("%.4f", $sigdesc->{lrr_xsd});
+			print "\tBAF_MEAN=", sprintf ("%.4f", $sigdesc->{baf_mean});
+			print "\tBAF_MEDIAN=", sprintf ("%.4f", $sigdesc->{baf_median});
+			print "\tBAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd});
+			print "\tBAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift});		#this number is usually small
+				print "\tBAF_XHET=", sprintf ("%.4f", $sigdesc->{baf_xhet});
+			print "\tWF=", sprintf ("%.4f", $sigdesc->{wf});
+			print "\n";
+		}
 }
 
 #the new testCHMM subroutine treat each chromosome separately, to reduce the burden of system memory, when analyzing a large number of markers
@@ -832,76 +854,78 @@ sub newtestCHMM {
 	my $pfbinfo = newreadPFB ($pfbfile);
 	my $hmm = readHMMFile ($hmmfile);
 	my ($file_sex, $gcmodel) = ({});
-	
+
 	defined $sexfile and $file_sex = readSexFile ($sexfile);
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the GC model for SNPs defined in snp_chr
-	
-	for my $inputfile (@$ref_inputfile) {
-		my ($siginfo, $sigdesc, $sample_sex);
-		
-		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
-		
-		#if the file processing fails and no signal data is read from file, move on to the next file
-		%$siginfo or print STDERR "WARNING: Skipping $inputfile since no signal values can be retrieved from the file\n" and next;
-		
-		$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $file_sex->{$inputfile});
-		
-		#read HMM model file
-		my $hmm_model = khmm::ReadCHMM ($hmmfile);
 
-		#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
-		if ($sdadjust) {
-			if ($chrx) {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+		for my $inputfile (@$ref_inputfile) {
+			my ($siginfo, $sigdesc, $sample_sex);
+
+			($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
+
+#if the file processing fails and no signal data is read from file, move on to the next file
+			%$siginfo or print STDERR "WARNING: Skipping $inputfile since no signal values can be retrieved from the file\n" and next;
+
+			$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $file_sex->{$inputfile});
+
+#read HMM model file
+			my $hmm_model = khmm::ReadCHMM ($hmmfile);
+
+#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
+			if ($sdadjust) {
+				if ($chrx) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+				} elsif ($chry) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_ysd});
+				} else {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
+				}
+			}
+
+#do the CNV calling for each chromosome separately, save the CNV calls in $cnvcall hash
+			my $cnvcall = {};
+			for my $curchr (keys %$siginfo) {
+				my $name = $siginfo->{$curchr}{name};
+				my $pos = $siginfo->{$curchr}{pos}; 
+				my $lrr = $siginfo->{$curchr}{lrr}; 
+				my $baf = $siginfo->{$curchr}{baf};
+
+				@$pos >= 10 or print STDERR "WARNING: Skipping chromosome $curchr due to insufficient data points (<10 markers)!\n" and next;
+
+				my $pfb = [@{$siginfo->{$curchr}{pfb}}];	#we will use PFB again later (for assigning confidence scores)
+					my $snpdist = [@$pos];
+				my $logprob = 0;
+				my $curcnvcall = {};
+				for my $i (1 .. @$snpdist-2) {
+					$snpdist->[$i] = ($snpdist->[$i+1]-$snpdist->[$i]) || 1;	#sometimes two markers have the same chromosome location (in Affymetrix array annotation)
+				}
+
+#generate CNV calls
+				my $probe_count = scalar (@$lrr)-1;
+				khmm::testVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob);
+				analyzeStateSequence ($curcnvcall, $curchr, $pfb, $name, $pos, $sample_sex);
+
+#assign confidence scores (if the --conf argument is given)
+				if ($confidence) {
+					$pfb = $siginfo->{$curchr}{pfb};			#reassign value to PFB as it has been changed
+						assignConfidence ($curcnvcall, $hmm_model, $name, $lrr, $baf, $pfb, $snpdist);
+				}
+
+#add the new CNV calls for one chromosome to the total CNV calls
+				for my $key (keys %$curcnvcall) {
+					push @{$cnvcall->{$key}}, @{$curcnvcall->{$key}};
+				}
+			}
+
+#print all CNV calls, sorted by copy numbers first, then by chromosomes
+			if ($tabout) {
+				printTabbedCNV ($cnvcall, $inputfile);				#use tab-delimited output
 			} else {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
-			}
-		}
-		
-		#do the CNV calling for each chromosome separately, save the CNV calls in $cnvcall hash
-		my $cnvcall = {};
-		for my $curchr (keys %$siginfo) {
-			my $name = $siginfo->{$curchr}{name};
-			my $pos = $siginfo->{$curchr}{pos}; 
-			my $lrr = $siginfo->{$curchr}{lrr}; 
-			my $baf = $siginfo->{$curchr}{baf};
-			
-			@$pos >= 10 or print STDERR "WARNING: Skipping chromosome $curchr due to insufficient data points (<10 markers)!\n" and next;
-
-			my $pfb = [@{$siginfo->{$curchr}{pfb}}];	#we will use PFB again later (for assigning confidence scores)
-			my $snpdist = [@$pos];
-			my $logprob = 0;
-			my $curcnvcall = {};
-			for my $i (1 .. @$snpdist-2) {
-				$snpdist->[$i] = ($snpdist->[$i+1]-$snpdist->[$i]) || 1;	#sometimes two markers have the same chromosome location (in Affymetrix array annotation)
+				printFormattedCNV ($cnvcall, $inputfile);
 			}
 
-			#generate CNV calls
-			my $probe_count = scalar (@$lrr)-1;
-			khmm::testVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob);
-			analyzeStateSequence ($curcnvcall, $curchr, $pfb, $name, $pos, $sample_sex);
-			
-			#assign confidence scores (if the --conf argument is given)
-			if ($confidence) {
-				$pfb = $siginfo->{$curchr}{pfb};			#reassign value to PFB as it has been changed
-				assignConfidence ($curcnvcall, $hmm_model, $name, $lrr, $baf, $pfb, $snpdist);
-			}
-			
-			#add the new CNV calls for one chromosome to the total CNV calls
-			for my $key (keys %$curcnvcall) {
-				push @{$cnvcall->{$key}}, @{$curcnvcall->{$key}};
-			}
+			khmm::FreeCHMM  ($hmm_model);
 		}
-		
-		#print all CNV calls, sorted by copy numbers first, then by chromosomes
-		if ($tabout) {
-			printTabbedCNV ($cnvcall, $inputfile);				#use tab-delimited output
-		} else {
-			printFormattedCNV ($cnvcall, $inputfile);
-		}
-		
-		khmm::FreeCHMM  ($hmm_model);
-	}
 }
 
 #the new tumorCHMM is copied from newtestCHMM, with tiny changes.
@@ -910,83 +934,85 @@ sub newtumorCHMM {
 	my $pfbinfo = newreadPFB ($pfbfile);
 	my $hmm = readHMMFile ($hmmfile);
 	my ($file_sex, $gcmodel) = ({});
-	
+
 	defined $sexfile and $file_sex = readSexFile ($sexfile);
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the GC model for SNPs defined in snp_chr
-	
-	for my $inputfile (@$ref_inputfile) {
-		my ($siginfo, $sigdesc, $sample_sex);
-		
-		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
-		
-		#if the file processing fails and no signal data is read from file, move on to the next file
-		%$siginfo or print STDERR "WARNING: Skipping $inputfile since no signal values can be retrieved from the file\n" and next;
-		
-		$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $file_sex->{$inputfile});
-		
-		#read HMM model file
-		my $hmm_model = khmm::ReadCHMM ($hmmfile);
 
-		#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
-		if ($sdadjust) {
-			if ($chrx) {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+		for my $inputfile (@$ref_inputfile) {
+			my ($siginfo, $sigdesc, $sample_sex);
+
+			($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
+
+#if the file processing fails and no signal data is read from file, move on to the next file
+			%$siginfo or print STDERR "WARNING: Skipping $inputfile since no signal values can be retrieved from the file\n" and next;
+
+			$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $file_sex->{$inputfile});
+
+#read HMM model file
+			my $hmm_model = khmm::ReadCHMM ($hmmfile);
+
+#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
+			if ($sdadjust) {
+				if ($chrx) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+				} elsif ($chry) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_ysd});
+				} else {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
+				}
+			}
+
+#do the CNV calling for each chromosome separately, save the CNV calls in $cnvcall hash
+			my $cnvcall = {};
+			for my $curchr (keys %$siginfo) {
+				my $name = $siginfo->{$curchr}{name};
+				my $pos = $siginfo->{$curchr}{pos}; 
+				my $lrr = $siginfo->{$curchr}{lrr}; 
+				my $baf = $siginfo->{$curchr}{baf};
+
+				@$pos >= 10 or print STDERR "WARNING: Skipping chromosome $curchr due to insufficient data points (<10 markers)!\n" and next;
+
+				my $pfb = [@{$siginfo->{$curchr}{pfb}}];	#we will use PFB again later (for assigning confidence scores)
+					my $snpdist = [@$pos];
+				my $logprob = 0;
+				my $curcnvcall = {};
+				for my $i (1 .. @$snpdist-2) {
+					$snpdist->[$i] = ($snpdist->[$i+1]-$snpdist->[$i]) || 1;	#sometimes two markers have the same chromosome location (in Affymetrix array annotation)
+				}
+
+#generate CNV calls
+				my $probe_count = scalar (@$lrr)-1;
+
+
+#------------------------------------------------------------------------------------------
+#khmm::testVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob);
+				khmm::tumorVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob, $stroma);
+#------------------------------------------------------------------------------------------
+
+
+				analyzeStateSequence ($curcnvcall, $curchr, $pfb, $name, $pos, $sample_sex);
+
+#assign confidence scores (if the --conf argument is given)
+				if ($confidence) {
+					$pfb = $siginfo->{$curchr}{pfb};			#reassign value to PFB as it has been changed
+						assignConfidence ($curcnvcall, $hmm_model, $name, $lrr, $baf, $pfb, $snpdist);
+				}
+
+#add the new CNV calls for one chromosome to the total CNV calls
+				for my $key (keys %$curcnvcall) {
+					push @{$cnvcall->{$key}}, @{$curcnvcall->{$key}};
+				}
+			}
+
+#print all CNV calls, sorted by copy numbers first, then by chromosomes
+			if ($tabout) {
+				printTabbedCNV ($cnvcall, $inputfile);				#use tab-delimited output
 			} else {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
-			}
-		}
-		
-		#do the CNV calling for each chromosome separately, save the CNV calls in $cnvcall hash
-		my $cnvcall = {};
-		for my $curchr (keys %$siginfo) {
-			my $name = $siginfo->{$curchr}{name};
-			my $pos = $siginfo->{$curchr}{pos}; 
-			my $lrr = $siginfo->{$curchr}{lrr}; 
-			my $baf = $siginfo->{$curchr}{baf};
-			
-			@$pos >= 10 or print STDERR "WARNING: Skipping chromosome $curchr due to insufficient data points (<10 markers)!\n" and next;
-
-			my $pfb = [@{$siginfo->{$curchr}{pfb}}];	#we will use PFB again later (for assigning confidence scores)
-			my $snpdist = [@$pos];
-			my $logprob = 0;
-			my $curcnvcall = {};
-			for my $i (1 .. @$snpdist-2) {
-				$snpdist->[$i] = ($snpdist->[$i+1]-$snpdist->[$i]) || 1;	#sometimes two markers have the same chromosome location (in Affymetrix array annotation)
+				printFormattedCNV ($cnvcall, $inputfile);
 			}
 
-			#generate CNV calls
-			my $probe_count = scalar (@$lrr)-1;
-			
-			
-			#------------------------------------------------------------------------------------------
-			#khmm::testVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob);
-			khmm::tumorVit_CHMM ($hmm_model, $probe_count, $lrr, $baf, $pfb, $snpdist, \$logprob, $stroma);
-			#------------------------------------------------------------------------------------------
-			
-			
-			analyzeStateSequence ($curcnvcall, $curchr, $pfb, $name, $pos, $sample_sex);
-			
-			#assign confidence scores (if the --conf argument is given)
-			if ($confidence) {
-				$pfb = $siginfo->{$curchr}{pfb};			#reassign value to PFB as it has been changed
-				assignConfidence ($curcnvcall, $hmm_model, $name, $lrr, $baf, $pfb, $snpdist);
-			}
-			
-			#add the new CNV calls for one chromosome to the total CNV calls
-			for my $key (keys %$curcnvcall) {
-				push @{$cnvcall->{$key}}, @{$curcnvcall->{$key}};
-			}
+			khmm::FreeCHMM  ($hmm_model);
 		}
-		
-		#print all CNV calls, sorted by copy numbers first, then by chromosomes
-		if ($tabout) {
-			printTabbedCNV ($cnvcall, $inputfile);				#use tab-delimited output
-		} else {
-			printFormattedCNV ($cnvcall, $inputfile);
-		}
-		
-		khmm::FreeCHMM  ($hmm_model);
-	}
 }
 
 #this subroutine is used to assign a confidence score to each predicted CNV
@@ -995,40 +1021,40 @@ sub assignConfidence {
 	my ($curcnvcall, $hmm_model, $name, $lrr, $baf, $pfb, $snpdist) = @_;
 	for my $key (keys %$curcnvcall) {
 		$key == 4 and next;				#do not consider LOH
-		for my $stretch (@{$curcnvcall->{$key}}) {
-			my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $curid, $curpath, $curconf) = @$stretch;
-			my (@region_lrr, @region_baf, @region_pfb, @region_snpdist);
-			push @region_lrr, 0;
-			push @region_baf, 0;
-			push @region_pfb, 0;
-			push @region_snpdist, 0;
-			my ($curlogprob, $logprob, @logprob) = (0, 0);	#curlogprob is the value at desired state, logprob are temp values
-			my ($found, $last) = qw/0 0/;
-			for my $i (0 .. @$name-1) {
-				if ($name->[$i] eq $curnamestart) {
-					$found = 1;
+			for my $stretch (@{$curcnvcall->{$key}}) {
+				my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $curid, $curpath, $curconf) = @$stretch;
+				my (@region_lrr, @region_baf, @region_pfb, @region_snpdist);
+				push @region_lrr, 0;
+				push @region_baf, 0;
+				push @region_pfb, 0;
+				push @region_snpdist, 0;
+				my ($curlogprob, $logprob, @logprob) = (0, 0);	#curlogprob is the value at desired state, logprob are temp values
+					my ($found, $last) = qw/0 0/;
+				for my $i (0 .. @$name-1) {
+					if ($name->[$i] eq $curnamestart) {
+						$found = 1;
+					}
+					if ($name->[$i] eq $curnameend) {	#use "if" not "elsif", because the CNV may contain only one SNP
+						$last = 1;
+					}
+					if ($found) {
+						push @region_lrr, $lrr->[$i];
+						push @region_baf, $baf->[$i];
+						push @region_pfb, $pfb->[$i];
+						push @region_snpdist, $snpdist->[$i];
+					}
+					$last and last;
 				}
-				if ($name->[$i] eq $curnameend) {	#use "if" not "elsif", because the CNV may contain only one SNP
-					$last = 1;
+				@region_lrr or confess "UNKNOWN ERROR: unable to find CNV region startsnp=$curnamestart endsnp=$curnameend\n";
+
+				for my $nextstate (1, 2, 3, 5, 6) {		#do not consider LOH
+					khmm::GetStateProb_CHMM ($hmm_model, @region_lrr-1, \@region_lrr, \@region_baf, \@region_pfb, \@region_snpdist, \$logprob, $nextstate);
+					push @logprob, $logprob;
+					$key == $nextstate and $curlogprob = $logprob;
 				}
-				if ($found) {
-					push @region_lrr, $lrr->[$i];
-					push @region_baf, $baf->[$i];
-					push @region_pfb, $pfb->[$i];
-					push @region_snpdist, $snpdist->[$i];
-				}
-				$last and last;
+				@logprob = sort {$b<=>$a} @logprob;
+				@$stretch = ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $curid, $curpath, sprintf ("%.3f", $curlogprob-$logprob[1]));
 			}
-			@region_lrr or confess "UNKNOWN ERROR: unable to find CNV region startsnp=$curnamestart endsnp=$curnameend\n";
-			
-			for my $nextstate (1, 2, 3, 5, 6) {		#do not consider LOH
-				khmm::GetStateProb_CHMM ($hmm_model, @region_lrr-1, \@region_lrr, \@region_baf, \@region_pfb, \@region_snpdist, \$logprob, $nextstate);
-				push @logprob, $logprob;
-				$key == $nextstate and $curlogprob = $logprob;
-			}
-			@logprob = sort {$b<=>$a} @logprob;
-			@$stretch = ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $curid, $curpath, sprintf ("%.3f", $curlogprob-$logprob[1]));
-		}
 	}
 }
 
@@ -1037,38 +1063,38 @@ sub printFormattedCNV {
 	my ($cnvcall, $inputfile) = @_;
 	for my $key (sort {$a<=>$b} keys %$cnvcall) {
 		$key == 4 and $loh || next;						#skip LOH regions unless --loh argument is set
-		my $curcn = $key-1;
+			my $curcn = $key-1;
 		$curcn >= 3 and $curcn--;						#calculate current copy number
-		for my $stretch (sort {sortChr ($a->[0], $b->[0])} @{$cnvcall->{$key}}) {
-			my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $trioid, $triopath, $confscore) = @$stretch;
-			
-			if (defined $minsnp) {						#minimum number of SNPs within a CNV to be printed out
-				$curnumsnp >= $minsnp or next;
+			for my $stretch (sort {sortChr ($a->[0], $b->[0])} @{$cnvcall->{$key}}) {
+				my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $trioid, $triopath, $confscore) = @$stretch;
+
+				if (defined $minsnp) {						#minimum number of SNPs within a CNV to be printed out
+					$curnumsnp >= $minsnp or next;
+				}
+				if (defined $minlength) {					#minimum length of CNVs to be printed out
+					$curend-$curstart+1 >= $minlength or next;
+				}
+				if (defined $minconf) {						#minimum confidence of CNVs to be printed out
+					$confscore >= $minconf or next;
+				}
+
+				my $cnvregion = "chr$curchr:$curstart-$curend";
+				if (length ($cnvregion) < 29) {
+					$cnvregion = substr ("$cnvregion                              ", 0, 29);
+				}
+
+				if (length($curnumsnp) < 6) {
+					$curnumsnp = substr ("$curnumsnp      ", 0, 6);
+				}
+
+				my $cnvlength = join ('', reverse split (//, $curend-$curstart+1)); $cnvlength =~ s/(...)/$1,/g; $cnvlength =~ s/,$//; $cnvlength = join ('', reverse split (//, $cnvlength));
+				if (length($cnvlength) < 11) {
+					$cnvlength = substr ("$cnvlength            ", 0, 11);
+				}
+
+				print "$cnvregion numsnp=$curnumsnp length=$cnvlength state$key,cn=$curcn $inputfile startsnp=$curnamestart endsnp=$curnameend";
+				print $trioid?" $trioid":"", $triopath?" statepath=$triopath":"", (defined $confscore)?" conf=$confscore":"", "\n";
 			}
-			if (defined $minlength) {					#minimum length of CNVs to be printed out
-				$curend-$curstart+1 >= $minlength or next;
-			}
-			if (defined $minconf) {						#minimum confidence of CNVs to be printed out
-				$confscore >= $minconf or next;
-			}
-			
-			my $cnvregion = "chr$curchr:$curstart-$curend";
-			if (length ($cnvregion) < 29) {
-				$cnvregion = substr ("$cnvregion                              ", 0, 29);
-			}
-		
-			if (length($curnumsnp) < 6) {
-				$curnumsnp = substr ("$curnumsnp      ", 0, 6);
-			}
-			
-			my $cnvlength = join ('', reverse split (//, $curend-$curstart+1)); $cnvlength =~ s/(...)/$1,/g; $cnvlength =~ s/,$//; $cnvlength = join ('', reverse split (//, $cnvlength));
-			if (length($cnvlength) < 11) {
-				$cnvlength = substr ("$cnvlength            ", 0, 11);
-			}
-			
-			print "$cnvregion numsnp=$curnumsnp length=$cnvlength state$key,cn=$curcn $inputfile startsnp=$curnamestart endsnp=$curnameend";
-			print $trioid?" $trioid":"", $triopath?" statepath=$triopath":"", (defined $confscore)?" conf=$confscore":"", "\n";
-		}
 	}
 }
 
@@ -1077,23 +1103,23 @@ sub printTabbedCNV {
 	my ($cnvcall, $inputfile) = @_;
 	for my $key (sort {$a<=>$b} keys %$cnvcall) {
 		$key == 4 and $loh || next;						#skip LOH regions unless --loh argument is set
-		my $curcn = $key-1;
+			my $curcn = $key-1;
 		$curcn >= 3 and $curcn--;						#calculate current copy number
-		for my $stretch (sort {sortChr ($a->[0], $b->[0])} @{$cnvcall->{$key}}) {
-			my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $trioid, $triopath, $confscore) = @$stretch;
-			my $cnvlength = $curend-$curstart+1;
-			
-			if (defined $minsnp) {						#minimum number of SNPs within a predicted CNV to be printed out
-				$curnumsnp >= $minsnp or next;
+			for my $stretch (sort {sortChr ($a->[0], $b->[0])} @{$cnvcall->{$key}}) {
+				my ($curchr, $curstart, $curend, $curnumsnp, $curnamestart, $curnameend, $trioid, $triopath, $confscore) = @$stretch;
+				my $cnvlength = $curend-$curstart+1;
+
+				if (defined $minsnp) {						#minimum number of SNPs within a predicted CNV to be printed out
+					$curnumsnp >= $minsnp or next;
+				}
+				if (defined $minlength) {					#minimum length of CNVs to be printed out
+					$cnvlength >= $minlength or next;
+				}
+				if (defined $minconf) {
+					$confscore >= $minconf or next;
+				}
+				print "$curchr\t$curstart\t$curend\t$curcn\t$inputfile\t$curnamestart\t$curnameend\t$confscore\n";
 			}
-			if (defined $minlength) {					#minimum length of CNVs to be printed out
-				$cnvlength >= $minlength or next;
-			}
-			if (defined $minconf) {
-				$confscore >= $minconf or next;
-			}
-			print "$curchr\t$curstart\t$curend\t$curcn\t$inputfile\t$curnamestart\t$curnameend\t$confscore\n";
-		}
 	}
 }
 
@@ -1104,7 +1130,7 @@ sub analyzeStateSequence {
 
 	$sample_sex and $sample_sex eq 'male' || $sample_sex eq 'female' || confess "\nERROR: sample_sex argument to the subroutine can be only 'male' or 'female'";
 
-	#set up the normal state in case of sex chromosome analysis
+#set up the normal state in case of sex chromosome analysis
 	if ($newchr eq 'X' and $sample_sex eq 'male') {
 		$normal_state = 2;
 	} elsif ($newchr eq 'Y') {
@@ -1118,26 +1144,26 @@ sub analyzeStateSequence {
 	}
 
 	$cnv ||= {};									#cnv is a reference to a hash (key=state value=array of info)
-	for my $i (1 .. @$symbol-1) {							#the first element is zero (arrays start from 1 in khmm module)
-		#found a new CNV or continue within a previously identified stretch of CNV
-		if ($symbol->[$i] != $normal_state) {
-			if ($found_signal and $found_signal ne $symbol->[$i]) {		#transition to one CNV to another CNV with different copy number
-				push @{$cnv->{$found_signal}}, [$newchr, $pos->[$stretch_start_i], $pos->[$i-1], $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
-				$stretch_start_i = $i;
-				$found_signal = $symbol->[$i];
-			} elsif ($found_signal) {					#do nothing, continue within a previously identified stretch of CNV
-				1;
-			} else {							#found the start of a new CNV
-				$found_signal = $symbol->[$i];
-				$stretch_start_i = $i;
-			}
-		} else {
-			if ($found_signal) {						#end a previously identified CNV
-				push @{$cnv->{$found_signal}}, [$newchr, $pos->[$stretch_start_i], $pos->[$i-1], $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
-				$found_signal = 0;
+		for my $i (1 .. @$symbol-1) {							#the first element is zero (arrays start from 1 in khmm module)
+#found a new CNV or continue within a previously identified stretch of CNV
+			if ($symbol->[$i] != $normal_state) {
+				if ($found_signal and $found_signal ne $symbol->[$i]) {		#transition to one CNV to another CNV with different copy number
+					push @{$cnv->{$found_signal}}, [$newchr, $pos->[$stretch_start_i], $pos->[$i-1], $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
+					$stretch_start_i = $i;
+					$found_signal = $symbol->[$i];
+				} elsif ($found_signal) {					#do nothing, continue within a previously identified stretch of CNV
+					1;
+				} else {							#found the start of a new CNV
+					$found_signal = $symbol->[$i];
+					$stretch_start_i = $i;
+				}
+			} else {
+				if ($found_signal) {						#end a previously identified CNV
+					push @{$cnv->{$found_signal}}, [$newchr, $pos->[$stretch_start_i], $pos->[$i-1], $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1]];
+					$found_signal = 0;
+				}
 			}
 		}
-	}
 	if ($found_signal) {								#finish the last CNV
 		push @{$cnv->{$found_signal}}, [$newchr, $pos->[$stretch_start_i], $pos->[@$symbol-1], @$symbol-$stretch_start_i, $name->[$stretch_start_i], $name->[@$symbol-1]];
 	}
@@ -1145,13 +1171,13 @@ sub analyzeStateSequence {
 
 sub cctestCNV {
 	my ($cnvfile, $phenofile, $pfbfile) = @_;
-	
+
 	my (%chr_marker, %snp_index, @snpid, $index);
 	open (PFB, $pfbfile) or confess "\nERROR: cannot read from PFB file $pfbfile: $!\n";
 	while (<PFB>) {
 		s/\s*[\r\n]+$//;
 		my @record = split (/\s+/, $_);			#snp name, chr, position, pfb
-		$record[1] =~ m/^\d+$/ or $record[1] =~ m/^[XY]+$/ or next;
+			$record[1] =~ m/^\d+$/ or $record[1] =~ m/^[XY]+$/ or next;
 		push @{$chr_marker{$record[1]}}, [$record[2], $record[0]];
 	}
 	close (PFB);
@@ -1162,23 +1188,23 @@ sub cctestCNV {
 	for my $i (0 .. @snpid-1) {
 		$snp_index{$snpid[$i]} = $i;
 	}
-	
+
 	my ($caseid, $controlid) = readPhenoFile ($phenofile, $control_label);
 	my ($casecount, $controlcount) = (scalar keys %$caseid, scalar keys %$controlid);
 	my (%snpcase, %snpcontrol, %skipped_ind);
-	
+
 	$casecount and $controlcount or confess "\nERROR: unable to find sufficient case/control from the phenotype file $phenofile (case=$casecount; control=$controlcount)\n";
-	
+
 	open (CNV, $cnvfile) or confess "\nERROR: cannot read from CNV file $cnvfile: $!\n";
 	while (<CNV>) {
 		m/(?:chr)?(\w+).+?state\d,cn=(\d)\s+(.+?)\s+startsnp=([\w\-\.\:]+)\s+endsnp=([\w\-\.\:]+)/ or confess "\nERROR: invalid record found in cnvfile $cnvfile: <$_>\n";
 		my ($cn, $indfile, $startsnp, $endsnp) = ($2, $3, $4, $5);
-		
+
 		if (not $caseid->{$indfile} and not $controlid->{$indfile}) {
 			$skipped_ind{$indfile}++;
 			next;
 		}
-		
+
 		my ($starti, $endi) = ($snp_index{$startsnp}, $snp_index{$endsnp});
 		defined $starti and defined $endi or confess "\nERROR: the marker $startsnp or $endsnp cannot be found in PFB file $pfbfile\n";
 		if ($type_filter) {
@@ -1201,14 +1227,14 @@ sub cctestCNV {
 	print STDERR "NOTICE: Finished reading CNV file $cnvfile";
 	%skipped_ind and print STDERR " (${\(scalar keys %skipped_ind)} individuals are skipped due to lack of phenotype annotation)";
 	print STDERR "\n";
-	
-	#perform case-control association tests
+
+#perform case-control association tests
 	print STDERR "NOTICE: Performing case-control comparison by Fisher's Exact Test (8 output columns are: SNP, Chr, Position, case-cnv, case-normal, control-cnv, control-normal, P-value)\n";
 	for my $nextchr (sort {sortChr ($a, $b)} keys %chr_marker) {
 		for my $i (0 .. @{$chr_marker{$nextchr}}-1) {
 			my ($nextpos, $nextsnp) = @{$chr_marker{$nextchr}->[$i]};
 			exists $snpcase{$nextsnp} or next;		#it could be zero in cases!!!
-			my $fisherp;
+				my $fisherp;
 			if ($onesided) {
 				if ($snpcase{$nextsnp} / $casecount > $snpcontrol{$nextsnp} / $controlcount) {
 					$fisherp = khmm::fisher_exact_1sided ($snpcase{$nextsnp}, $casecount-$snpcase{$nextsnp}, $snpcontrol{$nextsnp}, $controlcount-$snpcontrol{$nextsnp});
@@ -1251,14 +1277,14 @@ sub newreadPFB {
 	print STDERR "NOTICE: Reading marker coordinates and population frequency of B allele (PFB) from $pfbfile ...";	
 	while (<PFB>) {
 		s/[\r\n]+$//;							#delete line feed and return characters
-		m/^(\S+)\t(\S+)\t(\S+)\t(\S+)$/ or confess "\nERROR: invalid record found in PFB file $pfbfile (4 tab-delimited records expected): <$_>\n";
+			m/^(\S+)\t(\S+)\t(\S+)\t(\S+)$/ or confess "\nERROR: invalid record found in PFB file $pfbfile (4 tab-delimited records expected): <$_>\n";
 		my ($name, $chr, $pos, $pfb) = ($1, $2, $3, $4);
 		$chr =~ m/^chr/i and next;					#this is the header line in a regular PFB file
-		if (not $chr =~ m/^(\d+|X|Y)$/ or $chr eq '0') {
-			$skip_snp{$chr}++;
-			$skip_snp_count++;
-			next;
-		}
+			if (not $chr =~ m/^(\d+|X|Y)$/ or $chr eq '0') {
+				$skip_snp{$chr}++;
+				$skip_snp_count++;
+				next;
+			}
 		if ($pfb > 1) {
 			$count_np++;
 		} elsif ($pfb < 0) {						#when PFB<0, this marker is marked as being excluded from analysis
@@ -1304,21 +1330,18 @@ sub readLRRBAF  {
 		}
 	}
 
-	#check which column is chr, name, position and logr value
 	my (@header, $name_index, $chr_index, $pos_index, $logr_index, $b_index);
 	if ($directory) {
 		require File::Spec;
 		$directory =~ s#\\\/$##;
 		$inputfile = File::Spec->catfile ($directory, $inputfile);
 	}
-	
-	#open the file handler (it could be a physical file, or could be a piped output from a system command
 	if ($inputfile =~ m/^`(.+)`$/) {
 		open (SIG, "$1 |") or confess "\nERROR: cannot read from system command: $inputfile: $!\n";
 	} else {
 		open (SIG, $inputfile) or confess "\nERROR: cannot read from inputfile $inputfile: $!\n";
 	}
-	
+
 	$_ = <SIG>;
 	defined ($_) or die "\nERROR: NOTHING is found in inputfile $inputfile. Please check the file before proceeding\n";
 	s/[\r\n]+$//;
@@ -1365,8 +1388,8 @@ sub readLRRBAF  {
 		defined $chr_index and defined $pos_index or confess "\nERROR: signal file $inputfile does not contain Chr and Position information in header line (but you specified --coordinate_from_input argument)\n";
 	}
 
-	#read the logr values for specified individual
-	my (%siginfo, %sigdesc, @alllrr, @xlrr, @chr_baf_drift);
+#read the logr values for specified individual
+	my (%siginfo, %sigdesc, @alllrr, @xlrr, @ylrr, @chr_baf_drift);
 	my ($skipped_line, $record_count, $cn_count, $line_count, $nan_count) = qw/0 0 0 0 0/;
 	while (<SIG>) {
 		s/[\r\n]+$//;
@@ -1375,7 +1398,7 @@ sub readLRRBAF  {
 		my ($name, $logr, $baf) = @record[$name_index, $logr_index, $b_index];
 		my ($chr, $pos, $pfb);
 
-		#in non-English version of BeadStudio, sometimes weird characters may appear in the signal intensity file: they can be ignored
+#in non-English version of BeadStudio, sometimes weird characters may appear in the signal intensity file: they can be ignored
 		if (not defined $name) {
 			print STDERR "WARNING: Unable to read Name information from line ${\($line_count+1)} in signal file $inputfile: <$_>\n" and next;
 		}
@@ -1385,12 +1408,12 @@ sub readLRRBAF  {
 			$baf = 0;
 			$nan_count++;
 		}
-		
+
 		if (not exists $pfbinfo->{$name}) {
 			$skipped_line++;				#no PFB information is provided for this probe
-			next;
+				next;
 		}
-		
+
 		if ($coordinate_from_input) {		#use chromosome coordinates from the input file (rather than PFB file)
 			($chr, $pos) = ($record[$chr_index], $record[$pos_index]);
 			defined $chr and defined $pos or confess "\nERROR: Unable to read Chr and Position information from line ${\($line_count+1)} in signal file $inputfile: <$_>\n";
@@ -1400,57 +1423,56 @@ sub readLRRBAF  {
 		} else {
 			($chr, $pos, $pfb) = split (/\t/, $pfbinfo->{$name});
 		}
-		
+
 		if ($logr =~ m/^NaN/ or $baf =~ m/^NaN/) {		#assign the logr and B values to zero, when there are annotated as 'Not a Number' (in non-English version of BeadStudio, some additional strings may be appended after NaN
-			$logr = 0;
-			$baf = 0;
-			$nan_count++;
-		}
-		$logr eq '-Infinity' and $logr = -5;			#this usually means homozygous deletion (zero copy number)
-		$logr eq '-inf' and $logr = -5;				#same as above: this usually means homozygous deletion (zero copy number)
-		#if ($logr =~ m/^[a-zA-Z\-]+$/ or $baf =~ m/^[a-zA-Z\-]+$/) {		#previous 
-		if ($logr =~ m/[^\d\.eE-]/ or $baf =~ m/[^\d\.eE-]/) {			#current (2008Sep04) to handle "weird character" problems caused by non-English version of BeadStudio
-			print STDERR "WARNING: Unrecognizable LRR or BAF values are treated as zero: LRR=$logr BAF=$baf\n";
-			$logr = 0;
-			$baf = 0;
-			$nan_count++;
-		}
-		
-		if ($name =~ m/^CN/ or $name =~ m/^cnv/) {		#this step force the BAF for CN marker (non-polymorphic marker) to be 2 (normally it should be in 0-1 range for a SNP marker)
-			$baf = 2;
-			$cn_count++;
-		} elsif ($pfb > 1) {					#if the PFB value is annotated as >1, it is also treated as a NP marker (this is used for custom array design)
-			$baf = 2;
-			$cn_count++;
-		}
-		$record_count++;
-	
-		if (not $siginfo{$chr}) {
-			push @{$siginfo{$chr}->{name}}, 0;
-			push @{$siginfo{$chr}->{pos}}, [0, 0];
-			push @{$siginfo{$chr}->{lrr}}, 0;
-			push @{$siginfo{$chr}->{baf}}, 0;
-			push @{$siginfo{$chr}->{pfb}}, 0;
-		}
-		push @{$siginfo{$chr}->{name}}, $name;
-		push @{$siginfo{$chr}->{pos}}, [$pos, @{$siginfo{$chr}->{name}}-1];
-		push @{$siginfo{$chr}->{lrr}}, $logr;
-		push @{$siginfo{$chr}->{baf}}, $baf;
-		push @{$siginfo{$chr}->{pfb}}, $pfb;
+				$logr = 0;
+				$baf = 0;
+				$nan_count++;
+				}
+				$logr eq '-Infinity' and $logr = -5;			#this usually means homozygous deletion (zero copy number)
+				$logr eq '-inf' and $logr = -5;				#same as above: this usually means homozygous deletion (zero copy number)
+				if ($logr =~ m/[^\d\.eE-]/ or $baf =~ m/[^\d\.eE-]/) {			#current (2008Sep04) to handle "weird character" problems caused by non-English version of BeadStudio
+				print STDERR "WARNING: Unrecognizable LRR or BAF values are treated as zero: LRR=$logr BAF=$baf\n";
+				$logr = 0;
+				$baf = 0;
+				$nan_count++;
+				}
+
+				if ($name =~ m/^CN/ or $name =~ m/^cnv/) {		#this step force the BAF for CN marker (non-polymorphic marker) to be 2 (normally it should be in 0-1 range for a SNP marker)
+				$baf = 2;
+				$cn_count++;
+				} elsif ($pfb > 1) {					#if the PFB value is annotated as >1, it is also treated as a NP marker (this is used for custom array design)
+				$baf = 2;
+				$cn_count++;
+				}
+				$record_count++;
+
+				if (not $siginfo{$chr}) {
+					push @{$siginfo{$chr}->{name}}, 0;
+					push @{$siginfo{$chr}->{pos}}, [0, 0];
+					push @{$siginfo{$chr}->{lrr}}, 0;
+					push @{$siginfo{$chr}->{baf}}, 0;
+					push @{$siginfo{$chr}->{pfb}}, 0;
+				}
+				push @{$siginfo{$chr}->{name}}, $name;
+				push @{$siginfo{$chr}->{pos}}, [$pos, @{$siginfo{$chr}->{name}}-1];
+				push @{$siginfo{$chr}->{lrr}}, $logr;
+				push @{$siginfo{$chr}->{baf}}, $baf;
+				push @{$siginfo{$chr}->{pfb}}, $pfb;
 	}
 	close (SIG);
-	
-	#make sure that the SNPs in the inputfile are sorted based on positions from the PFB file
+
+#make sure that the SNPs in the inputfile are sorted based on positions from the PFB file
 	for my $nextchr (keys %siginfo) {
 		@{$siginfo{$nextchr}->{pos}} = sort {$a->[0]<=>$b->[0]} @{$siginfo{$nextchr}->{pos}};
 		my @index = map {$_->[1]} @{$siginfo{$nextchr}->{pos}};
 		@{$siginfo{$nextchr}->{pos}} = map {$_->[0]} @{$siginfo{$nextchr}->{pos}};
-		
+
 		@{$siginfo{$nextchr}->{name}} = @{$siginfo{$nextchr}->{name}}[@index];
 		@{$siginfo{$nextchr}->{lrr}} = @{$siginfo{$nextchr}->{lrr}}[@index];
 		@{$siginfo{$nextchr}->{baf}} = @{$siginfo{$nextchr}->{baf}}[@index];
 		@{$siginfo{$nextchr}->{pfb}} = @{$siginfo{$nextchr}->{pfb}}[@index];
-		
+
 		if ($nextchr =~ m/^\d+$/ and $nextchr>=1 and $nextchr<=$lastchr) {	#baf_drift is a measure of BAF in "unlikely regions" (except when 4-copy duplication is present): high baf_drift indicate sample quality issue
 			my @baf_drift = grep {$_>0.2 and $_<0.25 or $_>0.75 and $_<0.8} @{$siginfo{$nextchr}->{baf}};
 			push @chr_baf_drift, @baf_drift/@{$siginfo{$nextchr}->{baf}};
@@ -1465,34 +1487,35 @@ sub readLRRBAF  {
 	}
 	$verbose and $cn_count and print STDERR "NOTICE: Total of $cn_count non-polymorphic probes detected in the $record_count records from $inputfile\n";
 
-	#handle situations where nothing was in the file
+#handle situations where nothing was in the file
 	$record_count or print STDERR "ERROR: NO SIGNAL DATA FOUND IN INPUTFILE $inputfile\n" and return ({}, {});
-	
+
 	$sigdesc{num_record} = $record_count;					#total number of records (not including the leading zero in each array for each chromosome)
-	$sigdesc{cn_count} = $cn_count;						#total number of CN probes
-	$sigdesc{nocall_rate} = $nan_count/$record_count;
+		$sigdesc{cn_count} = $cn_count;						#total number of CN probes
+		$sigdesc{nocall_rate} = $nan_count/$record_count;
 
 	($sigdesc{wf}, $sigdesc{cc}) = calWF (\%siginfo);
 	$sigdesc{gcwf} = $sigdesc{cc} eq 'NA' ? 'NA' : ($sigdesc{wf} * abs ($sigdesc{cc}));
 
-	#adjust genomic wave using GC model file
+#adjust genomic wave using GC model file
 	if ($gcmodel) {
 		adjustLRRByGCModel (\%siginfo, \%sigdesc, $gcmodel);
 	}
-	
+
 	for my $nextchr (keys %siginfo) {
 		if ($nextchr =~ m/^\d+$/) {
 			push @alllrr, grep {$_>-2 and $_<2} @{$siginfo{$nextchr}->{lrr}};	#must use PUSH here, for each chromsome
 		} elsif ($nextchr eq 'X') {
 			@xlrr = grep {$_>-2 and $_<2} @{$siginfo{$nextchr}->{lrr}};
+		} elsif ($nextchr eq 'Y') {
+			@ylrr = grep {$_>-2 and $_<2} @{$siginfo{$nextchr}->{lrr}};
 		}
 	}
-
 	if (@alllrr <= 1) {							#for example, when the signal file does not contain any autosomes
 		@sigdesc{'lrr_mean', 'lrr_median', 'lrr_sd'} = qw/NA NA NA/;
 	} else {
 		$sigdesc{lrr_mean} = mean (\@alllrr);				#lrr mean, sd and median are for LRR values in (-2, 2) region only!
-		$sigdesc{lrr_median} = median (\@alllrr);
+			$sigdesc{lrr_median} = median (\@alllrr);
 		$sigdesc{lrr_sd} = sd (\@alllrr);
 	}
 	if (@xlrr <= 1) {
@@ -1500,22 +1523,31 @@ sub readLRRBAF  {
 	} else {
 		@sigdesc{'lrr_xmean', 'lrr_xmedian', 'lrr_xsd'} = (mean (\@xlrr), median (\@xlrr), sd (\@xlrr));
 	}
-	
+
+	if (@ylrr <= 1) {
+		@sigdesc{'baf_yhet', 'lrr_ymean', 'lrr_ymedian', 'lrr_ysd'} = qw/NA NA NA NA/;
+	} else {
+		@sigdesc{'lrr_ymean', 'lrr_ymedian', 'lrr_ysd'} = (mean (\@ylrr), median (\@ylrr), sd (\@ylrr));
+	}
+
 	@alllrr = ();
 	@xlrr = ();
+	@ylrr = ();
 	for my $nextchr (keys %siginfo) {
 		if ($nextchr =~ m/^\d+$/) {
 			push @alllrr, grep {$_>0.25 and $_<0.75} @{$siginfo{$nextchr}->{baf}};	#must use PUSH here, for each chromosome
 		} elsif ($nextchr eq 'X') {
 			@xlrr = @{$siginfo{$nextchr}->{baf}};		#unfilterd BAF values here
+		} elsif ($nextchr eq 'Y') {
+			@ylrr = @{$siginfo{$nextchr}->{baf}};		#unfilterd BAF values here
 		}
 	}
-	
+
 	if (@alllrr <= 1) {
 		@sigdesc{'baf_mean', 'baf_median', 'baf_sd'} = qw/NA NA NA/;
 	} else {
 		$sigdesc{baf_mean} = mean (\@alllrr);				#baf mean, sd and median are for BAF values in (0.25,0.75) region only!
-		$sigdesc{baf_median} = median (\@alllrr);
+			$sigdesc{baf_median} = median (\@alllrr);
 		$sigdesc{baf_sd} = sd (\@alllrr);
 		if (@chr_baf_drift) {
 			$sigdesc{baf_drift} = median (\@chr_baf_drift);		#baf_drift measure the random drift of BAF values to unlikely regions (we use median here, to eliminate effects of large baf_drift caused by one chromosome having large 4-copy duplication)
@@ -1523,7 +1555,7 @@ sub readLRRBAF  {
 			$sigdesc{baf_drift} = 0;				#for chrX, there is no baf_drift value
 		}
 	}
-	
+
 	if (@xlrr > 1) {								#occasionally the file do not contain SNPs for X chromosome
 		if (scalar (grep {$_>=0 and $_<=1} @xlrr)) {
 			$sigdesc{baf_xhet} = scalar (grep {$_>0.25 and $_<0.75} @xlrr)/scalar (grep {$_>=0 and $_<=1} @xlrr);	#the heterozygosity fraction (this is especially useful for chrX, as this value can be used to infer sex)
@@ -1532,7 +1564,15 @@ sub readLRRBAF  {
 		}
 	}
 
-	#delete non-specified region
+	if (@ylrr > 1) {								
+		if (scalar (grep {$_>=0 and $_<=1} @ylrr)) {
+			$sigdesc{baf_yhet} = scalar (grep {$_>0.25 and $_<0.75} @ylrr)/scalar (grep {$_>=0 and $_<=1} @ylrr); # fraction of heterozygous SNPs in chrY. this can not be used to predict the gender
+		} else {
+			$sigdesc{baf_yhet} = 'NA';  # no SNPs on chrY
+		}
+	}
+
+
 	my @dropchr;
 	for my $nextchr (keys %siginfo) {
 		if (not $chr_include{$nextchr}) {
@@ -1547,17 +1587,17 @@ sub readLRRBAF  {
 sub reg_linear {
 	my ($x, $y) = @_;
 	my ($a, $b);					#regression coefficient alpha, beta
-	
-	my ($sx, $sy, $st2, $mss, $rss, $tss);		#mean x, mean y, sum, model sum of squares, residual sum of squares, total sum of squares
-	
-	@$x and @$y or die "Error: input to reg_linear() should be two reference to arrays\n";
+
+		my ($sx, $sy, $st2, $mss, $rss, $tss);		#mean x, mean y, sum, model sum of squares, residual sum of squares, total sum of squares
+
+		@$x and @$y or die "Error: input to reg_linear() should be two reference to arrays\n";
 	@$x and @$y or die "Error: input arrays to reg_linear() should have equal dimensions, but the current dimensions are ${\(scalar @$x)} and ${\(scalar @$y)}, respectively.\n";
-	
+
 	for my $i (0 .. @$x-1) {
 		$sx += $x->[$i];
 		$sy += $y->[$i];
 	}
-	
+
 	for my $i (0 .. @$x-1) {
 		my $t = $x->[$i] - $sx/@$x;
 		$st2 += $t*$t;
@@ -1573,36 +1613,33 @@ sub adjustLRRByGCModel {
 	my (@x, @y);
 	my ($b1, $b2, $f, $p) = qw/0 0 0 0/;
 	my ($prepos, $distance) = (0, 1_000_000);
-	
+
 	my ($wf, $cc, $gcwf) = ($sigdesc->{wf}, $sigdesc->{cc}, $sigdesc->{gcwf});
-	
+
 	if ($cc eq 'NA') {
 		print STDERR "WARNING: Unable to adjust LRR values by GC model due to lack of GCWF measure\n";
 		return;
 	}
-	
+
 	for my $nextchr (keys %$siginfo) {
 		$nextchr =~ m/^\d+$/ or next;			#model training on autosome only
-		$prepos = 0;					#reset prepos for the new chromosome
-		my ($name, $pos, $lrr) = ($siginfo->{$nextchr}{name}, $siginfo->{$nextchr}{pos}, $siginfo->{$nextchr}{lrr});
+			$prepos = 0;					#reset prepos for the new chromosome
+			my ($name, $pos, $lrr) = ($siginfo->{$nextchr}{name}, $siginfo->{$nextchr}{pos}, $siginfo->{$nextchr}{lrr});
 		for my $i (0 .. @$name-1) {
 			$model->{$name->[$i]} or next;		#this SNP is not in GC model
-			if ($pos->[$i] - $prepos > $distance) {
-				my ($x, $y) = ($model->{$name->[$i]}, $lrr->[$i]);
-				if ($x > 15 and $x < 80 and $y > -1 and $y < 1) {
-					push @x, $x;
-					push @y, $y;
+				if ($pos->[$i] - $prepos > $distance) {
+					my ($x, $y) = ($model->{$name->[$i]}, $lrr->[$i]);
+					if ($x > 15 and $x < 80 and $y > -1 and $y < 1) {
+						push @x, $x;
+						push @y, $y;
+					}
+					$prepos = $pos->[$i];
 				}
-				$prepos = $pos->[$i];
-			}
 		}
 	}
-	#khmm::reg_linear (\@x, \@y, scalar (@x), \$b1, \$b2, \$f, \$p);
-	#$verbose and print STDERR "NOTICE: Regression x=@x\n\n\ny=@y\n\n\n";
-	#$verbose and print STDERR "NOTICE: Collecting ${\(scalar @x)} autosome SNPs for GC-based regression ... GC model regression parameter: a=$b1 b=$b2 f=$f p=$p\n";
 	($b1, $b2) = reg_linear (\@x, \@y);
 	$verbose and print STDERR "NOTICE: Collecting ${\(scalar @x)} autosome SNPs for GC-based regression ... GC model regression parameter: a=$b1 b=$b2\n";
-	
+
 	my ($count_skipped_marker, @alllrr, @xlrr, @ylrr);
 	for my $nextchr (keys %$siginfo) {
 		my ($name, $lrr) = ($siginfo->{$nextchr}{name}, $siginfo->{$nextchr}{lrr});
@@ -1623,7 +1660,7 @@ sub adjustLRRByGCModel {
 	}
 	($sigdesc->{wf}, $sigdesc->{cc}) = calWF ($siginfo);
 	$sigdesc->{gcwf} = $sigdesc->{wf} * abs ($sigdesc->{cc});
-	
+
 	@alllrr = grep {$_>-2 and $_<2} @alllrr;
 	@xlrr = grep {$_>-2 and $_<2} @xlrr;
 	if (@alllrr <= 1) {
@@ -1631,7 +1668,7 @@ sub adjustLRRByGCModel {
 	} else {
 		@{$sigdesc->{'lrr_mean', 'lrr_median', 'lrr_sd'}} = (sprintf("%.4f", mean (\@alllrr)), sprintf("%.4f", median (\@alllrr)), sprintf("%.4f", sd (\@alllrr)));
 	}
-	
+
 	@xlrr = grep {$_>-2 and $_<2} @xlrr;
 	if (@xlrr <= 1) {
 		@{$sigdesc->{'lrr_xmean', 'lrr_xmedian', 'lrr_xsd'}} = qw/NA NA NA/;
@@ -1658,42 +1695,36 @@ sub newreadGCModel {
 	return (\%snp_gc);
 }
 
-#identify a list of regions that should be validated in the trio-based or quartet-based CNV calling algorithm
-#the CNV file contains the file name in the fifth column
-#this subroutine look for the file names that match the trio file names, and then combine the CNV regions into a set of consensus regions for follow-up analysis
 sub identifyCNVRegion {
 	my ($cnvfile, $ref_inputfile, $pfbinfo) = @_;
-	
+
 	my $snp_pos;
 
 
-	#read CNV regions to be consolidated
 	my %inputsignalfile = map {$_, 1} @$ref_inputfile;
 	my (@region, %region);				#@region contains the region (3 elements in array, representing chr, start, end) %region stores files that have this region
-	open (TRIOCNV, $cnvfile) or confess "\nERROR: cannot read from cnvfile $cnvfile: $!";
+		open (TRIOCNV, $cnvfile) or confess "\nERROR: cannot read from cnvfile $cnvfile: $!";
 	while (<TRIOCNV>) {
-		#some strange hh1M probe names include cnvcnv2007:326PP165, cnvGap_CNV_457.1p15
-		#m/(?:chr)?(\w+).+?state(\d)\S*\s+(.+?)\s+startsnp=([\w\-\.\:]+)\s+endsnp=([\w\-\.\:]+)/ or confess "\nERROR: invalid record found in cnvfile $cnvfile: <$_>\n";
 		m/^chr(\w+):(\d+)-(\d+)\s+numsnp=(\d+)\s+length=([\d\,]+)\s+state(\d+),cn=(\d+)\s+(.+?)\s+startsnp=(\S+)\s+endsnp=(\S+)/ or die "Error: invalid record found in cnvfile $cnvfile: <$_>\n";
 		my ($curchr, $curstate, $curfile, $curstartsnp, $curendsnp) = ($1, $6, $8, $9, $10);
-		
+
 		$inputsignalfile{$curfile} or next;		#only consider regions that are related to the inputfiles
-		$curstartsnp eq $curendsnp and next;		#ignore CNV that contain only one SNP
-		if ($chrx) {
-			$curchr eq 'X' or next;
-		} else {
-			$curchr eq 'X' and next;
-		}
+			$curstartsnp eq $curendsnp and next;		#ignore CNV that contain only one SNP
+			if ($chrx) {
+				$curchr eq 'X' or next;
+			} else {
+				$curchr eq 'X' and next;
+			}
 		if ($chry) {
 			$curchr eq 'Y' or next;
 		} else {
 			$curchr eq 'Y' and next;
 		}
 		$region{"$curchr:$curstartsnp-$curendsnp"} and $region{"$curchr:$curstartsnp-$curendsnp"} .= "$curfile(state$curstate) " and next;		#this region is already processed (for example, when it occur in both father and son)
-		$region{"$curchr:$curstartsnp-$curendsnp"} .= "$curfile(state$curstate) ";		#key=CNV value=filename(state)
-		push @region, [$curchr, $curstartsnp, $curendsnp];					#array containing CNV regions
-		
-		my @temp = split (/\t/, $pfbinfo->{$curstartsnp});
+			$region{"$curchr:$curstartsnp-$curendsnp"} .= "$curfile(state$curstate) ";		#key=CNV value=filename(state)
+			push @region, [$curchr, $curstartsnp, $curendsnp];					#array containing CNV regions
+
+			my @temp = split (/\t/, $pfbinfo->{$curstartsnp});
 		$snp_pos->{$curstartsnp} = $temp[1];
 		@temp = split (/\t/, $pfbinfo->{$curendsnp});
 		$snp_pos->{$curendsnp} = $temp[1];
@@ -1702,29 +1733,29 @@ sub identifyCNVRegion {
 	print STDERR "NOTICE: Total of ${\(scalar @region)} CNV regions will be validated by family information (@$ref_inputfile)\n";
 	@region or print STDERR "WARNING: NO CNV CAN BE CALLED BY TRIO-BASED ALGORITHM FOR THE TRIO: @$ref_inputfile\n";
 	@region or return;								#no region will be used for family validation (none of the parent or offspring has CNV calls)
-	
-	#the goal of the following paragraph is to combine overlapping regions into one single region
-	#for example, the father may have a region of 100-200 as CNV, but the child may have a region of 105-205 as CNV region, so which region is more reasonable?
-	#to solve this problem, the best approach is to directly test the four regions via Viterbi algorithm: 100-104, 205-200, 201-205 and then see which one has the highest prob
-	#after the following paragraph:
-		#@region contains all regions, or arrays of [chr, start1, end1, end2, end3], etc.
-		#@subregion contains all subregions, or arrays of  [chr, start, end]
-	@region = sort {sortChr ($a->[0], $b->[0]) || $snp_pos->{$a->[1]}<=>$snp_pos->{$b->[1]} || $snp_pos->{$a->[2]} <=> $snp_pos->{$b->[2]}} @region;
+
+#the goal of the following paragraph is to combine overlapping regions into one single region
+#for example, the father may have a region of 100-200 as CNV, but the child may have a region of 105-205 as CNV region, so which region is more reasonable?
+#to solve this problem, the best approach is to directly test the four regions via Viterbi algorithm: 100-104, 205-200, 201-205 and then see which one has the highest prob
+#after the following paragraph:
+#@region contains all regions, or arrays of [chr, start1, end1, end2, end3], etc.
+#@subregion contains all subregions, or arrays of  [chr, start, end]
+		@region = sort {sortChr ($a->[0], $b->[0]) || $snp_pos->{$a->[1]}<=>$snp_pos->{$b->[1]} || $snp_pos->{$a->[2]} <=> $snp_pos->{$b->[2]}} @region;
 	my (@newregion, @subregion);
 	my ($prechr, $prestart, $preend) = (0);
 	my (%startname, %endname);			#key is snp name, value is the count that it is start or it is end
 
-	for my $nextregion (@region) {
-		my ($curchr, $curstart, $curend) = @$nextregion;
-		if ($curchr ne $prechr or $snp_pos->{$curstart} > $snp_pos->{$preend}) {
-			push @newregion, $nextregion;
-		} else {
-			push @{$newregion[$#newregion]}, $curstart, $curend;
+		for my $nextregion (@region) {
+			my ($curchr, $curstart, $curend) = @$nextregion;
+			if ($curchr ne $prechr or $snp_pos->{$curstart} > $snp_pos->{$preend}) {
+				push @newregion, $nextregion;
+			} else {
+				push @{$newregion[$#newregion]}, $curstart, $curend;
+			}
+			$startname{$curstart}++;
+			$endname{$curend}++;
+			($prechr, $prestart, $preend) = ($curchr, $curstart, ((!$preend || $snp_pos->{$curend} > $snp_pos->{$preend} || $curchr ne $prechr) ? $curend : $preend));
 		}
-		$startname{$curstart}++;
-		$endname{$curend}++;
-		($prechr, $prestart, $preend) = ($curchr, $curstart, ((!$preend || $snp_pos->{$curend} > $snp_pos->{$preend} || $curchr ne $prechr) ? $curend : $preend));
-	}
 	@region = ();
 	for my $nextregion (@newregion) {
 		my ($curchr, @curpos) = @$nextregion;
@@ -1746,89 +1777,91 @@ sub identifyCNVRegion {
 sub retrieveRegionSignal {
 	my ($ref_inputfile, $file_sex, $hmmfile, $subregion, $pfbinfo, $gcmodel, $directory, $hash_startname, $hash_endname) = @_;
 
-	#the following paragraph read the three signal intensity files and calculate the probability for each subregion
-	#the hash region_* all have key as subregion (chr,start,end)
+#the following paragraph read the three signal intensity files and calculate the probability for each subregion
+#the hash region_* all have key as subregion (chr,start,end)
 	my (%region_alllogprob, %region_numsnp, %region_cnvlength, %region_chr, %region_name_start, %region_name_end, %region_pos_start, %region_pos_end, %region_snpdist);
 	my (@sample_sex, $sample_sex);
-	
+
 	my $hmm = readHMMFile ($hmmfile);
 	my ($siginfo, $sigdesc);			#the siginfo for the last individual will be returned by the program (for calculating CNV length when printing CNV calls)
 
-	for my $i (0 .. @$ref_inputfile-1) {
-		my $inputfile = $ref_inputfile->[$i];
-		my $sample_sex = $file_sex->{$inputfile} || undef;
-		if (defined $sample_sex) {
-			if ($i == 0) {
-				$sample_sex eq 'male' or print STDERR "WARNING: sample_sex is annotated as $sample_sex in $sexfile but it is assumed as father (male) in analysis\n" and $sample_sex = 'male';
-			} elsif ($i == 1) {
-				$sample_sex eq 'female' or print STDERR "WARNING: sample_sex is annotated as $sample_sex in $sexfile but it is assumed as mother (female) in analysis\n" and $sample_sex = 'female';
+		for my $i (0 .. @$ref_inputfile-1) {
+			my $inputfile = $ref_inputfile->[$i];
+			my $sample_sex = $file_sex->{$inputfile} || undef;
+			if (defined $sample_sex) {
+				if ($i == 0) {
+					$sample_sex eq 'male' or print STDERR "WARNING: sample_sex is annotated as $sample_sex in $sexfile but it is assumed as father (male) in analysis\n" and $sample_sex = 'male';
+				} elsif ($i == 1) {
+					$sample_sex eq 'female' or print STDERR "WARNING: sample_sex is annotated as $sample_sex in $sexfile but it is assumed as mother (female) in analysis\n" and $sample_sex = 'female';
+				}
+			}
+
+			($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
+
+#if the file processing fails and no signal data is read from file, move on to the next file
+			%$siginfo or confess "\nERROR: Unable to read signal intensity information for chr$region from $inputfile for family-based CNV calling. Program halted.\n";
+
+			$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $sample_sex);
+			push @sample_sex, $sample_sex;
+
+#read HMM files
+			my $hmm_model = khmm::ReadCHMM ($hmmfile);
+
+#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
+			if ($sdadjust) {
+				if ($chrx) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+				} elsif ($chry) {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_ysd});
+				} else {
+					khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
+				}
+			}
+
+			my ($pre_chr, $pre_snpdist);
+			for my $nextsubregion (@$subregion) {
+				$verbose and print STDERR "NOTICE: Processing subregion @$nextsubregion\n";
+				my $subregionstring = join (",", @$nextsubregion);
+				my ($region_name, $region_chr, $region_pos, $region_logr, $region_baf, $region_pfb, $region_snpdist) = getRegionInfo ($siginfo, $pfbinfo, $nextsubregion, $hash_startname, $hash_endname);
+
+				my ($logprob, $scale) = (0);
+				my @logprob;
+				$verbose and print STDERR "NOTICE: processing @$nextsubregion containing ", scalar (@$region_name), " SNPs, where start=", $hash_startname->{$nextsubregion->[1]}||0, " and end=", $hash_endname->{$nextsubregion->[2]}||0, "\n";
+				unshift @$region_logr, 0; unshift @$region_baf, 0; unshift @$region_pfb, 0; unshift @$region_snpdist, 0;
+				for my $nextstate (1..6) {
+					khmm::GetStateProb_CHMM ($hmm_model, @$region_logr-1, $region_logr, $region_baf, $region_pfb, $region_snpdist, \$logprob, $nextstate);
+					push @logprob, $logprob;
+					$scale or $scale = $logprob;
+					$scale < $logprob and $scale = $logprob;
+				}
+				@logprob = map {$_-$scale} @logprob;		#make the highest probability as zero arbitrarily
+					unshift @logprob, 0;				#fill in the state0 (dummy state)
+
+					$verbose and print STDERR "logprob for $inputfile in region ($region_name) in 6 states are @logprob\n";
+				push @{$region_alllogprob{$subregionstring}}, \@logprob;
+				$region_numsnp{$subregionstring} = @$region_logr-1;
+				$region_cnvlength{$subregionstring} = $region_pos->[@$region_pos-1]-$region_pos->[0]+1;
+				$region_chr{$subregionstring} = $region_chr->[0];
+				$region_name_start{$subregionstring} = $region_name->[0];
+				$region_name_end{$subregionstring} = $region_name->[@$region_name-1];
+				$region_pos_start{$subregionstring} = $region_pos->[0];
+				$region_pos_end{$subregionstring} = $region_pos->[@$region_pos-1];
+				if ($pre_chr and $pre_chr eq $region_chr->[0]) {			#encountered new chromosome
+					$region_snpdist{$subregionstring} = $region_pos->[0]-$pre_snpdist;
+					$verbose and print STDERR "NOTICE: region $subregionstring snpdist=$region_snpdist{$subregionstring} ($region_pos->[0]-$pre_snpdist) curend=$region_pos_end{$subregionstring}\n";
+				}
+				$pre_snpdist = $region_pos_end{$subregionstring};
+				$pre_chr = $region_chr->[0];
 			}
 		}
 
-		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
-	
-		#if the file processing fails and no signal data is read from file, move on to the next file
-		%$siginfo or confess "\nERROR: Unable to read signal intensity information for chr$region from $inputfile for family-based CNV calling. Program halted.\n";
-		
-		$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $sample_sex);
-		push @sample_sex, $sample_sex;
-
-		#read HMM files
-		my $hmm_model = khmm::ReadCHMM ($hmmfile);
-		
-		#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
-		if ($sdadjust) {
-			if ($chrx) {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
-			} else {
-				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
-			}
-		}
-				
-		my ($pre_chr, $pre_snpdist);
-		for my $nextsubregion (@$subregion) {
-			$verbose and print STDERR "NOTICE: Processing subregion @$nextsubregion\n";
-			my $subregionstring = join (",", @$nextsubregion);
-			my ($region_name, $region_chr, $region_pos, $region_logr, $region_baf, $region_pfb, $region_snpdist) = getRegionInfo ($siginfo, $pfbinfo, $nextsubregion, $hash_startname, $hash_endname);
-			
-			my ($logprob, $scale) = (0);
-			my @logprob;
-			$verbose and print STDERR "NOTICE: processing @$nextsubregion containing ", scalar (@$region_name), " SNPs, where start=", $hash_startname->{$nextsubregion->[1]}||0, " and end=", $hash_endname->{$nextsubregion->[2]}||0, "\n";
-			unshift @$region_logr, 0; unshift @$region_baf, 0; unshift @$region_pfb, 0; unshift @$region_snpdist, 0;
-			for my $nextstate (1..6) {
-				khmm::GetStateProb_CHMM ($hmm_model, @$region_logr-1, $region_logr, $region_baf, $region_pfb, $region_snpdist, \$logprob, $nextstate);
-				push @logprob, $logprob;
-				$scale or $scale = $logprob;
-				$scale < $logprob and $scale = $logprob;
-			}
-			@logprob = map {$_-$scale} @logprob;		#make the highest probability as zero arbitrarily
-			unshift @logprob, 0;				#fill in the state0 (dummy state)
-			
-			$verbose and print STDERR "logprob for $inputfile in region ($region_name) in 6 states are @logprob\n";
-			push @{$region_alllogprob{$subregionstring}}, \@logprob;
-			$region_numsnp{$subregionstring} = @$region_logr-1;
-			$region_cnvlength{$subregionstring} = $region_pos->[@$region_pos-1]-$region_pos->[0]+1;
-			$region_chr{$subregionstring} = $region_chr->[0];
-			$region_name_start{$subregionstring} = $region_name->[0];
-			$region_name_end{$subregionstring} = $region_name->[@$region_name-1];
-			$region_pos_start{$subregionstring} = $region_pos->[0];
-			$region_pos_end{$subregionstring} = $region_pos->[@$region_pos-1];
-			if ($pre_chr and $pre_chr eq $region_chr->[0]) {			#encountered new chromosome
-				$region_snpdist{$subregionstring} = $region_pos->[0]-$pre_snpdist;
-				$verbose and print STDERR "NOTICE: region $subregionstring snpdist=$region_snpdist{$subregionstring} ($region_pos->[0]-$pre_snpdist) curend=$region_pos_end{$subregionstring}\n";
-			}
-			$pre_snpdist = $region_pos_end{$subregionstring};
-			$pre_chr = $region_chr->[0];
-		}
-	}
-	
 	return ($siginfo, \@sample_sex, \%region_alllogprob, \%region_numsnp, \%region_cnvlength, \%region_chr, \%region_name_start, \%region_name_end, \%region_pos_start, \%region_pos_end, \%region_snpdist);
 }
 
 #validate CNV calls using father-mother-offspring trio informatoin and reconcile boundary discordance using family information.
 sub newtestTrioCNVFile {
 	my ($ref_inputfile, $hmmfile, $pfbfile, $cnvfile, $sexfile, $gcmodelfile, $directory) = @_;
-	#my ($name, $chr, $pos, $logr, $baf, $pfb, $snpdist);
+#my ($name, $chr, $pos, $logr, $baf, $pfb, $snpdist);
 	my ($pfbinfo) = newreadPFB ($pfbfile);
 	my $file_sex;
 	$sexfile and $file_sex = readSexFile ($sexfile);
@@ -1837,54 +1870,59 @@ sub newtestTrioCNVFile {
 
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the gc model for SNPs defined in snp_chr
 
-	my ($array_subregion, $array_region, $hash_region, $hash_startname, $hash_endname) = identifyCNVRegion ($cnvfile, $ref_inputfile, $pfbinfo);
+		my ($array_subregion, $array_region, $hash_region, $hash_startname, $hash_endname) = identifyCNVRegion ($cnvfile, $ref_inputfile, $pfbinfo);
 	$array_subregion or return;		#no CNV region can be identified for posterior calling algorithm
-	
-	my @subregion = @$array_subregion;
+
+		my @subregion = @$array_subregion;
 	my @region = @$array_region;
 	my %region = %$hash_region;
 	my %startname = %$hash_startname;
 	my %endname = %$hash_endname;
-	
+
 
 	my ($siginfo, $sample_sex, $region_alllogprob, $region_numsnp, $region_cnvlength, $region_chr, $region_name_start, $region_name_end, $region_pos_start, $region_pos_end, $region_snpdist) 
 		= retrieveRegionSignal ($ref_inputfile, $file_sex, $hmmfile, $array_subregion, $pfbinfo, $gcmodel, $directory, $hash_startname, $hash_endname);
 
 
-	#now apply pedigree information to validate CNV calls and fine-map CNV boundaries
-	#first define the CNV inheritance matrix, and read the state transition matrix
-	
+#now apply pedigree information to validate CNV calls and fine-map CNV boundaries
+#first define the CNV inheritance matrix, and read the state transition matrix
+
 	my $transition = readTransitionMatrix ($hmmfile);
 	my ($e, %oprior) = ($denovo_rate);
+	print "debug, $sample_sex->[0], $sample_sex->[1], $sample_sex->[2]\n";
 	if ($chrx and $sample_sex->[2] eq 'male') {
 		%oprior = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.25*$e, 212=>1-$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.3333*$e, 222=>0.5*(1-$e), 223=>0.5*(1-$e), 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>0.25*$e, 233=>1-$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.3333*$e, 253=>0.5*(1-$e), 255=>0.5*(1-$e), 256=>0.3333*$e, 261=>0.5*$e, 262=>0.5*$e, 263=>0.25*(1-$e), 265=>0.5*(1-$e), 266=>0.25*(1-$e), 311=>0.25*$e, 312=>0.25*$e, 313=>1-$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.3333*$e, 323=>0.5*(1-$e), 325=>0.5*(1-$e), 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>0.25*$e, 335=>1-$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.3333*$e, 355=>0.5*(1-$e), 356=>0.5*(1-$e), 361=>0.3333*$e, 362=>0.3333*$e, 363=>0.3333*$e, 365=>0.25*(1-$e), 366=>0.75*(1-$e), 511=>0.25*$e, 512=>0.25*$e, 513=>0.25*$e, 515=>1-$e, 516=>0.25*$e, 521=>0.3333*$e, 522=>0.3333*$e, 523=>0.3333*$e, 525=>0.5*(1-$e), 526=>0.5*(1-$e), 531=>0.25*$e, 532=>0.25*$e, 533=>0.25*$e, 535=>0.25*$e, 536=>1-$e, 551=>0.25*$e, 552=>0.25*$e, 553=>0.25*$e, 555=>0.25*$e, 556=>1-$e, 561=>0.25*$e, 562=>0.25*$e, 563=>0.25*$e, 565=>0.25*$e, 566=>1-$e, 611=>0.25*$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>1-$e, 621=>0.25*$e, 622=>0.25*$e, 623=>0.25*$e, 625=>0.25*$e, 626=>1-$e, 631=>0.25*$e, 632=>0.25*$e, 633=>0.25*$e, 635=>0.25*$e, 636=>1-$e, 651=>0.25*$e, 652=>0.25*$e, 653=>0.25*$e, 655=>0.25*$e, 656=>1-$e, 661=>0.25*$e, 662=>0.25*$e, 663=>0.25*$e, 665=>0.25*$e, 666=>1-$e);
 	} elsif ($chrx and $sample_sex->[2] eq 'female') {
 		%oprior = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>1-$e, 212=>0.25*$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.5*(1-$e), 222=>0.5*(1-$e), 223=>0.3333*$e, 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>1-$e, 233=>0.25*$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.5*(1-$e), 253=>0.5*(1-$e), 255=>0.3333*$e, 256=>0.3333*$e, 261=>0.5*$e, 262=>0.25*(1-$e), 263=>0.5*(1-$e), 265=>0.25*(1-$e), 266=>0.5*$e, 311=>1-$e, 312=>0.25*$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.5*(1-$e), 322=>0.5*(1-$e), 323=>0.3333*$e, 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>1-$e, 333=>0.25*$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.5*(1-$e), 353=>0.5*(1-$e), 355=>0.3333*$e, 356=>0.3333*$e, 361=>0.5*$e, 362=>0.25*(1-$e), 363=>0.5*(1-$e), 365=>0.25*(1-$e), 366=>0.5*$e, 511=>1-$e, 512=>0.25*$e, 513=>0.25*$e, 515=>0.25*$e, 516=>0.25*$e, 521=>0.5*(1-$e), 522=>0.5*(1-$e), 523=>0.3333*$e, 525=>0.3333*$e, 526=>0.3333*$e, 531=>0.25*$e, 532=>1-$e, 533=>0.25*$e, 535=>0.25*$e, 536=>0.25*$e, 551=>0.3333*$e, 552=>0.5*(1-$e), 553=>0.5*(1-$e), 555=>0.3333*$e, 556=>0.3333*$e, 561=>0.5*$e, 562=>0.25*(1-$e), 563=>0.5*(1-$e), 565=>0.25*(1-$e), 566=>0.5*$e, 611=>1-$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>0.25*$e, 621=>0.5*(1-$e), 622=>0.5*(1-$e), 623=>0.3333*$e, 625=>0.3333*$e, 626=>0.3333*$e, 631=>0.25*$e, 632=>1-$e, 633=>0.25*$e, 635=>0.25*$e, 636=>0.25*$e, 651=>0.3333*$e, 652=>0.5*(1-$e), 653=>0.5*(1-$e), 655=>0.3333*$e, 656=>0.3333*$e, 661=>0.5*$e, 662=>0.25*(1-$e), 663=>0.5*(1-$e), 665=>0.25*(1-$e), 666=>0.5*$e);
+	}elsif ($chry and $sample_sex->[2] eq 'male'){
+		%oprior = (111=>1.000-$e, 112=>1.000*$e, 113=>0.500*$e, 115=>0.333*$e, 116=>0.250*$e, 121=>1.000-$e, 122=>1.000*$e, 123=>0.500*$e, 125=>0.333*$e, 126=>0.250*$e, 131=>1.000-$e, 132=>1.000*$e, 133=>0.500*$e, 135=>0.333*$e, 136=>0.250*$e, 151=>1.000-$e, 152=>1.000*$e, 153=>0.500*$e, 155=>0.333*$e, 156=>0.250*$e, 161=>1.000-$e, 162=>1.000*$e, 163=>0.500*$e, 165=>0.333*$e, 166=>0.250*$e, 211=>1.000*$e, 212=>1.000-$e, 213=>1.000*$e, 215=>0.500*$e, 216=>0.333*$e, 221=>1.000*$e, 222=>1.000-$e, 223=>1.000*$e, 225=>0.500*$e, 226=>0.333*$e, 231=>1.000*$e, 232=>1.000-$e, 233=>1.000*$e, 235=>0.500*$e, 236=>0.333*$e, 251=>1.000*$e, 252=>1.000-$e, 253=>1.000*$e, 255=>0.500*$e, 256=>0.333*$e, 261=>1.000*$e, 262=>1.000-$e, 263=>1.000*$e, 265=>0.500*$e, 266=>0.333*$e, 311=>0.500*$e, 312=>1.000*$e, 313=>1.000-$e, 315=>1.000*$e, 316=>0.500*$e, 321=>0.500*$e, 322=>1.000*$e, 323=>1.000-$e, 325=>1.000*$e, 326=>0.500*$e, 331=>0.500*$e, 332=>1.000*$e, 333=>1.000-$e, 335=>1.000*$e, 336=>0.500*$e, 351=>0.500*$e, 352=>1.000*$e, 353=>1.000-$e, 355=>1.000*$e, 356=>0.500*$e, 361=>0.500*$e, 362=>1.000*$e, 363=>1.000-$e, 365=>1.000*$e, 366=>0.500*$e, 511=>0.333*$e, 512=>0.500*$e, 513=>1.000*$e, 515=>1.000-$e, 516=>1.000*$e, 521=>0.333*$e, 522=>0.500*$e, 523=>1.000*$e, 525=>1.000-$e, 526=>1.000*$e, 531=>0.333*$e, 532=>0.500*$e, 533=>1.000*$e, 535=>1.000-$e, 536=>1.000*$e, 551=>0.333*$e, 552=>0.500*$e, 553=>1.000*$e, 555=>1.000-$e, 556=>1.000*$e, 561=>0.333*$e, 562=>0.500*$e, 563=>1.000*$e, 565=>1.000-$e, 566=>1.000*$e, 611=>0.250*$e, 612=>0.333*$e, 613=>0.500*$e, 615=>1.000*$e, 616=>1.000-$e, 621=>0.250*$e, 622=>0.333*$e, 623=>0.500*$e, 625=>1.000*$e, 626=>1.000-$e, 631=>0.250*$e, 632=>0.333*$e, 633=>0.500*$e, 635=>1.000*$e, 636=>1.000-$e, 651=>0.250*$e, 652=>0.333*$e, 653=>0.500*$e, 655=>1.000*$e, 656=>1.000-$e, 661=>0.250*$e, 662=>0.333*$e, 663=>0.500*$e, 665=>1.000*$e, 666=>1.000-$e);
+	}elsif ($chry and $sample_sex->[2] eq 'female'){
+		%oprior = (111=>$e*$e, 112=>$e*$e, 113=>$e*$e, 115=>$e*$e, 116=>$e*$e, 121=>$e*$e, 122=>$e*$e, 123=>$e*$e, 125=>$e*$e, 126=>$e*$e, 131=>$e*$e, 132=>$e*$e, 133=>$e*$e, 135=>$e*$e, 136=>$e*$e, 151=>$e*$e, 152=>$e*$e, 153=>$e*$e, 155=>$e*$e, 156=>$e*$e, 161=>$e*$e, 162=>$e*$e, 163=>$e*$e, 165=>$e*$e, 166=>$e*$e, 211=>$e*$e, 212=>$e*$e, 213=>$e*$e, 215=>$e*$e, 216=>$e*$e, 221=>$e*$e, 222=>$e*$e, 223=>$e*$e, 225=>$e*$e, 226=>$e*$e, 231=>$e*$e, 232=>$e*$e, 233=>$e*$e, 235=>$e*$e, 236=>$e*$e, 251=>$e*$e, 252=>$e*$e, 253=>$e*$e, 255=>$e*$e, 256=>$e*$e, 261=>$e*$e, 262=>$e*$e, 263=>$e*$e, 265=>$e*$e, 266=>$e*$e, 311=>$e*$e, 312=>$e*$e, 313=>$e*$e, 315=>$e*$e, 316=>$e*$e, 321=>$e*$e, 322=>$e*$e, 323=>$e*$e, 325=>$e*$e, 326=>$e*$e, 331=>$e*$e, 332=>$e*$e, 333=>$e*$e, 335=>$e*$e, 336=>$e*$e, 351=>$e*$e, 352=>$e*$e, 353=>$e*$e, 355=>$e*$e, 356=>$e*$e, 361=>$e*$e, 362=>$e*$e, 363=>$e*$e, 365=>$e*$e, 366=>$e*$e, 511=>$e*$e, 512=>$e*$e, 513=>$e*$e, 515=>$e*$e, 516=>$e*$e, 521=>$e*$e, 522=>$e*$e, 523=>$e*$e, 525=>$e*$e, 526=>$e*$e, 531=>$e*$e, 532=>$e*$e, 533=>$e*$e, 535=>$e*$e, 536=>$e*$e, 551=>$e*$e, 552=>$e*$e, 553=>$e*$e, 555=>$e*$e, 556=>$e*$e, 561=>$e*$e, 562=>$e*$e, 563=>$e*$e, 565=>$e*$e, 566=>$e*$e, 611=>$e*$e, 612=>$e*$e, 613=>$e*$e, 615=>$e*$e, 616=>$e*$e, 621=>$e*$e, 622=>$e*$e, 623=>$e*$e, 625=>$e*$e, 626=>$e*$e, 631=>$e*$e, 632=>$e*$e, 633=>$e*$e, 635=>$e*$e, 636=>$e*$e, 651=>$e*$e, 652=>$e*$e, 653=>$e*$e, 655=>$e*$e, 656=>$e*$e, 661=>$e*$e, 662=>$e*$e, 663=>$e*$e, 665=>$e*$e, 666=>$e*$e);
 	} else {
 		%oprior = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.5*(1-$e), 212=>0.5*(1-$e), 213=>0.3333*$e, 215=>0.3333*$e, 216=>0.3333*$e, 221=>0.25*(1-$e), 222=>0.5*(1-$e), 223=>0.25*(1-$e), 225=>0.5*$e, 226=>0.5*$e, 231=>0.3333*$e, 232=>0.5*(1-$e), 233=>0.5*(1-$e), 235=>0.3333*$e, 236=>0.3333*$e, 251=>0.5*$e, 252=>0.25*(1-$e), 253=>0.5*(1-$e), 255=>0.25*(1-$e), 256=>0.5*$e, 261=>$e, 262=>0.125*(1-$e), 263=>0.375*(1-$e), 265=>0.375*(1-$e), 266=>0.125*(1-$e), 311=>0.25*$e, 312=>1-$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.5*(1-$e), 323=>0.5*(1-$e), 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>1-$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.5*(1-$e), 355=>0.5*(1-$e), 356=>0.3333*$e, 361=>0.5*$e, 362=>0.5*$e, 363=>0.25*(1-$e), 365=>0.5*(1-$e), 366=>0.25*(1-$e), 511=>0.3333*$e, 512=>0.5*(1-$e), 513=>0.5*(1-$e), 515=>0.3333*$e, 516=>0.3333*$e, 521=>0.5*$e, 522=>0.25*(1-$e), 523=>0.5*(1-$e), 525=>0.25*(1-$e), 526=>0.5*$e, 531=>0.3333*$e, 532=>0.3333*$e, 533=>0.5*(1-$e), 535=>0.5*(1-$e), 536=>0.3333*$e, 551=>0.5*$e, 552=>0.5*$e, 553=>0.25*(1-$e), 555=>0.5*(1-$e), 556=>0.25*(1-$e), 561=>0.5*$e, 562=>0.5*$e, 563=>0.125*(1-$e), 565=>0.375*(1-$e), 566=>0.5*(1-$e), 611=>0.5*$e, 612=>0.25*(1-$e), 613=>0.5*(1-$e), 615=>0.25*(1-$e), 616=>0.5*$e, 621=>$e, 622=>0.125*(1-$e), 623=>0.375*(1-$e), 625=>0.375*(1-$e), 626=>0.125*(1-$e), 631=>0.5*$e, 632=>0.5*$e, 633=>0.25*(1-$e), 635=>0.5*(1-$e), 636=>0.25*(1-$e), 651=>0.5*$e, 652=>0.5*$e, 653=>0.125*(1-$e), 655=>0.375*(1-$e), 656=>0.5*(1-$e), 661=>0.5*$e, 662=>0.5*$e, 663=>0.0625*(1-$e), 665=>0.25*(1-$e), 666=>0.6875*(1-$e));
 	}
-	
-	#dichotomize the CNV validation procedure:
-		#if there is no boundary discordance, do a simple Bayesian computation
-		#otherwise, use viterbi algorithm to infer the most likely path
+
+#dichotomize the CNV validation procedure:
+#if there is no boundary discordance, do a simple Bayesian computation
+#otherwise, use viterbi algorithm to infer the most likely path
 	for my $nextregion (@region) {
 		my ($nextchr, @nextpos) = @$nextregion;				#nextchr is the chromosome, nextname is the SNPs that constitute the CNV boundary
-		my ($delta, $psi);						#delta: maximum prob at each time, psi: maximum previous ind that generate the delta at this time
-		my $nextsubregion = join (",", $nextchr, $nextpos[0], $nextpos[1]);
+			my ($delta, $psi);						#delta: maximum prob at each time, psi: maximum previous ind that generate the delta at this time
+			my $nextsubregion = join (",", $nextchr, $nextpos[0], $nextpos[1]);
 		my ($maxval, $maxvalind);
 		$verbose and print "processing regions at chr$nextchr pos=@nextpos\n";
-		
-		#the following paragraph applies when there is no boundary discordance (a simple Bayesian method to calculate most likely a posterior state combintations)
+
+#the following paragraph applies when there is no boundary discordance (a simple Bayesian method to calculate most likely a posterior state combintations)
 		if (@nextpos == 2) {
 			validateTrioCNVCall ($ref_inputfile, \@fmprior, \%oprior, $nextsubregion, $sample_sex, $region_alllogprob, $region_numsnp, $region_cnvlength, $region_chr, $region_name_start, $region_name_end, $region_pos_start, $region_pos_end);
 			next;
 		}
-		
-		#proceed to the following only if there are multiple overlapped subregions in the region. We will use a Viterbi algorithm to decode the best path
-		#delta is a matrix that record for each time point, for each fmostate, the maxlogprob of the path
-		#psi is a matrix that record for each time point, for each fmostate, the previous fmostate (that reach the current one with highest prob)
-		
-		#step1: initialization
+
+#proceed to the following only if there are multiple overlapped subregions in the region. We will use a Viterbi algorithm to decode the best path
+#delta is a matrix that record for each time point, for each fmostate, the maxlogprob of the path
+#psi is a matrix that record for each time point, for each fmostate, the previous fmostate (that reach the current one with highest prob)
+
+#step1: initialization
 		for my $fstate (1, 2, 3, 5, 6) {
 			for my $mstate (1, 2, 3, 5, 6) {
 				for my $ostate (1, 2, 3, 5, 6) {
@@ -1897,8 +1935,8 @@ sub newtestTrioCNVFile {
 			}
 		}
 		$verbose and print STDERR "NOTICE: initial scanning at $nextchr: @nextpos[0..1] found $maxvalind $maxval\n";
-		
-		#step 2: recursion
+
+#step 2: recursion
 		for my $i (1 .. @nextpos-2) {				#this is equivalent to "from time 1 to time t" (time 0 is the initialization stage)
 			my $nextsubregion = join (",", $nextchr, $nextpos[$i], $nextpos[$i+1]);
 			for my $fstate (1, 2, 3, 5, 6) {
@@ -1907,7 +1945,7 @@ sub newtestTrioCNVFile {
 						my $fmoindex = $fstate*7*7+$mstate*7+$ostate;
 						my $old_fmoindex;
 						undef $maxval;
-						
+
 						for my $old_fstate (1, 2, 3, 5, 6) {
 							for my $old_mstate (1, 2, 3, 5, 6) {
 								for my $old_ostate (1, 2, 3, 5, 6) {
@@ -1920,12 +1958,12 @@ sub newtestTrioCNVFile {
 									} else {
 										$val += log ($oprior{$fstate.$mstate.$ostate});
 									}
-									
-									#for the last block, arbitrarily set a "end" state that returns to state 3 (since all fstate and mstate return to 3, it can be directly added here as if there are two transitions)
+
+#for the last block, arbitrarily set a "end" state that returns to state 3 (since all fstate and mstate return to 3, it can be directly added here as if there are two transitions)
 									if ($i == @nextpos-2) {
 										$val += log ($transition->[$fstate][3]) + log ($transition->[$mstate][3]);
 									}
-									
+
 									if (not defined $maxval or $val > $maxval) {
 										$maxval = $val;
 										$maxvalind = $old_fmoindex;
@@ -1934,69 +1972,71 @@ sub newtestTrioCNVFile {
 							}
 						}
 						my $subpost = $region_alllogprob->{$nextsubregion}->[0][$fstate] + $region_alllogprob->{$nextsubregion}->[1][$mstate] + $region_alllogprob->{$nextsubregion}->[2][$ostate];
-						
+
 						$delta->[$i][$fmoindex] = $maxval + $subpost;
 						$psi->[$i][$fmoindex] = $maxvalind;
 					}
 				}
 			}
 		}
-		
+
 		my ($pprob, $q, $qstate);			#pprob is the maximum prob, $q is the fmoindex that reach maximum prob, qstate is the [fstate,mstate,ostate]
-		#step 3: termination
-		for my $fstate (1, 2, 3, 5, 6) {
-			for my $mstate (1, 2, 3, 5, 6) {
-				for my $ostate (1, 2, 3, 5, 6) {
-					my $fmoindex = $fstate*7*7+$mstate*7+$ostate;
-					if (not defined $pprob or $delta->[@nextpos-2][$fmoindex] > $pprob) {
-						$pprob = $delta->[@nextpos-2][$fmoindex];
-						$q->[@nextpos-2] = $fmoindex;
-						$qstate->[@nextpos-2] = [convertTrioIndex2State ($fmoindex)];
+#step 3: termination
+			for my $fstate (1, 2, 3, 5, 6) {
+				for my $mstate (1, 2, 3, 5, 6) {
+					for my $ostate (1, 2, 3, 5, 6) {
+						my $fmoindex = $fstate*7*7+$mstate*7+$ostate;
+						if (not defined $pprob or $delta->[@nextpos-2][$fmoindex] > $pprob) {
+							$pprob = $delta->[@nextpos-2][$fmoindex];
+							$q->[@nextpos-2] = $fmoindex;
+							$qstate->[@nextpos-2] = [convertTrioIndex2State ($fmoindex)];
+						}
 					}
 				}
 			}
-		}
 		$verbose and print STDERR "q[", @nextpos-2, "]=", $q->[@$q-1], " (", convertTrioIndex2State ($q->[@$q-1]), ")\n";
-		
-		#step 4: path backtracing
+
+#step 4: path backtracing
 		for (my $i = @nextpos-3; $i >= 0; $i--) {
 			$q->[$i] = $psi->[$i+1][$q->[$i+1]];
 			$qstate->[$i] = [convertTrioIndex2State ($q->[$i])];
 			$verbose and print STDERR "q[$i] = $q->[$i] (", convertTrioIndex2State ($q->[$i]), ")\n";
 		}
-		
-		#finally, compile all state sequences together to get a concensus sequence
+
+#finally, compile all state sequences together to get a concensus sequence
 		my @cnv;					#@cnv has 3 element, corresponding to father, mother, offspring CNV calls
-		for my $i (0 .. 2) {
-			my ($stretch_start_j, $found_signal);
-			my $normal_state = 3;
-			$chrx and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chrx
-			for my $j (0 .. @$qstate-1) {
-				my $nextstate = $qstate->[$j][$i];
-				if ($nextstate ne $normal_state) {
-					if ($found_signal and $found_signal ne $nextstate) {	#transition between different CNV states
-						push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
-						$stretch_start_j = $j;
-						$found_signal = $nextstate;
-					} elsif ($found_signal) {
-						1;						#do nothing, still in the same state
-					} else {
-						$found_signal = $nextstate;
-						$stretch_start_j = $j;
+			for my $i (0 .. 2) {
+				my ($stretch_start_j, $found_signal);
+				my $normal_state = 3;
+				$chrx and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chrx
+					$chry and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chry
+					$chry and $sample_sex->[$i] eq 'female' and $normal_state = 1;		#for female chry
+					for my $j (0 .. @$qstate-1) {
+						my $nextstate = $qstate->[$j][$i];
+						if ($nextstate ne $normal_state) {
+							if ($found_signal and $found_signal ne $nextstate) {	#transition between different CNV states
+								push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
+								$stretch_start_j = $j;
+								$found_signal = $nextstate;
+							} elsif ($found_signal) {
+								1;						#do nothing, still in the same state
+							} else {
+								$found_signal = $nextstate;
+								$stretch_start_j = $j;
+							}
+						} else {
+							if ($found_signal) {
+								push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
+								$found_signal = 0;
+							}
+						}
 					}
-				} else {
-					if ($found_signal) {
-						push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
-						$found_signal = 0;
-					}
+#finish the last stretch
+				if ($found_signal) {
+					push @{$cnv[$i]}, [$stretch_start_j, scalar (@$qstate), $found_signal];
 				}
 			}
-			#finish the last stretch
-			if ($found_signal) {
-				push @{$cnv[$i]}, [$stretch_start_j, scalar (@$qstate), $found_signal];
-			}
-		}
-		
+
 		printFamilyCNVCall (\@cnv, $nextchr, \@nextpos, $region_name_start, $region_name_end, $qstate, $siginfo, $ref_inputfile);
 
 	}
@@ -2011,11 +2051,11 @@ sub printFamilyCNVCall {
 			my $nextsubregion1 = join (",", $nextchr, $nextpos->[$starti], $nextpos->[$starti+1]);
 			my $nextsubregion2 = join (",", $nextchr, $nextpos->[$endi-1], $nextpos->[$endi]);
 			my $namestart = $region_name_start->{$nextsubregion1};			#the actual namestart might be different from the start_snp
-			my $nameend = $region_name_end->{$nextsubregion2};			#the actual nameend might be different from the end_snp
-			my $identity = ("father", "mother", "offspring", "offspring")[$i];
+				my $nameend = $region_name_end->{$nextsubregion2};			#the actual nameend might be different from the end_snp
+				my $identity = ("father", "mother", "offspring", "offspring")[$i];
 			my $nextcn = $nextstate-1;
 			$nextcn >= 3 and $nextcn--;						#calculate current copy number
-			my $triostateseq;
+				my $triostateseq;
 
 			for my $tempi ($starti .. $endi-1) {			#endi is usually the last element of nextpos, but qstate has only endi-1 elements
 				$triostateseq .= join ("", @{$qstate->[$tempi]})."-";
@@ -2025,9 +2065,9 @@ sub printFamilyCNVCall {
 			for my $j (0 .. @{$siginfo->{$nextchr}{name}}-1) {
 				$siginfo->{$nextchr}{name}[$j] eq $namestart and $snp_starti = $j;
 				$siginfo->{$nextchr}{name}[$j] eq $nameend and $snp_endi = $j;		#endi+1 must be used because we are asking for end SNP in a stretch
-				defined $snp_starti and defined $snp_endi and last;
+					defined $snp_starti and defined $snp_endi and last;
 			}
-			
+
 			$numsnp = $snp_endi-$snp_starti+1;
 			if (defined $minsnp) {						#minimum number of SNPs within a predicted CNV to be printed out
 				$numsnp >= $minsnp or next;
@@ -2035,7 +2075,7 @@ sub printFamilyCNVCall {
 			if (length($numsnp) < 6) {
 				$numsnp = substr ("$numsnp      ", 0, 6);
 			}
-			
+
 			$cnvlength = $siginfo->{$nextchr}{pos}[$snp_endi]-$siginfo->{$nextchr}{pos}[$snp_starti]+1;
 			if (defined $minlength) {					#minimum length of CNVs to be printed out
 				$cnvlength >= $minlength or next;
@@ -2044,12 +2084,12 @@ sub printFamilyCNVCall {
 			if (length($cnvlength) < 11) {
 				$cnvlength = substr ("$cnvlength            ", 0, 11);
 			}
-			
+
 			my $cnvregion = "chr" . $nextchr . ":" . $siginfo->{$nextchr}{pos}[$snp_starti] . "-" . $siginfo->{$nextchr}{pos}[$snp_endi];
 			if (length ($cnvregion) < 29) {
 				$cnvregion = substr ("$cnvregion                              ", 0, 29);
 			}
-			
+
 			print "$cnvregion numsnp=$numsnp length=$cnvlength state$nextstate,cn=$nextcn $ref_inputfile->[$i] ";
 			print "startsnp=$namestart endsnp=$nameend $identity boundary_reconciled=$triostateseq\n";			
 		}
@@ -2067,20 +2107,20 @@ sub retrieveCandidateRegion {
 		my @record = split (/\t/, $_);
 		@record == 5 or confess "Error: the --candlist file $candlist is not in valid format (five tab-delimited records expected in each line): <$_>\n";
 		$record[0] eq 'region' and next;		#header line in the candlist file
-		
-		my ($chr_region, $startsnp, $endsnp, $delfreq, $dupfreq) = @record;
+
+			my ($chr_region, $startsnp, $endsnp, $delfreq, $dupfreq) = @record;
 		$delfreq eq 'null' and $dupfreq eq 'null' and next;		#skip this region
-		$delfreq eq 'null' and $delfreq = $backfreq;
+			$delfreq eq 'null' and $delfreq = $backfreq;
 		$dupfreq eq 'null' and $dupfreq = $backfreq;
 		$delfreq =~ m/^[\d\.]+$/ or confess "Error: invalid record found in candlist file $candlist (delfreq is specified as $delfreq): <$_>\n";
 		$dupfreq =~ m/^[\d\.]+$/ or confess "Error: invalid record found in candlist file $candlist (dupfreq is specified as $dupfreq): <$_>\n";
-		
+
 		$delfreq <= 1 and $delfreq >=0 or confess "Error: the --candlist file $candlist contains invalid delfreq (must be between 0 and 1) in line: <$_>\n";
 		$dupfreq <= 1 and $dupfreq >=0 or confess "Error: the --candlist file $candlist contains invalid dupfreq (must be between 0 and 1) in line: <$_>\n";
 		$delfreq+$dupfreq<1 or confess "Error: the --candlist file $candlist contains invalid delfreq and dupfreq (the sum must be less than 1) in line: <$_>\n";
 		$delfreq ||= 1e-30;		#convert zero to a small number to prevent underflow error
-		$dupfreq ||= 1e-30;		#convert zero to a small number to prevent underflow error
-		push @candregion, [$startsnp, $endsnp, convertDelDupFreqToPrior ($delfreq, $dupfreq, $backfreq)];
+			$dupfreq ||= 1e-30;		#convert zero to a small number to prevent underflow error
+			push @candregion, [$startsnp, $endsnp, convertDelDupFreqToPrior ($delfreq, $dupfreq, $backfreq)];
 		$verbose and print STDERR "NOTICE: For validating CNV calls of $startsnp-$endsnp, the prior distribution is set at ", join (",", convertDelDupFreqToPrior ($delfreq, $dupfreq, $backfreq)), "\n";
 	}
 	close (CAND);
@@ -2091,17 +2131,17 @@ sub retrieveCandidateRegion {
 sub convertDelDupFreqToPrior {
 	my ($delfreq, $dupfreq, $backfreq) = @_;
 	my @prior;
-	
+
 	if (not defined $delfreq or not defined $dupfreq) {
 		defined $backfreq or confess "ERROR: convertDelDupFreqToPrior: no backfreq defined\n";				#by default, the background freq means that 0.01% of whole genome markers are in CNV
 	}
 	defined $delfreq or $delfreq = $backfreq;
 	defined $dupfreq or $dupfreq = $backfreq;
 	my $normfreq = 1-$delfreq-$dupfreq;					#allele frequqency of the normal-copy allele
-	$delfreq > 0 and $delfreq < 1 or confess "ERROR: the deletion frequency ($delfreq) must be specified between 0 and 1\n";
+		$delfreq > 0 and $delfreq < 1 or confess "ERROR: the deletion frequency ($delfreq) must be specified between 0 and 1\n";
 	$dupfreq > 0 and $dupfreq < 1 or confess "ERROR: the duplication frequency ($dupfreq) must be specified between 0 and 1\n";
 	$delfreq+$dupfreq<1 or confess "ERROR: the deletion frequency ($delfreq) and duplication frequency ($dupfreq) must sum up less than 1\n";
-	
+
 	$prior[0] = $delfreq*$delfreq;
 	$prior[1] = 2*$delfreq*$normfreq;
 	$prior[3] = 2*$dupfreq*$normfreq;
@@ -2114,98 +2154,135 @@ sub convertDelDupFreqToPrior {
 sub QCSignal {
 	my ($inputfile, $siginfo, $sigdesc, $hmm, $known_sex) = @_;
 	my ($sample_sex, $use_sex, $qc_flag);			#predicted gender, the gender that should be used, a QC-flag that specifies problems with QC
-	
-	if ($chrx) {
-		if ($sigdesc->{baf_xhet} eq 'NA') {
-			print STDERR "\nERROR: skipping inputfile $inputfile since it does not contain signal information for X chromosome markers.\n";
-			confess "FATAL ERROR: chrX markers not found in inputfile $inputfile for chrX operation (but the program reaches the QC step)\n";
-		}
-		print STDERR "NOTICE: quality summary for $inputfile: LRR_Xmean=", sprintf ("%.4f", $sigdesc->{lrr_xmean}), " LRR_Xmedian=", sprintf ("%.4f", $sigdesc->{lrr_xmedian}), " LRR_XSD=", sprintf ("%.4f", $sigdesc->{lrr_xsd}), " BAF_Xhet=", sprintf ("%.4f", $sigdesc->{baf_xhet}), "\n";
-		
-		$sample_sex = $sigdesc->{baf_xhet} > $bafxhet_threshold ? 'female' : 'male';
-		if (not $known_sex) {
-			print STDERR "NOTICE: Sample sex for $inputfile is predicted as '$sample_sex' based on BAF heterozygosity rate (this is different from genotype heterozygosity rate!) for chrX ($sigdesc->{baf_xhet})\n";
-		}
-		
-		$use_sex = $known_sex||$sample_sex;
-		if ($medianadjust) {					#for XXX, XXY and so on, the user may not want to use --medianadjust
-			if ($use_sex eq 'male') {			#for males, the mean LRR should be equal to expected LRR for state 2 (one-copy)
-				$verbose and print STDERR "NOTICE: Adjusting LRR values in chrX from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]), "\n";
-				adjustLRR ($siginfo, $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]);
-			} else {
-				$verbose and print STDERR "NOTICE: Adjusting LRR values in chrX from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_xmedian}), "\n";
-				adjustLRR ($siginfo, $sigdesc->{lrr_xmedian});
-			}
-		}
 
-		#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
-		if ($sigdesc->{lrr_xsd} > 0.2) {
-			print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_xsd})!\n";
-			$qc_flag++;
-		}
-		
-		#quality control: examine the waviness factor values (>0.04 or <-0.04 is generally treated as bad genotyping quality)
-		if ($sigdesc->{wf} ne 'NA' and $sigdesc->{wf} > 0.04 || $sigdesc->{wf} < -0.04) {
-			print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its waviness factor values ($sigdesc->{wf})!\n";
-			$qc_flag++;
-		}
-	} elsif ($chry) {
-		1;
-	} else {
-		#perform signal pre-processing to adjust the median LRR and BAF values
-		if ($medianadjust) {				#THIS IS A MANDATORY ARGUMENT NOW, SINCE IT ALWAYS IMPROVE PERFORMANCE!!! (use "--nomedianadjust" to disable this feature)
-			print STDERR "NOTICE: Median-adjusting LRR values for all autosome markers from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_median}), "\n";
-			adjustLRR ($siginfo, $sigdesc->{lrr_median});
-			$sigdesc->{lrr_mean} -= $sigdesc->{lrr_median};
-			$sigdesc->{lrr_median} = 0;
-		}
-		if ($bafadjust) {
-			if ($sigdesc->{baf_median} ne "NA") {	#for oligonucleotide arrays, there is no BAF information
-				print STDERR "NOTICE: Median-adjusting BAF values for all autosome markers from $inputfile by ", sprintf ("%.4f", $sigdesc->{baf_median}-0.5), "\n";
-				adjustBAF ($siginfo, $sigdesc->{baf_median}-0.5);
-				$sigdesc->{baf_mean} -= $sigdesc->{baf_median}-0.5;
-				$sigdesc->{baf_median} = 0.5;
-			} 
-		}
-		
-		if ($sigdesc->{baf_median} eq "NA") {
+		if ($chrx) {
+			if ($sigdesc->{baf_xhet} eq 'NA') {
+				print STDERR "\nERROR: skipping inputfile $inputfile since it does not contain signal information for X chromosome markers.\n";
+				confess "FATAL ERROR: chrX markers not found in inputfile $inputfile for chrX operation (but the program reaches the QC step)\n";
+			}
+			print STDERR "NOTICE: quality summary for $inputfile: LRR_Xmean=", sprintf ("%.4f", $sigdesc->{lrr_xmean}), " LRR_Xmedian=", sprintf ("%.4f", $sigdesc->{lrr_xmedian}), " LRR_XSD=", sprintf ("%.4f", $sigdesc->{lrr_xsd}), " BAF_Xhet=", sprintf ("%.4f", $sigdesc->{baf_xhet}), "\n";
+
+			$sample_sex = $sigdesc->{baf_xhet} > $bafxhet_threshold ? 'female' : 'male';
+			if (not $known_sex) {
+				print STDERR "NOTICE: Sample sex for $inputfile is predicted as '$sample_sex' based on BAF heterozygosity rate (this is different from genotype heterozygosity rate!) for chrX ($sigdesc->{baf_xhet})\n";
+			}
+
+			$use_sex = $known_sex||$sample_sex;
+
+			if ($medianadjust) {					#for XXX, XXY and so on, the user may not want to use --medianadjust
+				if ($use_sex eq 'male') {			#for males, the mean LRR should be equal to expected LRR for state 2 (one-copy)
+					$verbose and print STDERR "NOTICE: Adjusting LRR values in chrX from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]), "\n";
+					adjustLRR ($siginfo, $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]);
+				} else {
+					$verbose and print STDERR "NOTICE: Adjusting LRR values in chrX from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_xmedian}), "\n";
+					adjustLRR ($siginfo, $sigdesc->{lrr_xmedian});
+				}
+			}
+
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+			if ($sigdesc->{lrr_xsd} > 0.2) {
+				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_xsd})!\n";
+				$qc_flag++;
+			}
+
+#quality control: examine the waviness factor values (>0.04 or <-0.04 is generally treated as bad genotyping quality)
+			if ($sigdesc->{wf} ne 'NA' and $sigdesc->{wf} > 0.04 || $sigdesc->{wf} < -0.04) {
+				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its waviness factor values ($sigdesc->{wf})!\n";
+				$qc_flag++;
+			}
+		} elsif ($chry) {
+			if ($sigdesc->{baf_yhet} eq 'NA') {
+				print STDERR "\nERROR: skipping inputfile $inputfile since it does not contain signal information for Y chromosome markers.\n";
+				confess "FATAL ERROR: chrY markers not found in inputfile $inputfile for chrY operation (but the program reaches the QC step)\n";
+			}
+			print STDERR "NOTICE: quality summary for $inputfile: LRR_Ymean=", sprintf ("%.4f", $sigdesc->{lrr_ymean}), " LRR_Ymedian=", sprintf ("%.4f", $sigdesc->{lrr_ymedian}), " LRR_YSD=", sprintf ("%.4f", $sigdesc->{lrr_ysd}), " BAF_Yhet=", sprintf ("%.4f", $sigdesc->{baf_yhet}), "\n";
+
+## sex is also infered from chrX heterozygosity rate
+			$sample_sex = $sigdesc->{baf_xhet} > $bafxhet_threshold ? 'female' : 'male';
+			if (not $known_sex) {
+				print STDERR "NOTICE: Sample sex for $inputfile is predicted as '$sample_sex' based on BAF heterozygosity rate (this is different from genotype heterozygosity rate!) for chrX ($sigdesc->{baf_xhet})\n";
+			}
+			$use_sex = $known_sex||$sample_sex;
+
+			if ($medianadjust) {		
+#for XXX, XXY and so on, the user may not want to use --medianadjust			
+#for males, the mean LRR should be equal to expected LRR for state 2 (one-copy)
+#for females, the mean LRR should be equal to expected LRR for state 1 (zero-copy)
+				if ($use_sex eq 'male') {			
+					$verbose and print STDERR "NOTICE: Adjusting LRR values in chrY from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[1]), "\n";
+					adjustLRR ($siginfo, $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[1]);
+				} else {
+					$verbose and print STDERR "NOTICE: Adjusting LRR values in chrY from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[0]), "\n";
+					adjustLRR ($siginfo, $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[0]);
+				}
+			}
+
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+			if ($sigdesc->{lrr_ysd} > 0.2 and $use_sex eq 'male') {
+				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_ysd})!\n";
+				$qc_flag++;
+			}
+
+#quality control: examine the waviness factor values (>0.04 or <-0.04 is generally treated as bad genotyping quality)
+			if ($sigdesc->{wf} ne 'NA' and $sigdesc->{wf} > 0.04 || $sigdesc->{wf} < -0.04) {
+				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its waviness factor values ($sigdesc->{wf})!\n";
+				$qc_flag++;
+			}
+		} else {
+#perform signal pre-processing to adjust the median LRR and BAF values
+			if ($medianadjust) {				#THIS IS A MANDATORY ARGUMENT NOW, SINCE IT ALWAYS IMPROVE PERFORMANCE!!! (use "--nomedianadjust" to disable this feature)
+				print STDERR "NOTICE: Median-adjusting LRR values for all autosome markers from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_median}), "\n";
+				adjustLRR ($siginfo, $sigdesc->{lrr_median});
+				$sigdesc->{lrr_mean} -= $sigdesc->{lrr_median};
+				$sigdesc->{lrr_median} = 0;
+			}
+			if ($bafadjust) {
+				if ($sigdesc->{baf_median} ne "NA") {	#for oligonucleotide arrays, there is no BAF information
+					print STDERR "NOTICE: Median-adjusting BAF values for all autosome markers from $inputfile by ", sprintf ("%.4f", $sigdesc->{baf_median}-0.5), "\n";
+					adjustBAF ($siginfo, $sigdesc->{baf_median}-0.5);
+					$sigdesc->{baf_mean} -= $sigdesc->{baf_median}-0.5;
+					$sigdesc->{baf_median} = 0.5;
+				} 
+			}
+
+			if ($sigdesc->{baf_median} eq "NA") {
 				$sigdesc->{baf_mean} = 0.5;
 				$sigdesc->{baf_median} = 0.5;
 				$sigdesc->{baf_sd} = 0;
 				$sigdesc->{baf_drift} = 0;
 			}
-		
-		print STDERR "NOTICE: quality summary for $inputfile: LRR_mean=", sprintf ("%.4f", $sigdesc->{lrr_mean}), " LRR_median=", sprintf ("%.4f", $sigdesc->{lrr_median}), " LRR_SD=", sprintf ("%.4f", $sigdesc->{lrr_sd}), 
-			" BAF_mean=", sprintf ("%.4f", $sigdesc->{baf_mean}), " BAF_median=", sprintf ("%.4f", $sigdesc->{baf_median}), " BAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd}), " BAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift}), " WF=", $sigdesc->{wf} eq "NA"?"NA":sprintf("%.4f", $sigdesc->{wf}), " GCWF=", $sigdesc->{gcwf} eq "NA"?"NA":sprintf("%.4f", $sigdesc->{gcwf}), "\n";
 
-		#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
-		if ($sigdesc->{lrr_sd} > 0.2) {
-			print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its large SD for LRR ($sigdesc->{lrr_sd})!\n";
-			$qc_flag++;
+			print STDERR "NOTICE: quality summary for $inputfile: LRR_mean=", sprintf ("%.4f", $sigdesc->{lrr_mean}), " LRR_median=", sprintf ("%.4f", $sigdesc->{lrr_median}), " LRR_SD=", sprintf ("%.4f", $sigdesc->{lrr_sd}), 
+				  " BAF_mean=", sprintf ("%.4f", $sigdesc->{baf_mean}), " BAF_median=", sprintf ("%.4f", $sigdesc->{baf_median}), " BAF_SD=", sprintf ("%.4f", $sigdesc->{baf_sd}), " BAF_DRIFT=", sprintf ("%.6f", $sigdesc->{baf_drift}), " WF=", $sigdesc->{wf} eq "NA"?"NA":sprintf("%.4f", $sigdesc->{wf}), " GCWF=", $sigdesc->{gcwf} eq "NA"?"NA":sprintf("%.4f", $sigdesc->{gcwf}), "\n";
+
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+			if ($sigdesc->{lrr_sd} > 0.2) {
+				print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its large SD for LRR ($sigdesc->{lrr_sd})!\n";
+				$qc_flag++;
+			}
+
+#quality control: examine the median of BAF values (>0.6 or <0.4 is treated as bad clustering quality)
+			if ($sigdesc->{baf_median} < 0.4 or $sigdesc->{baf_median} > 0.6) {
+				print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its shifted BAF values (median=$sigdesc->{baf_median})!\n";
+				$qc_flag++;
+			}
+
+#quality control: examine the drifting of BAF values (>0.002 is generally treated as bad genotyping quality)
+			if ($sigdesc->{baf_drift} > 0.002) {
+				print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its drifting BAF values (drift=$sigdesc->{baf_drift})!\n";
+				$qc_flag++;
+			}
 		}
-		
-		#quality control: examine the median of BAF values (>0.6 or <0.4 is treated as bad clustering quality)
-		if ($sigdesc->{baf_median} < 0.4 or $sigdesc->{baf_median} > 0.6) {
-			print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its shifted BAF values (median=$sigdesc->{baf_median})!\n";
-			$qc_flag++;
-		}
-		
-		#quality control: examine the drifting of BAF values (>0.002 is generally treated as bad genotyping quality)
-		if ($sigdesc->{baf_drift} > 0.002) {
-			print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its drifting BAF values (drift=$sigdesc->{baf_drift})!\n";
-			$qc_flag++;
-		}
-	}
-	
-	#quality control: examine the waviness factor values (>0.04 or <-0.04 is generally treated as bad genotyping quality)
+
+#quality control: examine the waviness factor values (>0.04 or <-0.04 is generally treated as bad genotyping quality)
 	if ($sigdesc->{wf} ne 'NA' and $sigdesc->{wf} > 0.04 || $sigdesc->{wf} < -0.04) {
 		print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its waviness factor values (wf=$sigdesc->{wf})!\n";
 		$qc_flag++;
 	}
 	$sigdesc->{nocall_rate} > 0.1 and print STDERR "WARNING: Sample from $inputfile does not pass default quality control criteria due to its NoCall rate ($sigdesc->{nocall_rate})!\n" and $qc_flag++;
 	$qc_flag and print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
-	
-	#check whether the signal file contains non-polymorphic markers and whether the HMM file contains parameters to handle them
+
+#check whether the signal file contains non-polymorphic markers and whether the HMM file contains parameters to handle them
 	if ($sigdesc->{cn_count}) {
 		if (not $hmm->{B3_mean}) {
 			print STDERR "WARNING: The signal file $inputfile contains $sigdesc->{cn_count} non-polymorphic markers but the HMM file $hmmfile is for SNP markers only!\n";
@@ -2230,27 +2307,29 @@ sub newvalidateCNVCall {
 
 	defined $sexfile and $file_sex = readSexFile ($sexfile);
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the gc model for SNPs defined in snp_chr
-	
-	my $valioutfh;
+
+		my $valioutfh;
 	defined $valilog and open ($valioutfh, ">$valilog") || confess "Error: cannot write to valilog file $valilog: $!\n";
-	
+
 	for my $inputfile (@$ref_inputfile) {
 		my ($siginfo, $sigdesc, $sample_sex);
-		
+
 		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
 
-		#if the file processing fails and no signal data is read from file, move on to the next file
+#if the file processing fails and no signal data is read from file, move on to the next file
 		%$siginfo or print STDERR "WARNING: Skipping $inputfile since no signal values can be retrieved from the file\n" and next;
-		
+
 		$sample_sex = QCSignal ($inputfile, $siginfo, $sigdesc, $hmm, $file_sex->{$inputfile});
-		
-		#read HMM model file
+
+#read HMM model file
 		my $hmm_model = khmm::ReadCHMM ($hmmfile);
-		
-		#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
+
+#Now a mandatory step to handle low-quality samples and reduce false-positve calls, through matching the SD measure for sample and model
 		if ($sdadjust) {
 			if ($chrx) {
 				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_xsd});
+			} elsif ($chry) {
+				khmm::adjustBSD ($hmm_model, $sigdesc->{lry_xsd});
 			} else {
 				khmm::adjustBSD ($hmm_model, $sigdesc->{lrr_sd});
 			}
@@ -2263,19 +2342,19 @@ sub newvalidateCNVCall {
 			$snp_chr->{$startsnp} = $temp[0];
 			@temp = split (/\t/, $pfbinfo->{$endsnp});
 			$snp_chr->{$endsnp} = $temp[0];
-			
+
 			my $curchr = $snp_chr->{$startsnp} or confess "Error: the --startsnp $startsnp is not annotated in PFB file $pfbfile\n";
 			$snp_chr->{$endsnp}  or confess "Error: the --endsnp $endsnp is not annotated in PFB file $pfbfile\n";
 			$curchr eq $snp_chr->{$endsnp} or confess "Error: the --startsnp $startsnp is located in chr$curchr but --endsnp $endsnp is located in chr$snp_chr->{$endsnp}\n";
-	
+
 			my $name = $siginfo->{$curchr}{name};
 			my $pos = $siginfo->{$curchr}{pos};
 			my $lrr = $siginfo->{$curchr}{lrr};
 			my $baf = $siginfo->{$curchr}{baf};
-			
+
 			my $cnvcall = validateRegion ($name, $pos, $lrr, $baf, $startsnp, $endsnp, $pfbinfo, $curchr, \@prior, $hmm_model, $sample_sex, $valioutfh);
-						
-			#print all CNV calls, sorted by copy numbers first, then by chromosomes
+
+#print all CNV calls, sorted by copy numbers first, then by chromosomes
 			if ($tabout) {
 				printTabbedCNV ($cnvcall, $inputfile);				#use tab-delimited output
 			} else {
@@ -2296,9 +2375,9 @@ sub validateRegion {
 	my (@logprob);
 	my ($found, $last) = qw/0 0/;
 	my $cnvcall = {};
-	
+
 	my ($snp_pos);
-	
+
 	for my $i (0 .. @$name-1) {
 		if ($name->[$i] eq $startsnp) {
 			$found = 1;
@@ -2316,7 +2395,7 @@ sub validateRegion {
 		}
 		$last and last;
 	}
-	
+
 	@region_lrr or confess "UNKNOWN ERROR: unable to find CNV region startsnp=$startsnp endsnp=$endsnp\n";
 
 	my @rawll;
@@ -2326,16 +2405,16 @@ sub validateRegion {
 		$nextstate > 4 and $stateindex--;
 		khmm::GetStateProb_CHMM ($hmm_model, @region_lrr-1, \@region_lrr, \@region_baf, \@region_pfb, \@region_snpdist, \$logprob, $nextstate);
 		push @logprob, [$logprob + log ($prior_prob->[$stateindex]), $nextstate];
-		#push @rawll, $logprob;
+#push @rawll, $logprob;
 		push @rawll, $logprob + log ($prior_prob->[$stateindex]);
 	}
-	
+
 	$valioutfh and print $valioutfh "$startsnp\t$endsnp\t", join ("\t", @rawll), "\n";
-	
+
 	@logprob = sort {$b->[0]<=>$a->[0]} @logprob;
 	my $beststate = $logprob[0]->[0];	#best state should be the first state! 20160621
-	$verbose and print STDERR "NOTICE: best state is $beststate\n";
-	
+		$verbose and print STDERR "NOTICE: best state is $beststate\n";
+
 	if ($chrx) {
 		$sample_sex or confess "Error: the sample_sex is not defined for chrX CNV calling\n";
 		if ($sample_sex eq 'male') {
@@ -2351,7 +2430,7 @@ sub validateRegion {
 	} else {
 		$beststate == 3 and return $cnvcall;
 	}
-	
+
 	if ($confidence) {
 		if ($minconf) {
 			$logprob[0]->[0]-$logprob[1]->[0] >= $minconf or return $cnvcall;
@@ -2380,8 +2459,8 @@ sub validateTrioCNVCall {
 		}
 	}
 	$maxfmostate = $maxfstate . $maxmstate . $maxostate;
-	
-	#$verbose and print STDERR "NOTICE: States with highest logprob in region ", $region{"$nextregion->[0]:$nextregion->[1]-$nextregion->[2]"}, "is $maxfstate,$maxmstate,$maxostate (rawlogprob=$maxpost)\n";
+
+#$verbose and print STDERR "NOTICE: States with highest logprob in region ", $region{"$nextregion->[0]:$nextregion->[1]-$nextregion->[2]"}, "is $maxfstate,$maxmstate,$maxostate (rawlogprob=$maxpost)\n";
 	for my $i (0 .. 2) {
 		my $nextstate = ($maxfstate, $maxmstate, $maxostate)[$i];
 		if ($chrx) {
@@ -2390,12 +2469,18 @@ sub validateTrioCNVCall {
 			} else {
 				$nextstate == 3 and next;
 			}
+		} elsif ($chry) {
+			if ($sample_sex->[$i] eq 'male') {
+				$nextstate == 2 and next;
+			} else {
+				$nextstate == 1 and next;
+			}
 		} else {
 			$nextstate == 3 and next;
 		}
 		my $nextcn = $nextstate-1;
 		$nextcn >= 3 and $nextcn--;
-		
+
 		my $identity = ("father", "mother", "offspring")[$i];
 		my $numsnp = substr ($region_numsnp->{$nextsubregion} . "       ", 0, 6);
 		my $cnvlength = $region_cnvlength->{$nextsubregion};
@@ -2409,17 +2494,17 @@ sub validateTrioCNVCall {
 
 sub validateQuartetCNVCall {
 	my ($ref_inputfile, $fmprior, $oprior, $nextsubregion, $sample_sex, $region_alllogprob, $region_numsnp, $region_cnvlength, $region_chr, $region_name_start, $region_name_end, $region_pos_start, $region_pos_end) = @_;
-	
+
 	my ($maxfstate, $maxmstate, $max_o1state, $max_o2state, $maxfmostate, $maxpost);
 	for my $fstate (1, 2, 3, 5, 6) {
 		for my $mstate (1, 2, 3, 5, 6) {
 			my @ostate_array = generateOstateArray (@$ref_inputfile-2, [1,2,3,5,6]);
-			
+
 			for my $o12states (@ostate_array) {
 				my ($o1state, $o2state) = @$o12states;
 				my $cnvgeno1 = $fstate . $mstate . $o1state;
 				my $cnvgeno2 = $fstate . $mstate . $o2state;
-				#$verbose and print "f=$fmprior[$fstate] m=$fmprior[$mstate] geno1=$cnvgeno1 o1=$oprior{$cnvgeno1}} $region_alllogprob{@$nextregion}->[0][$fstate] and $region_alllogprob{@$nextregion}->[1][$mstate] and $region_alllogprob{@$nextregion}->[2][$o1state]\n";
+#$verbose and print "f=$fmprior[$fstate] m=$fmprior[$mstate] geno1=$cnvgeno1 o1=$oprior{$cnvgeno1}} $region_alllogprob{@$nextregion}->[0][$fstate] and $region_alllogprob{@$nextregion}->[1][$mstate] and $region_alllogprob{@$nextregion}->[2][$o1state]\n";
 				my $bayesposterior = log ($fmprior->[$fstate]) + log ($fmprior->[$mstate]) + $region_alllogprob->{$nextsubregion}->[0][$fstate] + $region_alllogprob->{$nextsubregion}->[1][$mstate];
 				$bayesposterior += log ($oprior->{$cnvgeno1})  + $region_alllogprob->{$nextsubregion}->[2][$o1state];
 				$bayesposterior += log ($oprior->{$cnvgeno2})  + $region_alllogprob->{$nextsubregion}->[3][$o2state];
@@ -2434,8 +2519,8 @@ sub validateQuartetCNVCall {
 		}
 	}
 	$maxfmostate = join ('', $maxfstate, $maxmstate, $max_o1state, $max_o2state);
-	
-	#$verbose and print STDERR "NOTICE: States with highest logprob in region ", $region{"$nextregion->[0]:$nextregion->[1]-$nextregion->[2]"}, "is $maxfstate,$maxmstate,$max_o1state,max_o2state (rawlogprob=$maxpost)\n";
+
+#$verbose and print STDERR "NOTICE: States with highest logprob in region ", $region{"$nextregion->[0]:$nextregion->[1]-$nextregion->[2]"}, "is $maxfstate,$maxmstate,$max_o1state,max_o2state (rawlogprob=$maxpost)\n";
 	for my $i (0 .. @$ref_inputfile-1) {
 		my $nextstate = ($maxfstate, $maxmstate, $max_o1state, $max_o2state)[$i];
 		if ($chrx) {
@@ -2444,17 +2529,23 @@ sub validateQuartetCNVCall {
 			} else {
 				$nextstate == 3 and next;
 			}
+		} elsif ($chry) {
+			if ($sample_sex->[$i] eq 'male') {
+				$nextstate == 2 and next;
+			} else {
+				$nextstate == 1 and next;
+			}
 		} else {
 			$nextstate == 3 and next;
 		}
-		
+
 		my $identity;
 		if ($i >= 2) {
 			$identity = 'offspring';
 		} else {
 			$identity = ("father", "mother")[$i];
 		}
-		
+
 		my $nextcn = $nextstate-1;
 		$nextcn >= 3 and $nextcn--;
 
@@ -2471,38 +2562,42 @@ sub validateQuartetCNVCall {
 #validate CNV calls using father-mother-offspring1-offspring2 quartet information and reconcile boundary discordance using family information.
 sub newtestQuartetCNVFile {
 	my ($ref_inputfile, $hmmfile, $pfbfile, $cnvfile, $sexfile, $gcmodelfile, $directory) = @_;
-	#my ($name, $chr, $pos, $logr, $baf, $pfb, $snpdist);
+#my ($name, $chr, $pos, $logr, $baf, $pfb, $snpdist);
 	my ($pfbinfo) = newreadPFB ($pfbfile);
 	my $file_sex;
 	$sexfile and $file_sex = readSexFile ($sexfile);
 	my $hmm = readHMMFile ($hmmfile);
 	my $gcmodel;
-	
+
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);	#read the gc model for SNPs defined in snp_chr
 
-	my ($array_subregion, $array_region, $hash_region, $hash_startname, $hash_endname) = identifyCNVRegion ($cnvfile, $ref_inputfile, $pfbinfo);
+		my ($array_subregion, $array_region, $hash_region, $hash_startname, $hash_endname) = identifyCNVRegion ($cnvfile, $ref_inputfile, $pfbinfo);
 	$array_subregion or return;		#no CNV region can be identified for posterior calling algorithm
-	
-	my @subregion = @$array_subregion;
+
+		my @subregion = @$array_subregion;
 	my @region = @$array_region;
 	my %region = %$hash_region;
 	my %startname = %$hash_startname;
 	my %endname = %$hash_endname;
-	
+
 
 	my ($siginfo, $sample_sex, $region_alllogprob, $region_numsnp, $region_cnvlength, $region_chr, $region_name_start, $region_name_end, $region_pos_start, $region_pos_end, $region_snpdist) 
 		= retrieveRegionSignal ($ref_inputfile, $file_sex, $hmmfile, $array_subregion, $pfbinfo, $gcmodel, $directory, $hash_startname, $hash_endname);
 
 	$chrx and confess "ERROR: THIS VERSION OF PENNCNV DOES NOT SUPPORT CHRX CALLING FOR A QUARTET YET\n";
 
-	#now apply pedigree information to validate CNV calls and fine-map CNV boundaries
-	#first define the CNV inheritance matrix, and read the state transition matrix
+#now apply pedigree information to validate CNV calls and fine-map CNV boundaries
+#first define the CNV inheritance matrix, and read the state transition matrix
 	my $transition = readTransitionMatrix ($hmmfile);
 	my ($e, %oprior1, %oprior2) = ($denovo_rate);
 	if ($chrx and $sample_sex->[2] eq 'male') {		#first child in the family
 		%oprior1 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.25*$e, 212=>1-$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.3333*$e, 222=>0.5*(1-$e), 223=>0.5*(1-$e), 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>0.25*$e, 233=>1-$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.3333*$e, 253=>0.5*(1-$e), 255=>0.5*(1-$e), 256=>0.3333*$e, 261=>0.5*$e, 262=>0.5*$e, 263=>0.25*(1-$e), 265=>0.5*(1-$e), 266=>0.25*(1-$e), 311=>0.25*$e, 312=>0.25*$e, 313=>1-$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.3333*$e, 323=>0.5*(1-$e), 325=>0.5*(1-$e), 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>0.25*$e, 335=>1-$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.3333*$e, 355=>0.5*(1-$e), 356=>0.5*(1-$e), 361=>0.3333*$e, 362=>0.3333*$e, 363=>0.3333*$e, 365=>0.25*(1-$e), 366=>0.75*(1-$e), 511=>0.25*$e, 512=>0.25*$e, 513=>0.25*$e, 515=>1-$e, 516=>0.25*$e, 521=>0.3333*$e, 522=>0.3333*$e, 523=>0.3333*$e, 525=>0.5*(1-$e), 526=>0.5*(1-$e), 531=>0.25*$e, 532=>0.25*$e, 533=>0.25*$e, 535=>0.25*$e, 536=>1-$e, 551=>0.25*$e, 552=>0.25*$e, 553=>0.25*$e, 555=>0.25*$e, 556=>1-$e, 561=>0.25*$e, 562=>0.25*$e, 563=>0.25*$e, 565=>0.25*$e, 566=>1-$e, 611=>0.25*$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>1-$e, 621=>0.25*$e, 622=>0.25*$e, 623=>0.25*$e, 625=>0.25*$e, 626=>1-$e, 631=>0.25*$e, 632=>0.25*$e, 633=>0.25*$e, 635=>0.25*$e, 636=>1-$e, 651=>0.25*$e, 652=>0.25*$e, 653=>0.25*$e, 655=>0.25*$e, 656=>1-$e, 661=>0.25*$e, 662=>0.25*$e, 663=>0.25*$e, 665=>0.25*$e, 666=>1-$e);
 	} elsif ($chrx and $sample_sex->[2] eq 'female') {
 		%oprior1 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>1-$e, 212=>0.25*$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.5*(1-$e), 222=>0.5*(1-$e), 223=>0.3333*$e, 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>1-$e, 233=>0.25*$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.5*(1-$e), 253=>0.5*(1-$e), 255=>0.3333*$e, 256=>0.3333*$e, 261=>0.5*$e, 262=>0.25*(1-$e), 263=>0.5*(1-$e), 265=>0.25*(1-$e), 266=>0.5*$e, 311=>1-$e, 312=>0.25*$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.5*(1-$e), 322=>0.5*(1-$e), 323=>0.3333*$e, 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>1-$e, 333=>0.25*$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.5*(1-$e), 353=>0.5*(1-$e), 355=>0.3333*$e, 356=>0.3333*$e, 361=>0.5*$e, 362=>0.25*(1-$e), 363=>0.5*(1-$e), 365=>0.25*(1-$e), 366=>0.5*$e, 511=>1-$e, 512=>0.25*$e, 513=>0.25*$e, 515=>0.25*$e, 516=>0.25*$e, 521=>0.5*(1-$e), 522=>0.5*(1-$e), 523=>0.3333*$e, 525=>0.3333*$e, 526=>0.3333*$e, 531=>0.25*$e, 532=>1-$e, 533=>0.25*$e, 535=>0.25*$e, 536=>0.25*$e, 551=>0.3333*$e, 552=>0.5*(1-$e), 553=>0.5*(1-$e), 555=>0.3333*$e, 556=>0.3333*$e, 561=>0.5*$e, 562=>0.25*(1-$e), 563=>0.5*(1-$e), 565=>0.25*(1-$e), 566=>0.5*$e, 611=>1-$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>0.25*$e, 621=>0.5*(1-$e), 622=>0.5*(1-$e), 623=>0.3333*$e, 625=>0.3333*$e, 626=>0.3333*$e, 631=>0.25*$e, 632=>1-$e, 633=>0.25*$e, 635=>0.25*$e, 636=>0.25*$e, 651=>0.3333*$e, 652=>0.5*(1-$e), 653=>0.5*(1-$e), 655=>0.3333*$e, 656=>0.3333*$e, 661=>0.5*$e, 662=>0.25*(1-$e), 663=>0.5*(1-$e), 665=>0.25*(1-$e), 666=>0.5*$e);
+	} elsif ($chry and $sample_sex->[2] eq 'male') {
+		%oprior1 = (111=>1.000-$e, 112=>1.000*$e, 113=>0.500*$e, 115=>0.333*$e, 116=>0.250*$e, 121=>1.000-$e, 122=>1.000*$e, 123=>0.500*$e, 125=>0.333*$e, 126=>0.250*$e, 131=>1.000-$e, 132=>1.000*$e, 133=>0.500*$e, 135=>0.333*$e, 136=>0.250*$e, 151=>1.000-$e, 152=>1.000*$e, 153=>0.500*$e, 155=>0.333*$e, 156=>0.250*$e, 161=>1.000-$e, 162=>1.000*$e, 163=>0.500*$e, 165=>0.333*$e, 166=>0.250*$e, 211=>1.000*$e, 212=>1.000-$e, 213=>1.000*$e, 215=>0.500*$e, 216=>0.333*$e, 221=>1.000*$e, 222=>1.000-$e, 223=>1.000*$e, 225=>0.500*$e, 226=>0.333*$e, 231=>1.000*$e, 232=>1.000-$e, 233=>1.000*$e, 235=>0.500*$e, 236=>0.333*$e, 251=>1.000*$e, 252=>1.000-$e, 253=>1.000*$e, 255=>0.500*$e, 256=>0.333*$e, 261=>1.000*$e, 262=>1.000-$e, 263=>1.000*$e, 265=>0.500*$e, 266=>0.333*$e, 311=>0.500*$e, 312=>1.000*$e, 313=>1.000-$e, 315=>1.000*$e, 316=>0.500*$e, 321=>0.500*$e, 322=>1.000*$e, 323=>1.000-$e, 325=>1.000*$e, 326=>0.500*$e, 331=>0.500*$e, 332=>1.000*$e, 333=>1.000-$e, 335=>1.000*$e, 336=>0.500*$e, 351=>0.500*$e, 352=>1.000*$e, 353=>1.000-$e, 355=>1.000*$e, 356=>0.500*$e, 361=>0.500*$e, 362=>1.000*$e, 363=>1.000-$e, 365=>1.000*$e, 366=>0.500*$e, 511=>0.333*$e, 512=>0.500*$e, 513=>1.000*$e, 515=>1.000-$e, 516=>1.000*$e, 521=>0.333*$e, 522=>0.500*$e, 523=>1.000*$e, 525=>1.000-$e, 526=>1.000*$e, 531=>0.333*$e, 532=>0.500*$e, 533=>1.000*$e, 535=>1.000-$e, 536=>1.000*$e, 551=>0.333*$e, 552=>0.500*$e, 553=>1.000*$e, 555=>1.000-$e, 556=>1.000*$e, 561=>0.333*$e, 562=>0.500*$e, 563=>1.000*$e, 565=>1.000-$e, 566=>1.000*$e, 611=>0.250*$e, 612=>0.333*$e, 613=>0.500*$e, 615=>1.000*$e, 616=>1.000-$e, 621=>0.250*$e, 622=>0.333*$e, 623=>0.500*$e, 625=>1.000*$e, 626=>1.000-$e, 631=>0.250*$e, 632=>0.333*$e, 633=>0.500*$e, 635=>1.000*$e, 636=>1.000-$e, 651=>0.250*$e, 652=>0.333*$e, 653=>0.500*$e, 655=>1.000*$e, 656=>1.000-$e, 661=>0.250*$e, 662=>0.333*$e, 663=>0.500*$e, 665=>1.000*$e, 666=>1.000-$e);
+	} elsif ($chry and $sample_sex->[2] eq 'female'){
+		%oprior1 = (111=>$e*$e, 112=>$e*$e, 113=>$e*$e, 115=>$e*$e, 116=>$e*$e, 121=>$e*$e, 122=>$e*$e, 123=>$e*$e, 125=>$e*$e, 126=>$e*$e, 131=>$e*$e, 132=>$e*$e, 133=>$e*$e, 135=>$e*$e, 136=>$e*$e, 151=>$e*$e, 152=>$e*$e, 153=>$e*$e, 155=>$e*$e, 156=>$e*$e, 161=>$e*$e, 162=>$e*$e, 163=>$e*$e, 165=>$e*$e, 166=>$e*$e, 211=>$e*$e, 212=>$e*$e, 213=>$e*$e, 215=>$e*$e, 216=>$e*$e, 221=>$e*$e, 222=>$e*$e, 223=>$e*$e, 225=>$e*$e, 226=>$e*$e, 231=>$e*$e, 232=>$e*$e, 233=>$e*$e, 235=>$e*$e, 236=>$e*$e, 251=>$e*$e, 252=>$e*$e, 253=>$e*$e, 255=>$e*$e, 256=>$e*$e, 261=>$e*$e, 262=>$e*$e, 263=>$e*$e, 265=>$e*$e, 266=>$e*$e, 311=>$e*$e, 312=>$e*$e, 313=>$e*$e, 315=>$e*$e, 316=>$e*$e, 321=>$e*$e, 322=>$e*$e, 323=>$e*$e, 325=>$e*$e, 326=>$e*$e, 331=>$e*$e, 332=>$e*$e, 333=>$e*$e, 335=>$e*$e, 336=>$e*$e, 351=>$e*$e, 352=>$e*$e, 353=>$e*$e, 355=>$e*$e, 356=>$e*$e, 361=>$e*$e, 362=>$e*$e, 363=>$e*$e, 365=>$e*$e, 366=>$e*$e, 511=>$e*$e, 512=>$e*$e, 513=>$e*$e, 515=>$e*$e, 516=>$e*$e, 521=>$e*$e, 522=>$e*$e, 523=>$e*$e, 525=>$e*$e, 526=>$e*$e, 531=>$e*$e, 532=>$e*$e, 533=>$e*$e, 535=>$e*$e, 536=>$e*$e, 551=>$e*$e, 552=>$e*$e, 553=>$e*$e, 555=>$e*$e, 556=>$e*$e, 561=>$e*$e, 562=>$e*$e, 563=>$e*$e, 565=>$e*$e, 566=>$e*$e, 611=>$e*$e, 612=>$e*$e, 613=>$e*$e, 615=>$e*$e, 616=>$e*$e, 621=>$e*$e, 622=>$e*$e, 623=>$e*$e, 625=>$e*$e, 626=>$e*$e, 631=>$e*$e, 632=>$e*$e, 633=>$e*$e, 635=>$e*$e, 636=>$e*$e, 651=>$e*$e, 652=>$e*$e, 653=>$e*$e, 655=>$e*$e, 656=>$e*$e, 661=>$e*$e, 662=>$e*$e, 663=>$e*$e, 665=>$e*$e, 666=>$e*$e);
 	} else {
 		%oprior1 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.5*(1-$e), 212=>0.5*(1-$e), 213=>0.3333*$e, 215=>0.3333*$e, 216=>0.3333*$e, 221=>0.25*(1-$e), 222=>0.5*(1-$e), 223=>0.25*(1-$e), 225=>0.5*$e, 226=>0.5*$e, 231=>0.3333*$e, 232=>0.5*(1-$e), 233=>0.5*(1-$e), 235=>0.3333*$e, 236=>0.3333*$e, 251=>0.5*$e, 252=>0.25*(1-$e), 253=>0.5*(1-$e), 255=>0.25*(1-$e), 256=>0.5*$e, 261=>$e, 262=>0.125*(1-$e), 263=>0.375*(1-$e), 265=>0.375*(1-$e), 266=>0.125*(1-$e), 311=>0.25*$e, 312=>1-$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.5*(1-$e), 323=>0.5*(1-$e), 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>1-$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.5*(1-$e), 355=>0.5*(1-$e), 356=>0.3333*$e, 361=>0.5*$e, 362=>0.5*$e, 363=>0.25*(1-$e), 365=>0.5*(1-$e), 366=>0.25*(1-$e), 511=>0.3333*$e, 512=>0.5*(1-$e), 513=>0.5*(1-$e), 515=>0.3333*$e, 516=>0.3333*$e, 521=>0.5*$e, 522=>0.25*(1-$e), 523=>0.5*(1-$e), 525=>0.25*(1-$e), 526=>0.5*$e, 531=>0.3333*$e, 532=>0.3333*$e, 533=>0.5*(1-$e), 535=>0.5*(1-$e), 536=>0.3333*$e, 551=>0.5*$e, 552=>0.5*$e, 553=>0.25*(1-$e), 555=>0.5*(1-$e), 556=>0.25*(1-$e), 561=>0.5*$e, 562=>0.5*$e, 563=>0.125*(1-$e), 565=>0.375*(1-$e), 566=>0.5*(1-$e), 611=>0.5*$e, 612=>0.25*(1-$e), 613=>0.5*(1-$e), 615=>0.25*(1-$e), 616=>0.5*$e, 621=>$e, 622=>0.125*(1-$e), 623=>0.375*(1-$e), 625=>0.375*(1-$e), 626=>0.125*(1-$e), 631=>0.5*$e, 632=>0.5*$e, 633=>0.25*(1-$e), 635=>0.5*(1-$e), 636=>0.25*(1-$e), 651=>0.5*$e, 652=>0.5*$e, 653=>0.125*(1-$e), 655=>0.375*(1-$e), 656=>0.5*(1-$e), 661=>0.5*$e, 662=>0.5*$e, 663=>0.0625*(1-$e), 665=>0.25*(1-$e), 666=>0.6875*(1-$e));
 	}
@@ -2510,35 +2605,39 @@ sub newtestQuartetCNVFile {
 		%oprior2 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.25*$e, 212=>1-$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.3333*$e, 222=>0.5*(1-$e), 223=>0.5*(1-$e), 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>0.25*$e, 233=>1-$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.3333*$e, 253=>0.5*(1-$e), 255=>0.5*(1-$e), 256=>0.3333*$e, 261=>0.5*$e, 262=>0.5*$e, 263=>0.25*(1-$e), 265=>0.5*(1-$e), 266=>0.25*(1-$e), 311=>0.25*$e, 312=>0.25*$e, 313=>1-$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.3333*$e, 323=>0.5*(1-$e), 325=>0.5*(1-$e), 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>0.25*$e, 335=>1-$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.3333*$e, 355=>0.5*(1-$e), 356=>0.5*(1-$e), 361=>0.3333*$e, 362=>0.3333*$e, 363=>0.3333*$e, 365=>0.25*(1-$e), 366=>0.75*(1-$e), 511=>0.25*$e, 512=>0.25*$e, 513=>0.25*$e, 515=>1-$e, 516=>0.25*$e, 521=>0.3333*$e, 522=>0.3333*$e, 523=>0.3333*$e, 525=>0.5*(1-$e), 526=>0.5*(1-$e), 531=>0.25*$e, 532=>0.25*$e, 533=>0.25*$e, 535=>0.25*$e, 536=>1-$e, 551=>0.25*$e, 552=>0.25*$e, 553=>0.25*$e, 555=>0.25*$e, 556=>1-$e, 561=>0.25*$e, 562=>0.25*$e, 563=>0.25*$e, 565=>0.25*$e, 566=>1-$e, 611=>0.25*$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>1-$e, 621=>0.25*$e, 622=>0.25*$e, 623=>0.25*$e, 625=>0.25*$e, 626=>1-$e, 631=>0.25*$e, 632=>0.25*$e, 633=>0.25*$e, 635=>0.25*$e, 636=>1-$e, 651=>0.25*$e, 652=>0.25*$e, 653=>0.25*$e, 655=>0.25*$e, 656=>1-$e, 661=>0.25*$e, 662=>0.25*$e, 663=>0.25*$e, 665=>0.25*$e, 666=>1-$e);
 	} elsif ($chrx and $sample_sex->[2] eq 'female') {
 		%oprior2 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>1-$e, 212=>0.25*$e, 213=>0.25*$e, 215=>0.25*$e, 216=>0.25*$e, 221=>0.5*(1-$e), 222=>0.5*(1-$e), 223=>0.3333*$e, 225=>0.3333*$e, 226=>0.3333*$e, 231=>0.25*$e, 232=>1-$e, 233=>0.25*$e, 235=>0.25*$e, 236=>0.25*$e, 251=>0.3333*$e, 252=>0.5*(1-$e), 253=>0.5*(1-$e), 255=>0.3333*$e, 256=>0.3333*$e, 261=>0.5*$e, 262=>0.25*(1-$e), 263=>0.5*(1-$e), 265=>0.25*(1-$e), 266=>0.5*$e, 311=>1-$e, 312=>0.25*$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.5*(1-$e), 322=>0.5*(1-$e), 323=>0.3333*$e, 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>1-$e, 333=>0.25*$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.5*(1-$e), 353=>0.5*(1-$e), 355=>0.3333*$e, 356=>0.3333*$e, 361=>0.5*$e, 362=>0.25*(1-$e), 363=>0.5*(1-$e), 365=>0.25*(1-$e), 366=>0.5*$e, 511=>1-$e, 512=>0.25*$e, 513=>0.25*$e, 515=>0.25*$e, 516=>0.25*$e, 521=>0.5*(1-$e), 522=>0.5*(1-$e), 523=>0.3333*$e, 525=>0.3333*$e, 526=>0.3333*$e, 531=>0.25*$e, 532=>1-$e, 533=>0.25*$e, 535=>0.25*$e, 536=>0.25*$e, 551=>0.3333*$e, 552=>0.5*(1-$e), 553=>0.5*(1-$e), 555=>0.3333*$e, 556=>0.3333*$e, 561=>0.5*$e, 562=>0.25*(1-$e), 563=>0.5*(1-$e), 565=>0.25*(1-$e), 566=>0.5*$e, 611=>1-$e, 612=>0.25*$e, 613=>0.25*$e, 615=>0.25*$e, 616=>0.25*$e, 621=>0.5*(1-$e), 622=>0.5*(1-$e), 623=>0.3333*$e, 625=>0.3333*$e, 626=>0.3333*$e, 631=>0.25*$e, 632=>1-$e, 633=>0.25*$e, 635=>0.25*$e, 636=>0.25*$e, 651=>0.3333*$e, 652=>0.5*(1-$e), 653=>0.5*(1-$e), 655=>0.3333*$e, 656=>0.3333*$e, 661=>0.5*$e, 662=>0.25*(1-$e), 663=>0.5*(1-$e), 665=>0.25*(1-$e), 666=>0.5*$e);
+	} elsif ($chry and $sample_sex->[2] eq 'male') {
+		%oprior2 = (111=>1.000-$e, 112=>1.000*$e, 113=>0.500*$e, 115=>0.333*$e, 116=>0.250*$e, 121=>1.000-$e, 122=>1.000*$e, 123=>0.500*$e, 125=>0.333*$e, 126=>0.250*$e, 131=>1.000-$e, 132=>1.000*$e, 133=>0.500*$e, 135=>0.333*$e, 136=>0.250*$e, 151=>1.000-$e, 152=>1.000*$e, 153=>0.500*$e, 155=>0.333*$e, 156=>0.250*$e, 161=>1.000-$e, 162=>1.000*$e, 163=>0.500*$e, 165=>0.333*$e, 166=>0.250*$e, 211=>1.000*$e, 212=>1.000-$e, 213=>1.000*$e, 215=>0.500*$e, 216=>0.333*$e, 221=>1.000*$e, 222=>1.000-$e, 223=>1.000*$e, 225=>0.500*$e, 226=>0.333*$e, 231=>1.000*$e, 232=>1.000-$e, 233=>1.000*$e, 235=>0.500*$e, 236=>0.333*$e, 251=>1.000*$e, 252=>1.000-$e, 253=>1.000*$e, 255=>0.500*$e, 256=>0.333*$e, 261=>1.000*$e, 262=>1.000-$e, 263=>1.000*$e, 265=>0.500*$e, 266=>0.333*$e, 311=>0.500*$e, 312=>1.000*$e, 313=>1.000-$e, 315=>1.000*$e, 316=>0.500*$e, 321=>0.500*$e, 322=>1.000*$e, 323=>1.000-$e, 325=>1.000*$e, 326=>0.500*$e, 331=>0.500*$e, 332=>1.000*$e, 333=>1.000-$e, 335=>1.000*$e, 336=>0.500*$e, 351=>0.500*$e, 352=>1.000*$e, 353=>1.000-$e, 355=>1.000*$e, 356=>0.500*$e, 361=>0.500*$e, 362=>1.000*$e, 363=>1.000-$e, 365=>1.000*$e, 366=>0.500*$e, 511=>0.333*$e, 512=>0.500*$e, 513=>1.000*$e, 515=>1.000-$e, 516=>1.000*$e, 521=>0.333*$e, 522=>0.500*$e, 523=>1.000*$e, 525=>1.000-$e, 526=>1.000*$e, 531=>0.333*$e, 532=>0.500*$e, 533=>1.000*$e, 535=>1.000-$e, 536=>1.000*$e, 551=>0.333*$e, 552=>0.500*$e, 553=>1.000*$e, 555=>1.000-$e, 556=>1.000*$e, 561=>0.333*$e, 562=>0.500*$e, 563=>1.000*$e, 565=>1.000-$e, 566=>1.000*$e, 611=>0.250*$e, 612=>0.333*$e, 613=>0.500*$e, 615=>1.000*$e, 616=>1.000-$e, 621=>0.250*$e, 622=>0.333*$e, 623=>0.500*$e, 625=>1.000*$e, 626=>1.000-$e, 631=>0.250*$e, 632=>0.333*$e, 633=>0.500*$e, 635=>1.000*$e, 636=>1.000-$e, 651=>0.250*$e, 652=>0.333*$e, 653=>0.500*$e, 655=>1.000*$e, 656=>1.000-$e, 661=>0.250*$e, 662=>0.333*$e, 663=>0.500*$e, 665=>1.000*$e, 666=>1.000-$e);
+	} elsif ($chry and $sample_sex->[2] eq 'female'){
+		%oprior2 = (111=>$e*$e, 112=>$e*$e, 113=>$e*$e, 115=>$e*$e, 116=>$e*$e, 121=>$e*$e, 122=>$e*$e, 123=>$e*$e, 125=>$e*$e, 126=>$e*$e, 131=>$e*$e, 132=>$e*$e, 133=>$e*$e, 135=>$e*$e, 136=>$e*$e, 151=>$e*$e, 152=>$e*$e, 153=>$e*$e, 155=>$e*$e, 156=>$e*$e, 161=>$e*$e, 162=>$e*$e, 163=>$e*$e, 165=>$e*$e, 166=>$e*$e, 211=>$e*$e, 212=>$e*$e, 213=>$e*$e, 215=>$e*$e, 216=>$e*$e, 221=>$e*$e, 222=>$e*$e, 223=>$e*$e, 225=>$e*$e, 226=>$e*$e, 231=>$e*$e, 232=>$e*$e, 233=>$e*$e, 235=>$e*$e, 236=>$e*$e, 251=>$e*$e, 252=>$e*$e, 253=>$e*$e, 255=>$e*$e, 256=>$e*$e, 261=>$e*$e, 262=>$e*$e, 263=>$e*$e, 265=>$e*$e, 266=>$e*$e, 311=>$e*$e, 312=>$e*$e, 313=>$e*$e, 315=>$e*$e, 316=>$e*$e, 321=>$e*$e, 322=>$e*$e, 323=>$e*$e, 325=>$e*$e, 326=>$e*$e, 331=>$e*$e, 332=>$e*$e, 333=>$e*$e, 335=>$e*$e, 336=>$e*$e, 351=>$e*$e, 352=>$e*$e, 353=>$e*$e, 355=>$e*$e, 356=>$e*$e, 361=>$e*$e, 362=>$e*$e, 363=>$e*$e, 365=>$e*$e, 366=>$e*$e, 511=>$e*$e, 512=>$e*$e, 513=>$e*$e, 515=>$e*$e, 516=>$e*$e, 521=>$e*$e, 522=>$e*$e, 523=>$e*$e, 525=>$e*$e, 526=>$e*$e, 531=>$e*$e, 532=>$e*$e, 533=>$e*$e, 535=>$e*$e, 536=>$e*$e, 551=>$e*$e, 552=>$e*$e, 553=>$e*$e, 555=>$e*$e, 556=>$e*$e, 561=>$e*$e, 562=>$e*$e, 563=>$e*$e, 565=>$e*$e, 566=>$e*$e, 611=>$e*$e, 612=>$e*$e, 613=>$e*$e, 615=>$e*$e, 616=>$e*$e, 621=>$e*$e, 622=>$e*$e, 623=>$e*$e, 625=>$e*$e, 626=>$e*$e, 631=>$e*$e, 632=>$e*$e, 633=>$e*$e, 635=>$e*$e, 636=>$e*$e, 651=>$e*$e, 652=>$e*$e, 653=>$e*$e, 655=>$e*$e, 656=>$e*$e, 661=>$e*$e, 662=>$e*$e, 663=>$e*$e, 665=>$e*$e, 666=>$e*$e);
 	} else {
 		%oprior2 = (111=>1-$e, 112=>0.25*$e, 113=>0.25*$e, 115=>0.25*$e, 116=>0.25*$e, 121=>0.5*(1-$e), 122=>0.5*(1-$e), 123=>0.3333*$e, 125=>0.3333*$e, 126=>0.3333*$e, 131=>0.25*$e, 132=>1-$e, 133=>0.25*$e, 135=>0.25*$e, 136=>0.25*$e, 151=>0.3333*$e, 152=>0.5*(1-$e), 153=>0.5*(1-$e), 155=>0.3333*$e, 156=>0.3333*$e, 161=>0.5*$e, 162=>0.25*(1-$e), 163=>0.5*(1-$e), 165=>0.25*(1-$e), 166=>0.5*$e, 211=>0.5*(1-$e), 212=>0.5*(1-$e), 213=>0.3333*$e, 215=>0.3333*$e, 216=>0.3333*$e, 221=>0.25*(1-$e), 222=>0.5*(1-$e), 223=>0.25*(1-$e), 225=>0.5*$e, 226=>0.5*$e, 231=>0.3333*$e, 232=>0.5*(1-$e), 233=>0.5*(1-$e), 235=>0.3333*$e, 236=>0.3333*$e, 251=>0.5*$e, 252=>0.25*(1-$e), 253=>0.5*(1-$e), 255=>0.25*(1-$e), 256=>0.5*$e, 261=>$e, 262=>0.125*(1-$e), 263=>0.375*(1-$e), 265=>0.375*(1-$e), 266=>0.125*(1-$e), 311=>0.25*$e, 312=>1-$e, 313=>0.25*$e, 315=>0.25*$e, 316=>0.25*$e, 321=>0.3333*$e, 322=>0.5*(1-$e), 323=>0.5*(1-$e), 325=>0.3333*$e, 326=>0.3333*$e, 331=>0.25*$e, 332=>0.25*$e, 333=>1-$e, 335=>0.25*$e, 336=>0.25*$e, 351=>0.3333*$e, 352=>0.3333*$e, 353=>0.5*(1-$e), 355=>0.5*(1-$e), 356=>0.3333*$e, 361=>0.5*$e, 362=>0.5*$e, 363=>0.25*(1-$e), 365=>0.5*(1-$e), 366=>0.25*(1-$e), 511=>0.3333*$e, 512=>0.5*(1-$e), 513=>0.5*(1-$e), 515=>0.3333*$e, 516=>0.3333*$e, 521=>0.5*$e, 522=>0.25*(1-$e), 523=>0.5*(1-$e), 525=>0.25*(1-$e), 526=>0.5*$e, 531=>0.3333*$e, 532=>0.3333*$e, 533=>0.5*(1-$e), 535=>0.5*(1-$e), 536=>0.3333*$e, 551=>0.5*$e, 552=>0.5*$e, 553=>0.25*(1-$e), 555=>0.5*(1-$e), 556=>0.25*(1-$e), 561=>0.5*$e, 562=>0.5*$e, 563=>0.125*(1-$e), 565=>0.375*(1-$e), 566=>0.5*(1-$e), 611=>0.5*$e, 612=>0.25*(1-$e), 613=>0.5*(1-$e), 615=>0.25*(1-$e), 616=>0.5*$e, 621=>$e, 622=>0.125*(1-$e), 623=>0.375*(1-$e), 625=>0.375*(1-$e), 626=>0.125*(1-$e), 631=>0.5*$e, 632=>0.5*$e, 633=>0.25*(1-$e), 635=>0.5*(1-$e), 636=>0.25*(1-$e), 651=>0.5*$e, 652=>0.5*$e, 653=>0.125*(1-$e), 655=>0.375*(1-$e), 656=>0.5*(1-$e), 661=>0.5*$e, 662=>0.5*$e, 663=>0.0625*(1-$e), 665=>0.25*(1-$e), 666=>0.6875*(1-$e));
 	}
-	
-	#dichotomize the CNV validation procedure:
-		#if there is no boundary discordance, do a simple Bayesian computation
-		#otherwise, use viterbi algorithm to infer the most likely path
+
+#dichotomize the CNV validation procedure:
+#if there is no boundary discordance, do a simple Bayesian computation
+#otherwise, use viterbi algorithm to infer the most likely path
 	for my $nextregion (@region) {
 		my ($nextchr, @nextpos) = @$nextregion;				#nextchr is the chromosome, nextname is the SNPs that constitute the CNV boundary
-		my ($delta, $psi);						#delta: maximum prob at each time, psi: maximum previous ind that generate the delta at this time
-		my $nextsubregion = join (",", $nextchr, $nextpos[0], $nextpos[1]);
+			my ($delta, $psi);						#delta: maximum prob at each time, psi: maximum previous ind that generate the delta at this time
+			my $nextsubregion = join (",", $nextchr, $nextpos[0], $nextpos[1]);
 		my ($maxval, $maxvalind);
 		$verbose and print "processing regions at chr$nextchr pos=@nextpos\n";
-		
-		#the following paragraph applies when there is no boundary discordance (a simple Bayesian method to calculate most likely a posterior state combintations)
+
+#the following paragraph applies when there is no boundary discordance (a simple Bayesian method to calculate most likely a posterior state combintations)
 		if (@nextpos == 2) {
 			validateQuartetCNVCall ($ref_inputfile, \@fmprior, \%oprior1, $nextsubregion, $sample_sex, $region_alllogprob, $region_numsnp, $region_cnvlength, $region_chr, $region_name_start, $region_name_end, $region_pos_start, $region_pos_end);
 			next;
 		}
-		
-		#proceed to the following only if there are multiple overlapped subregions in the region. We will a Viterbi algorithm to decode the best path
-		#delta is a matrix that record for each time point, for each fmostate, the maxlogprob of the path
-		#psi is a matrix that record for each time point, for each fmostate, the previous fmostate (that reach the current one with highest prob)
-		
-		#step1: initialization
+
+#proceed to the following only if there are multiple overlapped subregions in the region. We will a Viterbi algorithm to decode the best path
+#delta is a matrix that record for each time point, for each fmostate, the maxlogprob of the path
+#psi is a matrix that record for each time point, for each fmostate, the previous fmostate (that reach the current one with highest prob)
+
+#step1: initialization
 		for my $fstate (1, 2, 3, 5, 6) {
 			for my $mstate (1, 2, 3, 5, 6) {
 				my @ostate_array = generateOstateArray (@$ref_inputfile-2, [1,2,3,5,6]);
-					
+
 				for my $o12states (@ostate_array) {
 					my ($o1state, $o2state) = @$o12states;
 					my $fmoindex = $fstate+$mstate*7+$o1state*7*7+$o2state*7*7*7;
@@ -2550,8 +2649,8 @@ sub newtestQuartetCNVFile {
 			}
 		}
 		$verbose and print STDERR "NOTICE: initial scanning at $nextchr: @nextpos[0..1] found $maxvalind $maxval\n";
-		
-		#step 2: recursion
+
+#step 2: recursion
 		for my $i (1 .. @nextpos-2) {	#this is equivalent to "from time 1 to time t" (time 0 is the initialization stage)
 			my $nextsubregion = join (",", $nextchr, $nextpos[$i], $nextpos[$i+1]);
 
@@ -2562,7 +2661,7 @@ sub newtestQuartetCNVFile {
 						my ($o1state, $o2state) = @$o12states;
 						my $fmoindex = $fstate+7*$mstate+7*7*$o1state+7*7*7*$o2state;
 						undef $maxval;
-						
+
 						for my $old_fstate (1, 2, 3, 5, 6) {
 							for my $old_mstate (1, 2, 3, 5, 6) {
 								my @old_ostate_array = generateOstateArray (@$ref_inputfile-2, [1,2,3,5,6]);
@@ -2572,10 +2671,10 @@ sub newtestQuartetCNVFile {
 									my $old_fmoindex = $old_fstate+7*$old_mstate+7*7*$old_o1state+7*7*7*$old_o2state;
 									$region_snpdist->{$nextsubregion} or confess "\nERROR: for nextregion $nextsubregion, pos=@nextpos @$ref_inputfile: no snpdist defined!!!";
 
-									#val is calculated as previous prob + transition prob of parent + transition prob of offspring
+#val is calculated as previous prob + transition prob of parent + transition prob of offspring
 									my $val = $delta->[$i-1][$old_fmoindex];
 									$val += log ($transition->[$old_fstate][$fstate] * (1-exp(-$region_snpdist->{$nextsubregion}/100_000)) / (1-exp(-5000/100_000))) + log ($transition->[$old_mstate][$mstate]* (1-exp(-$region_snpdist->{$nextsubregion}/100_000)) / (1-exp(-5000/100_000)));
-						
+
 									if ($fstate == $old_fstate and $mstate == $old_mstate and $o1state != $old_o1state and $oprior1{$fstate.$mstate.$o1state} > $e) {
 										my @tempoprior = sort {$a<=>$b} @oprior1{$fstate.$mstate.'1', $fstate.$mstate.'2', $fstate.$mstate.'3', $fstate.$mstate.'5', $fstate.$mstate.'6'};
 										$val += log ($tempoprior[0]);			#recombination happens without de novo event!
@@ -2588,12 +2687,12 @@ sub newtestQuartetCNVFile {
 									} else {
 										$val += log ($oprior2{$fstate.$mstate.$o2state});
 									}
-									
-									#for the last block, arbitrarily set a "end" state that returns to state 3 (since all fstate and mstate return to 3, it can be directly added here as if there are two transitions)
+
+#for the last block, arbitrarily set a "end" state that returns to state 3 (since all fstate and mstate return to 3, it can be directly added here as if there are two transitions)
 									if ($i == @nextpos-2) {
 										$val += log ($transition->[$fstate][3]) + log ($transition->[$mstate][3]);
 									}
-									
+
 									if (not defined $maxval or $val > $maxval) {
 										$maxval = $val;
 										$maxvalind = $old_fmoindex;
@@ -2608,67 +2707,69 @@ sub newtestQuartetCNVFile {
 				}
 			}
 		}
-		
+
 		my ($pprob, $q, $qstate);	#pprob is the maximum prob, $q is the fmoindex that reach maximum prob, qstate is the [fstate,mstate,ostate]
-		#step 3: termination
-		for my $fstate (1, 2, 3, 5, 6) {
-			for my $mstate (1, 2, 3, 5, 6) {
-				my @ostate_array = generateOstateArray (@$ref_inputfile-2, [1,2,3,5,6]);
-				
-				for my $o12states (@ostate_array) {
-					my ($o1state, $o2state) = @$o12states;
-					my $fmoindex = $fstate+7*$mstate+7*7*$o1state+7*7*7*$o2state;
-					if (not defined $pprob or $delta->[@nextpos-2][$fmoindex] > $pprob) {
-						$pprob = $delta->[@nextpos-2][$fmoindex];
-						$q->[@nextpos-2] = $fmoindex;
-						$qstate->[@nextpos-2] = [convertQuartetIndex2State ($fmoindex)];
+#step 3: termination
+			for my $fstate (1, 2, 3, 5, 6) {
+				for my $mstate (1, 2, 3, 5, 6) {
+					my @ostate_array = generateOstateArray (@$ref_inputfile-2, [1,2,3,5,6]);
+
+					for my $o12states (@ostate_array) {
+						my ($o1state, $o2state) = @$o12states;
+						my $fmoindex = $fstate+7*$mstate+7*7*$o1state+7*7*7*$o2state;
+						if (not defined $pprob or $delta->[@nextpos-2][$fmoindex] > $pprob) {
+							$pprob = $delta->[@nextpos-2][$fmoindex];
+							$q->[@nextpos-2] = $fmoindex;
+							$qstate->[@nextpos-2] = [convertQuartetIndex2State ($fmoindex)];
+						}
 					}
 				}
 			}
-		}
 		$verbose and print STDERR "q[", @nextpos-2, "]=", $q->[@$q-1], " (", convertTrioIndex2State ($q->[@$q-1]), ")\n";
-		
-		#step 4: path backtracing
+
+#step 4: path backtracing
 		for (my $i = @nextpos-3; $i >= 0; $i--) {
 			$q->[$i] = $psi->[$i+1][$q->[$i+1]];
 			$qstate->[$i] = [convertQuartetIndex2State ($q->[$i])];
 			$verbose and print STDERR "q[$i] = $q->[$i] (", convertTrioIndex2State ($q->[$i]), ")\n";
 		}
-		
-		#finally, compile all state sequences together to get a concensus sequence
+
+#finally, compile all state sequences together to get a concensus sequence
 		my @cnv;			#@cnv has 4 element, corresponding to father, mother, offspring CNV calls
-		for my $i (0 .. 3) {
-			my ($stretch_start_j, $found_signal);
-			my $normal_state = 3;
-			$chrx and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chrx
-			for my $j (0 .. @$qstate-1) {
-				my $nextstate = $qstate->[$j][$i];
-				if ($nextstate ne $normal_state) {
-					if ($found_signal and $found_signal ne $nextstate) {	#transition between different CNV states
-						push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
-						$stretch_start_j = $j;
-						$found_signal = $nextstate;
-					} elsif ($found_signal) {
-						1;						#do nothing, still in the same state
-					} else {
-						$found_signal = $nextstate;
-						$stretch_start_j = $j;
+			for my $i (0 .. 3) {
+				my ($stretch_start_j, $found_signal);
+				my $normal_state = 3;
+				$chrx and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chrx
+					$chry and $sample_sex->[$i] eq 'male' and $normal_state = 2;		#for male chry
+					$chry and $sample_sex->[$i] eq 'female' and $normal_state = 1;		#for female chry
+					for my $j (0 .. @$qstate-1) {
+						my $nextstate = $qstate->[$j][$i];
+						if ($nextstate ne $normal_state) {
+							if ($found_signal and $found_signal ne $nextstate) {	#transition between different CNV states
+								push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
+								$stretch_start_j = $j;
+								$found_signal = $nextstate;
+							} elsif ($found_signal) {
+								1;						#do nothing, still in the same state
+							} else {
+								$found_signal = $nextstate;
+								$stretch_start_j = $j;
+							}
+						} else {
+							if ($found_signal) {
+								push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
+								$found_signal = 0;
+							}
+						}
 					}
-				} else {
-					if ($found_signal) {
-						push @{$cnv[$i]}, [$stretch_start_j, $j, $found_signal];
-						$found_signal = 0;
-					}
+#finish the last stretch
+				if ($found_signal) {
+					push @{$cnv[$i]}, [$stretch_start_j, scalar (@$qstate), $found_signal];
 				}
 			}
-			#finish the last stretch
-			if ($found_signal) {
-				push @{$cnv[$i]}, [$stretch_start_j, scalar (@$qstate), $found_signal];
-			}
-		}
-		
+
 		printFamilyCNVCall (\@cnv, $nextchr, \@nextpos, $region_name_start, $region_name_end, $qstate, $siginfo, $ref_inputfile);
-		
+
 	}
 }
 
@@ -2677,47 +2778,49 @@ sub jointCNVCall {
 	my ($pfbinfo) = newreadPFB ($pfbfile);
 	my $file_sex = {};
 	$sexfile and $file_sex = readSexFile ($sexfile);		# if --sexfile is set, read gender information from sexfile for each sample
-	my $hmm = main::readHMMFile ($hmmfile);				#check the validity of the HMM file
-	my $region;
+		my $hmm = main::readHMMFile ($hmmfile);				#check the validity of the HMM file
+		my $region;
 
 	my (%fmolrr, %fmobaf);						#key=chr value=ref_array (fat, mot, off)
-	my (%name, %pos, %pfb, %snpdist, %probe_count);			#key=chr value=name, pos, pfb, snpdist, probe_count
-	my (@trio_sample_sex, @trio_lrr_sd);
+		my (%name, %pos, %pfb, %snpdist, %probe_count);			#key=chr value=name, pos, pfb, snpdist, probe_count
+		my (@trio_sample_sex, @trio_lrr_sd);
 	my $logprob = 0;
 	my @cnvcall = ();
-	
+
 	my $gcmodel;
 	defined $gcmodelfile and $gcmodel = newreadGCModel ($gcmodelfile, $pfbinfo);
 
-	#read HMM model file
+#read HMM model file
 	my $hmm_model = khmm::ReadCHMM ($hmmfile);
-	
+
 	my $medianadjust = $main::medianadjust;
 	my $sdadjust = $main::sdadjust;
 
-	#read intensity signals for all members
+#read intensity signals for all members
 	for my $i (0 .. @$ref_inputfile-1) {
 		my $inputfile = $ref_inputfile->[$i];
 		my $sample_sex = $file_sex->{$inputfile} || 'unknown';	# if the sample is not in sexfile, or if it is 'unknown' in sex file
-		my ($siginfo, $sigdesc);				# the hash contains all the signal intensity values for each chromosome (key)
-		
-		
-		if ($chrx) {
-			$region = 'X';
-		} else {
-			$region ||= "1-$lastchr";					# by default --region argument should be all autosomes
-		}
-		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
-		#print STDERR "NOTICE: Descriptive summary of $sigdesc->{num_record} records: mean=", sprintf ("%.4f", $sigdesc->{lrr_mean}), " sd=", sprintf ("%.4f", $sigdesc->{lrr_sd}), "\n";
+			my ($siginfo, $sigdesc);				# the hash contains all the signal intensity values for each chromosome (key)
 
+
+			if ($chrx) {
+				$region = 'X';
+			} elsif ($chry) {
+				$region = 'Y';
+			} else {
+				$region ||= "1-$lastchr";					# by default --region argument should be all autosomes
+			}
+		($siginfo, $sigdesc) = readLRRBAF ($inputfile, $region, $pfbinfo, $gcmodel, $directory);
+#print STDERR "NOTICE: Descriptive summary of $sigdesc->{num_record} records: mean=", sprintf ("%.4f", $sigdesc->{lrr_mean}), " sd=", sprintf ("%.4f", $sigdesc->{lrr_sd}), "\n";
+########################################################################################################################
 		if ($chrx) {
 			if ($sigdesc->{baf_xhet} eq 'NA') {
 				print STDERR "ERROR: skipping inputfile $inputfile since it does not contain signal information for X chromosome markers.\n";
 				return;
 			}
 			print STDERR "NOTICE: Descriptive summary of $sigdesc->{num_record} records in $inputfile: LRR_Xmean=", sprintf ("%.4f", $sigdesc->{lrr_xmean}), " LRR_Xmedian=", sprintf ("%.4f", $sigdesc->{lrr_xmedian}), " LRR_XSD=", sprintf ("%.4f", $sigdesc->{lrr_xsd}), " BAF_Xhet=", sprintf ("%.4f", $sigdesc->{baf_xhet}), "\n";
-			
-			#examine whether sample_sex is correct or predict sample_sex when it is not specified in --sexfile
+
+#examine whether sample_sex is correct or predict sample_sex when it is not specified in --sexfile
 			if ($sigdesc->{baf_xhet} > 0.1) {		#if >10% of BAF are heterozygotes in chrX, it must be a female sample
 				if (defined $sample_sex) {
 					$sample_sex eq 'male' and print STDERR "WARNING: Sample sex for $inputfile is specified as 'male' in $sexfile but BAF heterozygous rate for chrX ($sigdesc->{baf_xhet}) indicates 'female'\n";
@@ -2733,7 +2836,7 @@ sub jointCNVCall {
 					print STDERR "NOTICE: Sample sex for $inputfile is predicted as 'male' based on BAF heterozygous rate for chrX ($sigdesc->{baf_xhet})\n";
 				}
 			}
-			
+
 			if ($sample_sex eq 'male') {			#for males, the mean LRR should be equal to expected LRR for state 2 (one-copy)
 				print STDERR "NOTICE: Adjusting LRR values in chrX from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]), "\n";
 				main::adjustLRR ($siginfo, $sigdesc->{lrr_xmedian}-$hmm->{B1_mean}[1]);
@@ -2742,30 +2845,72 @@ sub jointCNVCall {
 				main::adjustLRR ($siginfo, $sigdesc->{lrr_xmedian});
 			}
 
-			#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
 			if ($sigdesc->{lrr_xsd} > 0.2) {
 				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_xsd})!\n";
 				print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
 			}
+########################################################################################################################
+########################################################################################################################
+		} elsif ($chry) {
+			if ($sigdesc->{baf_yhet} eq 'NA') {
+				print STDERR "ERROR: skipping inputfile $inputfile since it does not contain signal information for Y chromosome markers.\n";
+				return;
+			}
+			print STDERR "NOTICE: Descriptive summary of $sigdesc->{num_record} records in $inputfile: LRR_Ymean=", sprintf ("%.4f", $sigdesc->{lrr_ymean}), " LRR_Ymedian=", sprintf ("%.4f", $sigdesc->{lrr_ymedian}), " LRR_YSD=", sprintf ("%.4f", $sigdesc->{lrr_ysd}), "\n";
+
+#examine whether sample_sex is correct or predict sample_sex when it is not specified in --sexfile
+			if ($sigdesc->{baf_xhet} > 0.1) {		#if >10% of BAF are heterozygotes in chrX, it must be a female sample
+				if (defined $sample_sex) {
+					$sample_sex eq 'male' and print STDERR "WARNING: Sample sex for $inputfile is specified as 'male' in $sexfile but BAF heterozygous rate for chrX ($sigdesc->{baf_xhet}) indicates 'female'\n";
+				} else {
+					$sample_sex = 'female';
+					print STDERR "NOTICE: Sample sex for $inputfile is predicted as 'female' based on BAF heterozygous rate for chrX ($sigdesc->{baf_xhet})\n";
+				}
+			} else {
+				if (defined $sample_sex) {
+					$sample_sex eq 'female' and print STDERR "WARNING: Sample sex for $inputfile is specified as 'female' in $sexfile but BAF heterozygous rate for chrX ($sigdesc->{baf_xhet}) indicates 'male'\n";
+				} else {
+					$sample_sex = 'male';
+					print STDERR "NOTICE: Sample sex for $inputfile is predicted as 'male' based on BAF heterozygous rate for chrX ($sigdesc->{baf_xhet})\n";
+				}
+			}
+
+			if ($sample_sex eq 'male') {			#for males, the mean LRR should be equal to expected LRR for state 2 (one-copy)
+				print STDERR "NOTICE: Adjusting LRR values in chrY from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[1]), "\n";
+				main::adjustLRR ($siginfo, $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[1]);
+			} else {
+#for females, the mean LRR should be equal to expected LRR for state 1 (zero-copy)
+				print STDERR "NOTICE: Adjusting LRR values in chrY from $inputfile by ", sprintf ("%.4f", $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[0]), "\n";
+				main::adjustLRR ($siginfo, $sigdesc->{lrr_ymedian}-$hmm->{B1_mean}[0]);
+			}
+
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+			if ($sigdesc->{lrr_ysd} > 0.2 and $sample_sex eq 'male') {
+				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_ysd})!\n";
+				print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
+			}
+########################################################################################################################
+########################################################################################################################
 		} else {
-			#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
+#quality control: examine the variation of Log R Ratio values (>0.2 is generally treated as bad genotyping quality)
 			if ($sigdesc->{lrr_sd} > 0.2) {
 				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its large SD for LRR ($sigdesc->{lrr_sd})!\n";
 				print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
 			}
-			
-			#quality control: examine the median of BAF values (>0.6 or <0.4 is treated as bad clustering quality)
+
+#quality control: examine the median of BAF values (>0.6 or <0.4 is treated as bad clustering quality)
 			if ($sigdesc->{baf_median} < 0.4 or $sigdesc->{baf_median} > 0.6) {
 				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its shifted BAF values (median=$sigdesc->{baf_median})!\n";
 				print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
 			}
-			
-			#quality control: examine the drifting of BAF values (>0.002 is generally treated as bad genotyping quality)
+
+#quality control: examine the drifting of BAF values (>0.002 is generally treated as bad genotyping quality)
 			if ($sigdesc->{baf_drift} > 0.002) {
 				print STDERR "WARNING: Sample from $inputfile does not pass quality control criteria due to its drifting BAF values (drift=$sigdesc->{baf_drift})!\n";
 				print STDERR "WARNING: Small-sized CNV calls may not be reliable and should be interpreted with caution!\n";
 			}
-		
+
 			if ($medianadjust) {				#THIS IS A MANDATORY ARGUMENT NOW, SINCE IT ALWAYS IMPROVE PERFORMANCE!!! (use "--medianadjust 0" to disable this feature)
 				if ($sigdesc->{num_record} >= 5_000) {			#just in case one is only interested in one small region (<5000 SNPs) that may already have large chunk of CNVs
 					main::adjustLRR ($siginfo, $sigdesc->{lrr_median});
@@ -2779,24 +2924,26 @@ sub jointCNVCall {
 			$sample_sex eq 'male' and print STDERR "ERROR: sample_sex for $inputfile should be female since it corresponds to mother signals\n";
 		}
 		push @trio_sample_sex, $sample_sex;			# sample_sex is important information for CNV calling in chrX and chrY, but not for autosomes
-		
-		if ($sdadjust) {
-			if ($chrx) {
-				push @trio_lrr_sd, $sigdesc->{lrr_xsd};
+
+			if ($sdadjust) {
+				if ($chrx) {
+					push @trio_lrr_sd, $sigdesc->{lrr_xsd};
+				} elsif ($chry) {
+					push @trio_lrr_sd, $sigdesc->{lrr_ysd};
+				} else {
+					push @trio_lrr_sd, $sigdesc->{lrr_sd};
+				}
 			} else {
-				push @trio_lrr_sd, $sigdesc->{lrr_sd};
+				push @trio_lrr_sd, $hmm->{B1_sd}[2];
+				print STDERR "NOTICE: Setting trio_lrr_sd as $hmm->{B1_sd}[2], effectively eliminating the sdadjust step in trio CNV detection\n";
 			}
-		} else {
-			push @trio_lrr_sd, $hmm->{B1_sd}[2];
-			print STDERR "NOTICE: Setting trio_lrr_sd as $hmm->{B1_sd}[2], effectively eliminating the sdadjust step in trio CNV detection\n";
-		}
-		
+
 		for my $curchr (keys %$siginfo) {
 			my $pos = $siginfo->{$curchr}{pos};
 			my $lrr = $siginfo->{$curchr}{lrr};
 			my $baf = $siginfo->{$curchr}{baf};
 			@$pos >= 10 or print STDERR "WARNING: Skipping chromosome $curchr due to insufficient data points (<10 markers)!\n" and next;
-			
+
 			my @snpdist = @$pos;
 			for my $i (1 .. @snpdist-2) {
 				$snpdist[$i] = ($snpdist[$i+1]-$snpdist[$i]) || 1;	#sometimes two markers have the same chromosome location (in Affymetrix array annotation)
@@ -2817,7 +2964,7 @@ sub jointCNVCall {
 		}
 	}
 
-	#generate CNV calls
+#generate CNV calls
 	for my $curchr (sort keys %name) {
 		print STDERR "NOTICE: Calling CNVs in chromosome $curchr with $probe_count{$curchr} markers\n";
 		khmm::testVitTrio_CHMM ($hmm_model, $probe_count{$curchr}, $fmolrr{$curchr}->[0], $fmobaf{$curchr}->[0], $fmolrr{$curchr}->[1], $fmobaf{$curchr}->[1], $fmolrr{$curchr}->[2], $fmobaf{$curchr}->[2], $pfb{$curchr}, $snpdist{$curchr}, \$logprob, \@trio_lrr_sd, $trio_sample_sex[2] eq 'male'?1:2, $chrx);
@@ -2839,7 +2986,7 @@ sub analyzeTrioStateSequence {
 	my ($triocnvcall, $curindex, $curchr, $symbol, $name, $pos, $sample_sex, $trioid) = @_;
 	my ($normal_state, $found_signal, $stretch_start_i);
 
-	#set up the normal state in case of sex chromosome analysis
+#set up the normal state in case of sex chromosome analysis
 	if ($curchr eq 'X' and $sample_sex eq 'male') {
 		$normal_state = 2;
 	} elsif ($curchr eq 'Y') {
@@ -2851,27 +2998,27 @@ sub analyzeTrioStateSequence {
 	} else {
 		$normal_state = 3;
 	}
-	
+
 	$triocnvcall->[$curindex] ||= {};						#cnv is a reference to a hash (key=state value=array of info)
-	my (@curstate, @triopath, $currentdn);
+		my (@curstate, @triopath, $currentdn);
 	for my $i (1 .. @$symbol-1) {							#the first element is zero (arrays start from 1 in khmm module)
 		$currentdn = int ($symbol->[$i] / 125);
 		$curstate[0] = int (($symbol->[$i] - $currentdn*125) / 25);
 		$curstate[1] = int (($symbol->[$i] - $currentdn*125 - $curstate[0]*25) / 5);
 		$curstate[2] = $symbol->[$i] - $currentdn*125 - $curstate[0]*25 - $curstate[1]*5;
-		
+
 		if ($i <= 10) {
-			#print "i=$i dn=$currentdn state=@curstate\n";
+#print "i=$i dn=$currentdn state=@curstate\n";
 		}
-		
+
 		for my $j (0 .. 2) {
 			$curstate[$j]++;
 			$curstate[$j] >= 4 and $curstate[$j]++;		#convert CN to state
 		}
-		
+
 		my $curstate = $curstate[$curindex];
-		
-		#found a new CNV or continue within a previously identified stretch of CNV
+
+#found a new CNV or continue within a previously identified stretch of CNV
 		if ($curstate != $normal_state) {
 			if ($found_signal and $found_signal ne $curstate) {		#transition to one CNV to another CNV with different copy number
 				push @{$triocnvcall->[$curindex]{$found_signal}}, [$curchr, $pos->[$stretch_start_i], $pos->[$i-1], $i-$stretch_start_i, $name->[$stretch_start_i], $name->[$i-1], $trioid, join ('-', @triopath)];
@@ -2914,21 +3061,18 @@ sub excludeHeterosomic {
 	while (<CNV>) {
 		m/^chr(\w+).+?state(\d)(?:,cn=\d)?\s+(\S+)\s+startsnp=(\S+)\s+endsnp=(\S+)/ or confess "\nERROR: invalid record found in cnvfile $cnvfile: <$_>";
 		$cnvchrcount{$3, $1, $2} and $cnvchrcount{$3, $1, $2} == -1 and next;		#this has already been processed
-		if ($cnvchrcount{$3, $1, $2} and ($cnvchrcount{$3, $1, $2} >= $heterosomic_threshold and $cnvchrlength{$3, $1, $2} > 1_000_000 or $cnvchrcount{$3, $1, $2} >= 40)) {
-			print STDERR "NOTICE: chr$1 from $3 is excluded due to possible problems with heterosomic abberations ($cnvchrcount{$3, $1, $2} CNVs $cnvchrlength{$3, $1, $2} bases found in one chromosome)\n";
-			$cnvchrcount{$3, $1, $2} = -1;
-		} else {
-			print;
-		}
+			if ($cnvchrcount{$3, $1, $2} and ($cnvchrcount{$3, $1, $2} >= $heterosomic_threshold and $cnvchrlength{$3, $1, $2} > 1_000_000 or $cnvchrcount{$3, $1, $2} >= 40)) {
+				print STDERR "NOTICE: chr$1 from $3 is excluded due to possible problems with heterosomic abberations ($cnvchrcount{$3, $1, $2} CNVs $cnvchrlength{$3, $1, $2} bases found in one chromosome)\n";
+				$cnvchrcount{$3, $1, $2} = -1;
+			} else {
+				print;
+			}
 	}
 	close (CNV);
 }
 
 sub calWF {
-	my ($siginfo, $refchr) = @_;
-	$refchr = 11;					#the WF is calculated using chr=11 as reference chromosome; to switch to other chromosome, the ref_median array below needs to be changed
-	my @ref_median = qw/54.8207535282258 56.8381472081218 53.1218950320513 46.9484174679487 39.9367227359694 38.3365384615385 41.9867788461538 40.4431401466837 44.5320512820513 42.1979166666667 41.6984215561224 43.1598557692308 43.4388020833333 40.8104967948718 39.8444475446429 41.5357572115385 38.7496995192308 45.0213249362245 42.3251201923077 43.5287459935897 40.7440808354592 37.0492788461538 36.5006009615385 35.8518016581633 35.2767427884615 35.1972155448718 36.5286192602041 39.4890825320513 36.5779246794872 36.7275641025641 38.3256935586735 37.791266025641 41.1777844551282 41.950534119898 42.3639823717949 41.9208733974359 41.2061543367347 35.4974959935897 35.2123397435897 36.5101841517857 36.7135416666667 36.8268229166667 37.6945153061224 40.7453926282051 47.7049278846154 47.3233173076923 44.7361288265306 46.6585536858974 39.1593549679487 36.5684789540816 38.2718466806667 37.184425 37.184425 37.184425 37.184425 35.9227764423077 41.1157852564103 41.6662348533163 39.7402844551282 40.0149238782051 46.6417211415816 49.9136618589744 45.2016225961538 51.3019172512755 52.0818309294872 51.1320112179487 49.9807185102302 49.9807185102302 49.5874473187766 50.547349024718 50.7186498397436 45.6435347576531 46.3352363782051 42.4091546474359 46.6399274553571 43.7746394230769 45.0160256410256 41.8526642628205 43.8899075255102 38.5112179487179 36.1038661858974 36.1689851721939 39.8506610576923 37.0439703525641 36.8012595663265 40.2521033653846 39.661858974359 37.5013769093564 35.5448717948718 36.9039979272959 35.2046274038462 38.2195512820513 40.074537627551 40.7097355769231 40.5470753205128 38.4104380072343 36.131109775641 35.3915264423077 34.9693080357143 36.2953725961538 37.9602363782051 39.1942362882653 37.4464142628205 36.8879206730769 35.7242588141026 36.7556202168367 37.0639022435897 40.6929086538462 38.385084502551 39.4121594551282 40.2410857371795 42.0772879464286 43.2935697115385 43.2345753205128 40.9113919005102 44.9575320512821 46.2513020833333 46.4753069196429 48.3886217948718 47.8520633012821 43.8001802884615 39.808274872449 44.5042067307692 38.3835136217949 44.9097177933673 45.5366586538462 41.7346754807692 39.2198461415816 41.9489182692308 44.3351362179487 42.7910754145408 42.3190104166667 42.0425681089744 47.0514787946429 45.3482603740699/;
-	
+	my ($siginfo) = @_;
 	my ($wf, $cc);
 	my (%chrsig, @allsig, @alllrr, @allblock);
 	my (@cursignal, %chryi, @yi);
@@ -2941,8 +3085,8 @@ sub calWF {
 
 	for my $nextchr (keys %chrsig) {
 		$nextchr =~ m/^\d+$/ or next;					#only consider autosome in WF calculation
-		my @allsig = sort {$a->[0] <=> $b->[0]} @{$chrsig{$nextchr}};	#sort by position
-		my $current_bin = 0;
+			my @allsig = sort {$a->[0] <=> $b->[0]} @{$chrsig{$nextchr}};	#sort by position
+			my $current_bin = 0;
 		for my $i (0 .. @allsig-1) {
 			if ($allsig[$i]->[0] >= $current_bin * 1_000_000 and $allsig[$i]->[0] < ($current_bin+1) * 1_000_000) {
 				push @cursignal, $allsig[$i]->[1];
@@ -2962,7 +3106,7 @@ sub calWF {
 			push @{$chryi{$nextchr}}, 'NA';
 		}
 	}
-	
+
 	for my $nextchr (keys %chryi) {
 		push @yi, @{$chryi{$nextchr}};
 	}
@@ -2974,7 +3118,7 @@ sub calWF {
 		return ('NA', 'NA');
 	}
 	my $yi_median = median (\@yi);
-	#print STDERR " (${\(scalar @yi)} sliding windows were used in WF calculation with median=$yi_median)\n";
+#print STDERR " (${\(scalar @yi)} sliding windows were used in WF calculation with median=$yi_median)\n";
 	@yi = map {abs ($_ - $yi_median)} @yi;
 	$wf = median (\@yi);
 
@@ -3126,7 +3270,7 @@ sub median {
         Analysis Type:
  	    --train			train optimized HMM model (not recommended to use)
  	    --test			test HMM model to identify CNV
-            --wgs			test HMM model to identify CNV from transformed wgs data
+ 	    --wgs			test HMM model to identify CNV from transformed wgs data
  	    --trio			posterior CNV calls for father-mother-offspring trio
  	    --quartet			posterior CNV calls for quartet
  	    --joint			joint CNV calls for trio
@@ -3142,6 +3286,8 @@ sub median {
  	    --sexfile <file>		a 2-column file containing filename and sex (male/female) for chrx CNV calling
  	    --cnvfile <file>		specify CNV call file for use in family-based CNV calling by -trio or -quartet
  	    --directory <string>	specify the directory where signal files are located
+ 	    --refchr <string>		specify a chromosome for wave adjustment (default: 11 for human)
+ 	    --refgcfile <file>		a file containing GC percentage of each 1M region of the chromosome specified by --refchr (default: 11 for human)
  	    --gcmodelfile <file>	a file containing GC model for wave adjustment
  	    --phenofile <file>		a file containing phenotype information for each input file for -cctest operation
 
