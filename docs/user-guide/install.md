@@ -102,6 +102,14 @@ The `make test` command will run around 1,000 tests, and some of them may fail (
 
 Finally, remember to add `~/usr/perl` into the beginning of your PATH environmental variable. Then logout and login again, enter PennCNV's `kext/` directory and type `make`. Everything should work from there.
 
+If you want to install perl using `perlbrew`, you can use the following command:
+
+```
+perlbrew install perl-5.14.2 --as perl-5.14.2-PIC -Accflags=-fPIC
+perlbrew switch perl-5.14.2-PIC
+```
+Be sure to add the `-Accflags=-fPIC` argument.
+
 
 ## Installation trouble shooting
 
