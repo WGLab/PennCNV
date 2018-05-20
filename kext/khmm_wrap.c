@@ -1840,7 +1840,10 @@ XS(_wrap_estHMMFromFile_CHMM) {
     int argvi = 0;
     SV * _saved[3] ;
     dXSARGS;
-    
+
+    double dvalue5;
+    double dvalue6;
+
     if ((items < 6) || (items > 6)) {
       SWIG_croak("Usage: estHMMFromFile_CHMM(hmm,T,fp,niter,logprobinit,logprobfinal);");
     }
@@ -1881,7 +1884,6 @@ XS(_wrap_estHMMFromFile_CHMM) {
       arg4 = &ivalue;
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(4))) {
         croak("expected a reference\n");
@@ -1892,11 +1894,10 @@ XS(_wrap_estHMMFromFile_CHMM) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg5 = &dvalue;
+      dvalue5 = SvNV(tempsv);
+      arg5 = &dvalue5;
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(5))) {
         croak("expected a reference\n");
@@ -1907,8 +1908,8 @@ XS(_wrap_estHMMFromFile_CHMM) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg6 = &dvalue;
+      dvalue6 = SvNV(tempsv);
+      arg6 = &dvalue6;
     }
     _saved[0] = ST(3);
     _saved[1] = ST(4);
@@ -1963,6 +1964,8 @@ XS(_wrap_testVit_CHMM) {
     int argvi = 0;
     SV * _saved[5] ;
     dXSARGS;
+
+    double dvalue7;
     
     if ((items < 7) || (items > 7)) {
       SWIG_croak("Usage: testVit_CHMM(hmm,T,O1,O2,pfb,snpdist,plogproba);");
@@ -1996,7 +1999,6 @@ XS(_wrap_testVit_CHMM) {
       arg6 = (int *) pack1D(ST(5),'i');
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(6))) {
         croak("expected a reference\n");
@@ -2007,8 +2009,8 @@ XS(_wrap_testVit_CHMM) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg7 = &dvalue;
+      dvalue7 = SvNV(tempsv);
+      arg7 = &dvalue7;
     }
     _saved[0] = ST(2);
     _saved[1] = ST(3);
@@ -2101,6 +2103,8 @@ XS(_wrap_GetStateProb_CHMM) {
     int argvi = 0;
     SV * _saved[5] ;
     dXSARGS;
+
+    double dvalue7;
     
     if ((items < 8) || (items > 8)) {
       SWIG_croak("Usage: GetStateProb_CHMM(phmm,T,O1,O2,pfb,snpdist,pprob,state);");
@@ -2128,7 +2132,6 @@ XS(_wrap_GetStateProb_CHMM) {
       arg6 = (int *) pack1D(ST(5),'i');
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(6))) {
         croak("expected a reference\n");
@@ -2139,8 +2142,8 @@ XS(_wrap_GetStateProb_CHMM) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg7 = &dvalue;
+      dvalue7 = SvNV(tempsv);
+      arg7 = &dvalue7;
     }
     ecode8 = SWIG_AsVal_int SWIG_PERL_CALL_ARGS_2(ST(7), &val8);
     if (!SWIG_IsOK(ecode8)) {
@@ -2277,6 +2280,8 @@ XS(_wrap_testVitTrio_CHMM) {
     int argvi = 0;
     SV * _saved[10] ;
     dXSARGS;
+
+    double dvalue11;
     
     if ((items < 14) || (items > 14)) {
       SWIG_croak("Usage: testVitTrio_CHMM(phmm,T,Of1,Of2,Om1,Om2,Oo1,Oo2,pfb,snpdist,plogproba,trio_lrr_sd,osex,chrx_flag);");
@@ -2316,7 +2321,6 @@ XS(_wrap_testVitTrio_CHMM) {
       arg10 = (int *) pack1D(ST(9),'i');
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(10))) {
         croak("expected a reference\n");
@@ -2327,8 +2331,8 @@ XS(_wrap_testVitTrio_CHMM) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg11 = &dvalue;
+      dvalue11 = SvNV(tempsv);
+      arg11 = &dvalue11;
     }
     {
       arg12 = (double *) pack1D(ST(11),'d');
@@ -2418,6 +2422,11 @@ XS(_wrap_reg_linear) {
     int argvi = 0;
     SV * _saved[6] ;
     dXSARGS;
+
+    double dvalue4;
+    double dvalue5;
+    double dvalue6;
+    double dvalue7;
     
     if ((items < 7) || (items > 7)) {
       SWIG_croak("Usage: reg_linear(x,y,ndata,a,b,F,P);");
@@ -2434,7 +2443,6 @@ XS(_wrap_reg_linear) {
     } 
     arg3 = (int)(val3);
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(3))) {
         croak("expected a reference\n");
@@ -2445,11 +2453,10 @@ XS(_wrap_reg_linear) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg4 = &dvalue;
+      dvalue4 = SvNV(tempsv);
+      arg4 = &dvalue4;
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(4))) {
         croak("expected a reference\n");
@@ -2460,11 +2467,10 @@ XS(_wrap_reg_linear) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg5 = &dvalue;
+      dvalue5 = SvNV(tempsv);
+      arg5 = &dvalue5;
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(5))) {
         croak("expected a reference\n");
@@ -2475,11 +2481,10 @@ XS(_wrap_reg_linear) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg6 = &dvalue;
+      dvalue6 = SvNV(tempsv);
+      arg6 = &dvalue6;
     }
     {
-      double dvalue;
       SV* tempsv;
       if (!SvROK(ST(6))) {
         croak("expected a reference\n");
@@ -2490,8 +2495,8 @@ XS(_wrap_reg_linear) {
           croak("expected a double reference\n");
         }
       }
-      dvalue = SvNV(tempsv);
-      arg7 = &dvalue;
+      dvalue7 = SvNV(tempsv);
+      arg7 = &dvalue7;
     }
     _saved[0] = ST(0);
     _saved[1] = ST(1);
