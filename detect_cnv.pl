@@ -2412,7 +2412,7 @@ sub validateRegion {
 	$valioutfh and print $valioutfh "$startsnp\t$endsnp\t", join ("\t", @rawll), "\n";
 
 	@logprob = sort {$b->[0]<=>$a->[0]} @logprob;
-	my $beststate = $logprob[0]->[0];	#best state should be the first state! 20160621
+	my $beststate = $logprob[0]->[1];	#best state should be the first state! 20160621
 		$verbose and print STDERR "NOTICE: best state is $beststate\n";
 
 	if ($chrx) {
