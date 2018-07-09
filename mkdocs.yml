@@ -14,27 +14,41 @@ docs_dir: docs
 #use_directory_urls: false
 
 pages:
-- ['index.md', 'PennCNV']
+
+- Home: 'index.md'
+- User Guide:
+    - 'Download PennCNV': 'user-guide/download.md.md'
+    - 'Install PennCNV': 'user-guide/install.md'
+    - 'Quick Start-Up Guide': 'user-guide/startup.md'
+- Misc:
+    - 'FAQ': 'misc/faq.md'
+    - 'Version History': 'misc/version_history.md'
+    - 'Credit': 'misc/credit.md'
+    - 'How to Contribute': 'misc/contributing.md'
+
+
+
+#- ['index.md', 'PennCNV']
 
 # User Guide
-- ['user-guide/download.md', 'User Guide', 'Download PennCNV']
-- ['user-guide/install.md', 'User Guide', 'Install PennCNV']
-- ['user-guide/startup.md', 'User Guide', 'Quick Start-Up Guide']
-- ['user-guide/input.md', 'User Guide', 'Prepare Input Files']
-- ['user-guide/test.md', 'User Guide', 'CNV calling']
-- ['user-guide/trio.md', 'User Guide', 'Trio-based CNV calling']
-- ['user-guide/joint.md', 'User Guide', 'Joint-based CNV calling']
-- ['user-guide/denovo.md', 'User Guide', 'de novo CNV calling']
-- ['user-guide/validation.md', 'User Guide', 'Validation-based CNV calling']
-- ['user-guide/annotation.md', 'User Guide', 'CNV annotation']
-- ['user-guide/visualization.md', 'User Guide', 'CNV visualization']
-- ['user-guide/affy.md', 'User Guide', 'PennCNV-Affy']
-- ['user-guide/plugin.md', 'User Guide', 'PennCNV Plug-in']
+#- ['user-guide/download.md', 'User Guide', 'Download PennCNV']
+#- ['user-guide/install.md', 'User Guide', 'Install PennCNV']
+#- ['user-guide/startup.md', 'User Guide', 'Quick Start-Up Guide']
+#- ['user-guide/input.md', 'User Guide', 'Prepare Input Files']
+#- ['user-guide/test.md', 'User Guide', 'CNV calling']
+#- ['user-guide/trio.md', 'User Guide', 'Trio-based CNV calling']
+#- ['user-guide/joint.md', 'User Guide', 'Joint-based CNV calling']
+#- ['user-guide/denovo.md', 'User Guide', 'de novo CNV calling']
+#- ['user-guide/validation.md', 'User Guide', 'Validation-based CNV calling']
+#- ['user-guide/annotation.md', 'User Guide', 'CNV annotation']
+#- ['user-guide/visualization.md', 'User Guide', 'CNV visualization']
+#- ['user-guide/affy.md', 'User Guide', 'PennCNV-Affy']
+#- ['user-guide/plugin.md', 'User Guide', 'PennCNV Plug-in']
 
 # Misc
-- ['misc/faq.md', 'Misc', 'FAQ']
-- ['misc/version_history.md', 'Misc', 'Version History']
-- ['misc/credit.md', 'Misc', 'Credit']
-- ['misc/contributing.md', 'Misc', 'How to Contribute']
+#- ['misc/faq.md', 'Misc', 'FAQ']
+#- ['misc/version_history.md', 'Misc', 'Version History']
+#- ['misc/credit.md', 'Misc', 'Credit']
+#- ['misc/contributing.md', 'Misc', 'How to Contribute']
 
 
