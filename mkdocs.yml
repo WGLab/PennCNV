@@ -17,7 +17,7 @@ pages:
 
 - Home: 'index.md'
 - User Guide:
-    - 'Download PennCNV': 'user-guide/download.md.md'
+    - 'Download PennCNV': 'user-guide/download.md'
     - 'Install PennCNV': 'user-guide/install.md'
     - 'Quick Start-Up Guide': 'user-guide/startup.md'
 - Misc:
