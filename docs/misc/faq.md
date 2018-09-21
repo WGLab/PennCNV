@@ -52,18 +52,19 @@
 
     This command first scan the cnvcall file against known immunoglobulin regions, and any CNV call that overlap with immunoglobulin regions are written to the cnvcall.imm file (the --minqueryfrac means that at least 50% of the length in the CNV call must overlap with the immunoglobulin region, to exclude cases where a very large CNV call happens to encompass the immunoglobulin regions). Then the fgrep program is used to remove these regions from the file and generate a cleaned cnvcall.clean file. The imm_region file contains immunoglobulin regions. For the 2006 human genome assembly, these four regions can be put into the file:
 
-```
+    ```
  chr22:20715572-21595082
  chr14:105065301-106352275
  chr2:88937989-89411302
  chr14:21159897-22090937
 ```
 
+
 1. **How to remove CNV calls in centromeric and telomeric regions?**
 
     The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
 
-```
+    ```
 chr1:1-500000
 chr1:246749719-247249719
 ......
