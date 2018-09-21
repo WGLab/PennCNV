@@ -24,6 +24,10 @@
 
     To further understand this, one can open BeadStudio and examine by eye the mean intensity of chrX from multiple female individuals. The mean is not ZERO, but higher than ZERO, indicating that female chrX is not even similar to 2-copy autosomes. For more deails and discussions, refer to Sup Figure 1 of the 2007 PennCNV paper in Genome Research.
 
+1. **How to find small CNVs from trisomy X samples with XXX chromosomes?
+
+    Re-cluster using female XX samples only to generate a new cluster file, and then use this cluster file to generate LRR/BAF values for all samples. This method is demonstrated by users to improve performance significantly for CNV calling on samples with trisomy X; it is not necessary to do this for autosomes though since the cluster file is already generated with diploid genomes. (By default, most clustering uses a mixture of male and female samples, so the reference clusters for chrX are biased, and do not have an expected value of zero for two copies of chrX; see the question above).
+
 1. **How to use genomic wave adjustment independent of CNV calling?**
 
     Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Use the `cal_gc_snp.pl` script to generate GC model file for these custom arrays.
@@ -49,29 +53,29 @@
     This command first scan the cnvcall file against known immunoglobulin regions, and any CNV call that overlap with immunoglobulin regions are written to the cnvcall.imm file (the --minqueryfrac means that at least 50% of the length in the CNV call must overlap with the immunoglobulin region, to exclude cases where a very large CNV call happens to encompass the immunoglobulin regions). Then the fgrep program is used to remove these regions from the file and generate a cleaned cnvcall.clean file. The imm_region file contains immunoglobulin regions. For the 2006 human genome assembly, these four regions can be put into the file:
 
     
-    ```
+```
  chr22:20715572-21595082
  chr14:105065301-106352275
  chr2:88937989-89411302
  chr14:21159897-22090937
-    ```
+```
     
 
 1. **How to remove CNV calls in centromeric and telomeric regions?**
 
     The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
 
-    ```
+```
 chr1:1-500000
 chr1:246749719-247249719
 ......
 chr22:1-500000
 chr22:49191432-49691432
-    ```
+```
 
     For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-    ```
+```
     chr1:121100001-128000000
     chr2:91000001-95700000
     chr3:89400001-93200000
@@ -96,11 +100,11 @@ chr22:49191432-49691432
     chr22:9600001-16300000
     chrX:56600001-65000000
     chrY:11200001-12500000
-    ```
+```
 
     For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
 
-    ```
+```
     chr1:121500000-128900000
     chr2:90500000-96800000
     chr3:87900000-93900000
@@ -125,7 +129,7 @@ chr22:49191432-49691432
     chr22:12200000-17900000
     chrX:58100000-63000000
     chrY:11600000-13400000
-    ```
+```
 
 1. **Does chromosome X requires special handling?**
 
@@ -136,6 +140,7 @@ PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1
 
     Right now chrY calling is not supported yet. If you want to call CNV for chrY, then you can remove all chrX markers from PFB file, then annotate chrY markers as located in chromosome X in PFB file, then use the -chrx argument instead.
 
+
 1. **How to handle "weirld characters" in signal intensity files?**
 
     Sometimes, Illumina BeadStudio/Genome studio may export signal intensity values with weird characters. This could occur in non-English version of BeadStudio, in non-English version of Windows, in non-human SNP arrays, or any other reasons. For example, the LRR values for several markers in a file may display as "ABCDE" rather than a number, and PennCNV will ignore these values and ignore these markers in analysis. If they are "-inf" instead, PennCNV will treat them as -5. This should usually affect only a few markers for each sample.
@@ -143,7 +148,7 @@ PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1
     But some other times, all the signal intensity values are wrong so PennCNV will not work at all. For example, all the decimal points in LRR/BAF become "comma", so they are not valid numbers. In that case, users can do "perl -pe 's/,/./g' < inputfile > outputfile" to generate a new signal intensity file for CNV calling. One example is shown below:
 
     
-    ```
+```
 [kaiwang@cc ~]$ head -n 3 sample.split1
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0,1223288      0,5079593
@@ -154,7 +159,7 @@ Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio     
 rs109696 3       108367588       AB      -0.1223288      0.5079593
 rs109701 13      39306521        BB      -0.1577153      1
 rs109702 16      6508957 BB      -0.001872403    0.9723207
-    ```
+```
     
 
 1. **How to call CNVs if I have signal data for 50 SNPs in a candidate region?**
