@@ -62,16 +62,18 @@
 1. **How to remove CNV calls in centromeric and telomeric regions?**
 
     The same techniques described above can be used. For telomeric regions, one can treat the 100kb or 500kb region within start or end of chromosome as telomeric region. For example, for the 500kb threshold, you can put the following regions ino a file and then use scan_region.pl to remove CNV calls:
-```
+
+    `
 chr1:1-500000
 chr1:246749719-247249719
 ......
 chr22:1-500000
 chr22:49191432-49691432
-```
+`
 
     For centromeric regions, the following definition can be used (NCBI36 2006 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
-```
+
+    `
     chr1:121100001-128000000
     chr2:91000001-95700000
     chr3:89400001-93200000
@@ -96,10 +98,11 @@ chr22:49191432-49691432
     chr22:9600001-16300000
     chrX:56600001-65000000
     chrY:11200001-12500000
-```
+`
 
     For centromeric regions, the following definition can be used (NCBI37/hg19 human genome assembly). In fact, you may want to add 100kb (or 500kb) to both the left and right of these regions, just to make sure that centromeric CNVs are identified comprehensively.
-```
+
+    `
     chr1:121500000-128900000
     chr2:90500000-96800000
     chr3:87900000-93900000
@@ -124,7 +127,7 @@ chr22:49191432-49691432
     chr22:12200000-17900000
     chrX:58100000-63000000
     chrY:11600000-13400000
-```
+`
 
 1. **Does chromosome X requires special handling?**
 
@@ -142,8 +145,7 @@ PennCNV tries to predict sample sex based on BAF values in chrX markers. The 0.1
 
     But some other times, all the signal intensity values are wrong so PennCNV will not work at all. For example, all the decimal points in LRR/BAF become "comma", so they are not valid numbers. In that case, users can do "perl -pe 's/,/./g' < inputfile > outputfile" to generate a new signal intensity file for CNV calling. One example is shown below:
 
-    
-```
+    `
 [kaiwang@cc ~]$ head -n 3 sample.split1
 Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio        4622780469_F.B Allele Freq
 rs109696 3       108367588       AB      -0,1223288      0,5079593
@@ -154,8 +156,7 @@ Name    Chr     Position        4622780469_F.GType 4622780469_F.Log R Ratio     
 rs109696 3       108367588       AB      -0.1223288      0.5079593
 rs109701 13      39306521        BB      -0.1577153      1
 rs109702 16      6508957 BB      -0.001872403    0.9723207
-```
-    
+`
 
 1. **How to call CNVs if I have signal data for 50 SNPs in a candidate region?**
 
