@@ -7,8 +7,8 @@ SHELL = /bin/sh
 
 CC = gcc
 LD = gcc
-CFLAGS = `perl -MExtUtils::Embed -e ccopts` -fPIC
-LDFLAGS = `perl -MExtUtils::Embed -e ldopts`
+CFLAGS = `perl -MExtUtils::Embed -e ccopts` -fPIC -O
+LDFLAGS = `perl -MExtUtils::Embed -e ldopts` -fPIC
 ARCH = `perl -MConfig -e 'print $$Config{archname}'`
 VER = `perl -MConfig -e 'print $$Config{version}'`
 
