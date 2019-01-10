@@ -18,13 +18,20 @@ Then we uncompress the downloaded file by the `tar` command, which automatically
 
 We will see the new directory, enter this directory, and we will see several Perl programs (file name in the \*.pl format), as well as a `kext/`, `lib/`, `docs/` and `example/` subdirectory. Next, enter the `kext/` directory, optionally make change to the `Makefile`, and type `make`. If there is no error message, the installation is done!
 
+If you see an error message such as "khmm_wrap.c: In functionSWIG_AsCharPtrAndSize:
+/opt/perl/lib/5.26.0/x86_64-linux-thread-multi/CORE/handy.h:111:34: error: bool undeclared (first use in this function)", then just do a `sed -i -e '/#undef bool/d' khmm_wrap.c` to remove this statement.
+
+If you see an error message such as "/usr/bin/ld: /opt/perl/lib/5.26.0/x86_64-linux-thread-multi/CORE/libperl.a(op.o): relocation R_X86_64_32S against PL_opargs can not be used when making a shared object; recompile with -fPIC", the best solution is just to install a new Perl such as 5.14.2, as explained below in "compilation from source" section. My guess is that the libperl.a itself is not compiled with -fPIC so there is really just no other way except to perl another perl yourself.
+
 Now try to run the `detect_cnv.pl` program:
 
 ```
 [kai@adenine]$ ./detect_cnv.pl
 ```
 
-It will show the program usage information, indicating the successful installation of the program. If an error message like `bad interpreter: No such file or directory` is shown, it indicates that Perl is installed in a different directory: try running `perl ./detect_cnv.pl` instead. If other types of error message are issued (such as floating point exception), we need to compile the program, see the compilation section below.
+It will show the program usage information, indicating the successful installation of the program. If an error message like `bad interpreter: No such file or directory` is shown, it indicates that Perl is installed in a different directory: try running `perl ./detect_cnv.pl` instead. 
+
+If other types of error message are issued (such as floating point exception), we need to compile the program, see the compilation section below.
 
 For Solaris, change "gcc" to "cc" in the Makefile, since normally one can create shared libraries with c compiler provided by Solaris, but not gcc itself.
 
