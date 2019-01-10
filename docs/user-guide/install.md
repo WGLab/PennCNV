@@ -21,7 +21,7 @@ We will see the new directory, enter this directory, and we will see several Per
 If you see an error message such as "khmm_wrap.c: In functionSWIG_AsCharPtrAndSize:
 /opt/perl/lib/5.26.0/x86_64-linux-thread-multi/CORE/handy.h:111:34: error: bool undeclared (first use in this function)", then just do a `sed -i -e '/#undef bool/d' khmm_wrap.c` to remove this statement.
 
-If you see an error message such as "/usr/bin/ld: /opt/perl/lib/5.26.0/x86_64-linux-thread-multi/CORE/libperl.a(op.o): relocation R_X86_64_32S against PL_opargs can not be used when making a shared object; recompile with -fPIC", the best solution is just to install a new Perl such as 5.14.2, as explained below in "compilation from source" section. My guess is that the libperl.a itself is not compiled with -fPIC so there is really just no other way except to perl another perl yourself.
+If you see an error message such as "/usr/bin/ld: /opt/perl/lib/5.26.0/x86_64-linux-thread-multi/CORE/libperl.a(op.o): relocation R_X86_64_32S against PL_opargs can not be used when making a shared object; recompile with -fPIC", the best solution is just to install a new Perl such as 5.14.2, as explained below in "compilation from source" section. My guess is that the `libperl.a` itself is not compiled with -fPIC so there is really just no other way except to install another perl yourself (you can either do it manually as I illustrated below, or use perlbrew).
 
 Now try to run the `detect_cnv.pl` program:
 
