@@ -1,4 +1,4 @@
-![Logo](http://genomics.usc.edu/images/lab/logo/penncnv.png)
+![Logo](penncnv.png)
 
 # Introduction to the PennCNV software
 
