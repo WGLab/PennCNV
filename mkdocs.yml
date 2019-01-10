@@ -1,11 +1,11 @@
 site_name: PennCNV
 site_url: http://penncnv.openbioinformatics.org/
-repo_url: http://github.com/WangGenomicsLab/penncnv/
+repo_url: http://github.com/WGLab/penncnv/
 repo_name: GitHub
 site_description: PennCNV software distribution site
 site_author: Kai Wang, et al
 site_favicon: favicon.ico
-copyright: 2007-2017 PennCNV
+copyright: 2007-2019 PennCNV
 google_analytics: ['UA-7565671-1', 'www.openbioinformatics.org/penncnv']
 
 docs_dir: docs
