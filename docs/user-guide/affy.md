@@ -74,6 +74,61 @@ The command generates 4 output files:
 
 The manuscript reporting the above procedure has been published [here](http://www.sciencedirect.com/science/article/pii/S0006322316327111). Detailed procedure for CNV calling on the Axiom array can be found in the supplementary materials in the published manuscript.
 
+**Cytoscan HD array**
+
+You can just use the “affy2sv" R wrapper around the APT tools for CNV calling. The instructions below were provided by Venkata Teja Yellapantula at Memorial Sloan Kettering Cancer Center.
+
+```
+library(affy2sv)
+setwd("/ifs/res/leukgen/home/yellapav/SNPArray/p292")
+aptParam <- APTparam(
+    type="cytoscan", 
+    level="standard",
+    cel.list="/ifs/res/leukgen/home/yellapav/SNPArray/p292/MM_NGS_CEL_Files/", 
+    output.path="/ifs/res/leukgen/home/yellapav/SNPArray/p292/affy2sv_out", 
+    analysis.path="/ifs/res/leukgen/home/yellapav/SNPArray/cytoscan/a32.3",
+    cdf="CytoScanHD_Array.cdf", 
+    chrX="CytoScanHD_Array.chrXprobes", 
+    chrY="CytoScanHD_Array.chrYprobes", 
+    qca="CytoScanHD_Array.r1.qca", 
+    qcc="CytoScanHD_Array.r1.qcc", 
+    snp="CytoScanHD_Array.snplist.txt", 
+    annot.db="CytoScanHD_Array.na32.3.annot.db", 
+    refmodel="CytoScanHD_Array.na32.3.v1.REF_MODEL"
+)
+
+Cyto2APT(aptParam)
+
+Cyto2Mad(
+    cychp.files="/ifs/res/leukgen/home/yellapav/SNPArray/p292/affy2sv_out",
+    output.name="cychd",
+    output.type="penncnv",
+    annotation.file="/ifs/res/leukgen/home/yellapav/SNPArray/cytoscan/CytoScanHD_Array.na33.annot.csv"
+)
+
+Cyto2Mad(
+    cychp.files="/ifs/res/leukgen/home/yellapav/SNPArray/p292/affy2sv_out",
+    output.name="cychd.mad",
+    output.type="mad",
+    annotation.file="/ifs/res/leukgen/home/yellapav/SNPArray/cytoscan/CytoScanHD_Array.na33.annot.csv"
+)
+
+smc <- Cyto2SnpMatrix(
+    cychp.files="/ifs/res/leukgen/home/yellapav/SNPArray/p292/affy2sv_out",
+    annotation.file="/ifs/res/leukgen/home/yellapav/SNPArray/cytoscan/CytoScanHD_Array.na33.annot.csv",
+    output.type="snpmatrix"
+)
+
+Cyto2SnpMatrix(
+    cychp.files="/ifs/res/leukgen/home/yellapav/SNPArray/p292/affy2sv_out",
+    annotation.file="/ifs/res/leukgen/home/yellapav/SNPArray/cytoscan/CytoScanHD_Array.na33.annot.csv",
+    output.name="cychd.plink",
+    output.type="plink",
+)
+```
+
+
+
 ### - Subsetp 1.2 Allele-specific signal extraction from CEL files
 
 This step uses the Affymetrix Power Tools software to extract allele-specific signal values from the raw CEL files. Here `allele-specific` refers to the fact that for each SNP, we have a signal measure for the A allele and a separate signal measure for the B allele.
