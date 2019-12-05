@@ -258,6 +258,8 @@ normalize_affy_geno_cluster.pl batch1.genocluster AxiomGT1.summary.txt -nopower2
 
 Please note the `-nopower2` argument above. The signal intensity values have not been log2 normalized, so the `-nopower2` argument is needed.
 
+If you see an error similar to " expect to read B allele after reading A allele for AFFX-NP-77285336-A, but instead read AFFX-NP-77285338-A" for Axiom array, it is because the marker AFFX-NP-77285336 is non-polymorphic marker and should not have been included in the genotype calls. You can manually grep out of all "AFFX-NP-" lines and the command above should then work.
+
 For a typical modern computer, the command should take several hours to process files generated from 1000-2000 CEL files. A new tab-delimited file called gw6.lrr_baf.txt will be generated that contains one SNP per line and one sample per two columns (LRR column and BAF column).
 
 If the user does not have sufficient number of CEL files for the above substep 1.1 and 1.3, then you can alternatively use the default canonical clustering file provided in the PennCNV-Affy package. Right now several files are provided: hapmap.genocluster for GW6 arrays, agre.genocluster for GW5 arrays, and `affy500k.nsp.genocluster/affy500k.sty.genocluster` for Mapping 500K arrays. The results won't be optimal and are probably highly unreliable (the QC measures during PennCNV calling can give some clue on the signal-to-noise ratio of the resulting signal intensity files).
