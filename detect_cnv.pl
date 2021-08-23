@@ -3321,6 +3321,7 @@ sub median {
  	    --(no)sdadjust		adjust SD of hidden Markov model based on input signal (default=ON)
  	    --(no)flush			flush input/output buffer (default=ON)
  	    --bafxhet <float>		minimum BAF het rate to predict female gender when -sexfile is not supplied (default=0.1)
+ 	    --lastchr <integer>		the number of the last autosomal chromosome, change for non human data (default=22).
 
  Function: generate CNV calls from high-density SNP genotyping data that 
  contains Log R Ratio and B Allele Frequency for each SNP or CN marker. Use -m 
