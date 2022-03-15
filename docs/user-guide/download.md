@@ -4,7 +4,9 @@ The link to latest stable version of PennCNV main package is given below. The pa
 
 - [GitHub Repository](https://github.com/WangGenomicsLab/PennCNV/releases)
 
-Alternatively, users can download the cutting edge version from GitHub by `git clone git@github.com:WangGenomicsLab/PennCNV.git`.
+Alternatively, users can download the latest version from GitHub by `git clone https://github.com/WGLab/PennCNV.git`.
+
+A docker image was also made available at DockerHub. It is useful for users who do not have GCC version 4 installed in the sytem and have difficulty compiling PennCNV. Please use `docker pull genomicslab/penncnv` to download and use it.
 
 ## User-supplied files and programs
 
