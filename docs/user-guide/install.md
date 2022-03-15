@@ -117,6 +117,9 @@ perlbrew switch perl-5.14.2-PIC
 ```
 Be sure to add the `-Accflags=-fPIC` argument.
 
+## Using the Docker image
+
+In recent version of Linux distributions, PennCNV cannot be compiled by GCC. As a result, even the "last resort" step above does not work since the `make` step throws out an error message. To avoid the complication of installing a lower version of GCC by the user, I made a PennCNV Docker image with CentOS 7 (GCC 4) and all tutorial datasets and the PennCNV-Affy library files. Description of the image is available at https://hub.docker.com/r/genomicslab/penncnv. A `/mounted` directory is available in the image, so you can mount your dataset directory in the host system to the `/mounted` directory through the `-v` argument in `docker run`.
 
 ## Installation trouble shooting
 
