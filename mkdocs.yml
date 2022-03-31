@@ -4,8 +4,8 @@ repo_url: http://github.com/WGLab/penncnv/
 repo_name: GitHub
 site_description: PennCNV software distribution site
 site_author: Kai Wang, et al
-site_favicon: favicon.ico
-copyright: 2007-2019 PennCNV
+#site_favicon: favicon.ico      #favicon.ico is removed from MkDocs; To use a different icon, create an img subdirectory in your docs_dir and copy your custom favicon.ico file to that directory
+copyright: 2007-2022 PennCNV
 google_analytics: ['UA-7565671-1', 'www.openbioinformatics.org/penncnv']
 
 docs_dir: docs
@@ -13,7 +13,7 @@ docs_dir: docs
 #use_absolute_urls: true
 #use_directory_urls: false
 
-pages:
+nav:
 
 - Home: 'index.md'
 - User Guide:
