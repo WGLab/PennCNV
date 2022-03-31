@@ -8,6 +8,7 @@ This website is built for the "original" Perl/C-based PennCNV developed for SNP 
 
 ## What's new:
 
+- 20220314: In recent version of Linux distributions, PennCNV cannot be compiled by GCC. To avoid the complication of installing a lower version of GCC by the user, I made a PennCNV Docker image with CentOS 7 (GCC 4) and all tutorial datasets and the PennCNV-Affy library files. Description of the image is available at https://hub.docker.com/r/genomicslab/penncnv.
 - 20190109: A slightly updated PennCNV is provided in v1.0.5, to improve compatibility with recent version of GCC and Perl. If users still have problems in installation, please follow "last resort" guide and just install a new Perl 5.14.2 to run PennCNV.
 - 20170606: Zoltan Kutalik shared an article on how to improve PENNCNV CNV calls [here](https://www.ncbi.nlm.nih.gov/pubmed/27402902). They defined a new quality score (QS) estimating the probability of a CNV called by PennCNV to be confirmed by other software.
 - 20161024: Prof. George Kirov shared a recently published paper reporting the use of PennCNV on Affy Axiom arrays [here](https://pubmed.ncbi.nlm.nih.gov/27773354/). Detailed procedure for CNV calling is given in the supplementary materials.
