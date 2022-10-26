@@ -12,7 +12,7 @@ Suppose all the files from a genotyping project is stored in a directory called 
 
 We need to download the PennCNV software and uncompress the file. Next download the [PennCNV-Affy programs and library files](http://www.openbioinformatics.org/penncnv/download/gw6.tar.gz) and uncompress the file. These files are required for signal pre-processing and also for CNV calling. There will be a `lib/` directory that contains some PennCNV-specific library files for genome-wide 6.0 array; in addition, the library files for the genome-wide 5.0 arrays and Mapping 500K arrays are in the `libgw5/` and `gw6/`, `lib500k/` directories, respectively.
 
-Next download the Affymetrix Power Tools (APT) software package from http://www.affymetrix.com/support/developer/powertools/index.affx. We need to log into the website to download the software (the registration is free).
+Next download the Affymetrix Power Tools (APT) software package from https://www.thermofisher.com/us/en/home/life-science/microarray-analysis/microarray-analysis-partners-programs/affymetrix-developers-network/affymetrix-power-tools.html. We need to log into the website to download the software (the registration is free).
 
 ### - Substep 1.1 Generate genotyping calls from CEL files
 
@@ -20,7 +20,7 @@ This step uses the apt-probeset-genotype program in Affymetrix Power Tools (APT)
 
 **Genome-wide 6.0 array**
 
-Before performing this step, we need to download the library files for the genome-wide 6.0 array from http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp6_libraryfile.zip, and save the decompressed files to the lib/ directory. Several files in this directory, including a CDF file and a Birdseed model file, will be used in the genotype calling step.
+Before performing this step, we need to download the library files from https://www.thermofisher.com/de/de/home/life-science/microarray-analysis/microarray-data-analysis/genechip-array-library-files.html. For the genome-wide 6.0 array, a direct link is https://sec-assets.thermofisher.com/TFS-Assets/LSG/Support-Files/genomewidesnp6_libraryfile.zip, and save the decompressed files to the lib/ directory. Several files in this directory, including a CDF file and a Birdseed model file, will be used in the genotype calling step.
 
 ```
 [kai@cc ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_6.cdf -a birdseed --read-models-birdseed lib/GenomeWideSNP_6.birdseed.models --special-snps lib/GenomeWideSNP_6.specialSNPs --out-dir apt --cel-files listfile
@@ -36,7 +36,7 @@ For a typical modern computer, the command should take less than one day for 100
 
 **Genome-wide 5.0 array**
 
-For genome-wide 5.0 arrays, the command line is slightly different. First download the CDF and model files for GW5 array from http://www.affymetrix.com/Auth/support/downloads/library_files/genomewidesnp5_libraryfile_rev1.zip and http://www.affymetrix.com/Auth/support/downloads/library_files/GenomeWideSNP_5.r2.zip. Then save decompressed files to the lib/ directory.  There are several CDF files but we will need to use the GenomeWideSNP_5.Full.r2.cdf file. The genotype calling can be done using a command like this:
+For genome-wide 5.0 arrays, the command line is slightly different. First download the CDF and model files for GW5 array from Affymetrix (now ThermoFisher) website above. Then save decompressed files to the lib/ directory.  There are several CDF files but we will need to use the GenomeWideSNP_5.Full.r2.cdf file. The genotype calling can be done using a command like this:
 
 ```
 [kai@cc ~/]$ apt-probeset-genotype -c lib/GenomeWideSNP_5.Full.r2.cdf --chrX-snps lib/GenomeWideSNP_5.Full.chrx --read-models-brlmmp lib/GenomeWideSNP_5.models -a brlmm-p --out-dir apt --cel-files listfile
