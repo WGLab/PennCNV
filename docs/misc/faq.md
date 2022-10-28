@@ -32,6 +32,10 @@
 
     Some users just want to adjust signal intensity values, without generating CNV calls by PennCNV. The genomic_wave.pl program in PennCNV package can be used to adjust signal intensity values. The input file must have a field in the header line that says "*.Log R Ratio". The -adjust argument can be used to generate a new file with updated Log R Ratio measures. This procedure can be also used in Agilent arrays or Nimblegen arrays for adjustment. Use the `cal_gc_snp.pl` script to generate GC model file for these custom arrays.
 
+1. **How to call copy neutral LOH?**
+
+    The current version of PennCNV does not generate copy neutral (copy number=2) LOH calls by default. To enable this, change the 100 in hhall.hmm file to 0, and add the `-loh` argument in `detect_cnv.pl` command line.
+
 1. **A sample generates >1000 CNV calls, whats wrong?**
 
     Most probably it has low signal quality. Please check the QC&Annotation section in the tutorial to see how to take advantage of the filter_cnv.pl program for automatic QC analysis.
