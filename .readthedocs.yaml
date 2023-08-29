@@ -5,6 +5,7 @@
 version: 2
 
 # Set the version of Python and other tools you might need
+# With Python 3.10 Sequence has been moved to collections.abc (so if using default Python, there will be an error for "from collections import Sequence")
 build:
   os: ubuntu-22.04
   tools:
