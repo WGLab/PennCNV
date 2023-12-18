@@ -95,7 +95,7 @@ sub combineSegment {
 					my $newconf;
 					defined $preconf and defined $curconf and $newconf = $preconf+$curconf;
 					push @newcall, [$prestart, $curend, $prestartindex, $curendindex, $presnpstart, $cursnpend, $curcn, $newconf];
-					($prestart, $preend, $prestartindex, $preendindex, $presnpstart, $presnpend, $precn, $newconf) = @{$newcall[$#newcall]};
+					($prestart, $preend, $prestartindex, $preendindex, $presnpstart, $presnpend, $precn, $preconf) = @{$newcall[$#newcall]};
 					next;
 				}
 			}
