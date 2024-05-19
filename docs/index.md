@@ -7,6 +7,7 @@ PennCNV implements a hidden Markov model (HMM) that integrates multiple sources 
 This website is built for the "original" Perl/C-based PennCNV developed for SNP arrays (see references below). Other tools of the PennCNV family include [PennCNV2](https://github.com/WGLab/PennCNV2/) (C++ based PennCNV for tumor/NGS data) and [PennCNV3](https://github.com/WGLab/HadoopCNV) (Java/Hadoop-based PennCNV for NGS data).
 
 ## What's new:
+- 20240519: If you use a Mac with M1/M2/M3 chips to run PennCNV, make sure to use a Docker installation that is compatible with new arm64 architecture.
 - 20221004: Docker image has been updated to help Singularity users in using the Docker image, with executables located at `/home/user` directory. Use `docker pull genomicslab/penncnv` to get this image.
 - 20220314: In recent version of Linux distributions, PennCNV cannot be compiled by GCC. To avoid the complication of installing a lower version of GCC by the user, I made a PennCNV Docker image with CentOS 7 (GCC 4) and all tutorial datasets and the PennCNV-Affy library files. Description of the image is available at https://hub.docker.com/r/genomicslab/penncnv. (You can use `docker run -it -v /path/to/directory:/mounted genomicslab/penncnv:1.0.5` to run this image)
 - 20190109: A slightly updated PennCNV is provided in v1.0.5, to improve compatibility with recent version of GCC and Perl. If users still have problems in installation, please follow "last resort" guide and just install a new Perl 5.14.2 to run PennCNV.
